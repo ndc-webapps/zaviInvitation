@@ -1,0 +1,722 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Zavier's 7th Birthday — Invitation</title>
+  <style>
+    :root{
+      --accent:#ff6b35;
+      --accent-2:#ffd24a;
+      --card-bg-alpha:0.65;
+      --card-bg: rgba(6,10,16,var(--card-bg-alpha));
+      --radius:18px;
+      --shadow: 0 18px 60px rgba(2,6,23,0.55);
+      --max-width:980px;
+      --gap:14px;
+      --touch:48px;
+      --kid-font: "Comic Sans MS", "Trebuchet MS", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      --input-bg: rgba(255,255,255,0.96);
+      --input-color: #071021;
+      --placeholder-color: #7b8a95;
+      --focus-ring: 0 6px 28px rgba(255,107,53,0.12);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:var(--kid-font);background:transparent;color:#fff}
+    body{ -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); min-height:100vh; line-height:1.35; }
+
+    .bg-fixed{ position:fixed; inset:0; z-index:-30; background-image:url('bg.png'); background-size:cover; background-position:center; filter:saturate(1.05) brightness(0.95); }
+    .bg-overlay{ position:fixed; inset:0; z-index:-20; background: linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.18)); pointer-events:none; }
+    .confetti{ position:fixed; inset:0; z-index:-10; pointer-events:none; opacity:0.9; background-image: radial-gradient(circle at 10% 20%, rgba(255,235,59,0.04) 0 2px, transparent 3px), radial-gradient(circle at 80% 30%, rgba(255,107,53,0.03) 0 2px, transparent 3px); background-size:120px 120px,160px 160px; mix-blend-mode:screen; }
+
+    .page{ display:flex; align-items:center; justify-content:center; padding:18px; min-height:100vh; position:relative; z-index:1; }
+    .card{ width:100%; max-width:var(--max-width); border-radius:var(--radius); background:var(--card-bg); box-shadow:var(--shadow); border:1px solid rgba(255,255,255,0.04); overflow:hidden; display:flex; flex-direction:column; gap:var(--gap); max-height:calc(100vh - 36px); position:relative; z-index:2; }
+    .card-inner{ padding:18px; overflow:auto; -webkit-overflow-scrolling:touch; }
+
+    .header{ display:flex; gap:12px; align-items:center; margin-bottom:6px; justify-content:space-between; }
+    .logo-img{ width:68px; height:68px; border-radius:10px; object-fit:contain; background:transparent; box-shadow:0 8px 24px rgba(0,0,0,0.25); }
+    h1{ margin:0;font-size:20px; color:#fff; text-shadow:0 6px 18px rgba(0,0,0,0.6) }
+    .lead{ margin:2px 0 0;color:#f3f6f9; font-size:14px; opacity:0.95 }
+
+    .layout{ display:grid; grid-template-columns:1fr 360px; gap:var(--gap); align-items:start; }
+    @media (max-width:880px){ .layout{ grid-template-columns:1fr; } }
+
+    .slider{ position:relative; border-radius:14px; overflow:hidden; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); display:flex; align-items:center; justify-content:center; height: clamp(180px,36vh,380px); min-height:160px; }
+    .slides{ display:flex; height:100%; transition:transform 420ms cubic-bezier(.2,.9,.2,1); will-change:transform; width:100%; }
+    .slide{ width:100%; flex:0 0 100%; height:100%; display:flex; align-items:center; justify-content:center; padding:12px; box-sizing:border-box; }
+    .slide img{ max-width:100%; max-height:100%; object-fit:contain; border-radius:12px; box-shadow:0 10px 30px rgba(2,6,23,0.45); background:linear-gradient(180deg,#fff,#f7f7f7); border:6px solid rgba(255,255,255,0.03); display:block; }
+
+    .nav{ position:absolute; inset:0; display:flex; justify-content:space-between; align-items:center; z-index:30; pointer-events:auto; }
+    .nav button{ pointer-events:auto; background:linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03)); border:none; color:#071021; padding:10px; margin:0 8px; border-radius:12px; cursor:pointer; min-width:44px; height:44px; display:inline-flex; align-items:center; justify-content:center; font-weight:900; box-shadow:0 8px 20px rgba(0,0,0,0.35); z-index:31; }
+
+    .dots{ display:flex; gap:8px; justify-content:center; margin-top:10px; }
+    .dot{ width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,0.12); cursor:pointer; border:none; box-shadow:0 4px 10px rgba(0,0,0,0.35); }
+    .dot.active{ background:linear-gradient(90deg,var(--accent),var(--accent-2)); transform:scale(1.1); }
+
+    .invite{ margin-top:12px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:12px; border-radius:12px; color:#fff; border:1px dashed rgba(255,255,255,0.03); }
+    .invite .heading{ font-weight:900; font-size:18px; color:#fff; margin-bottom:6px; text-shadow:0 4px 12px rgba(0,0,0,0.45) }
+    .invite .text{ color:#f0f6fb; font-size:15px; line-height:1.35 }
+
+    .info-card{ background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:14px; border-radius:12px; display:flex; flex-direction:column; gap:12px; border:1px solid rgba(255,255,255,0.03); }
+    .info-row{ display:flex; gap:12px; align-items:center; padding:12px; border-radius:10px; background: rgba(255,255,255,0.06); box-shadow: inset 0 1px 0 rgba(255,255,255,0.02); }
+    .icon{ width:52px;height:52px;border-radius:10px;background:linear-gradient(180deg,#fff,#fff); display:flex; align-items:center; justify-content:center; box-shadow:0 8px 20px rgba(0,0,0,0.25); flex:0 0 52px; }
+    .info-text .label{ font-size:13px; color:#ffd24a; font-weight:900; }
+    .info-text .value{ font-weight:900; color:#fff7e6; font-size:16px; text-shadow:0 3px 10px rgba(0,0,0,0.45); }
+
+    .rsvp-actions{ display:flex; gap:10px; margin-top:6px; }
+    .btn{ border:0; border-radius:12px; padding:12px 14px; font-weight:900; cursor:pointer; min-height:var(--touch); display:inline-flex; align-items:center; justify-content:center; gap:8px; }
+    .btn.primary{ background:linear-gradient(90deg,var(--accent),var(--accent-2)); color:#071021; box-shadow:0 12px 36px rgba(255,107,53,0.14); }
+    .btn.ghost{ background:linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); color:#fff; border:1px solid rgba(255,255,255,0.06); font-weight:900; }
+    .btn.regrets{ background: linear-gradient(90deg,#ffd24a,#ffb84a); color:#071021; box-shadow:0 10px 28px rgba(255,178,74,0.12); }
+
+    .contact{ color:#f3f6f9; font-size:13px; margin-top:8px }
+
+    .modal-backdrop{ position:fixed; inset:0; display:none; z-index:400; background: rgba(0,0,0,0.6); align-items:flex-start; justify-content:center; padding: calc(env(safe-area-inset-top,20px) + 12px) 12px 12px 12px; overflow:auto; }
+    .modal{ width:100%; max-width:560px; border-radius:14px; background: var(--card-bg); color:#ffffff; padding:18px; box-shadow:0 24px 80px rgba(0,0,0,0.6); max-height:calc(100vh - 48px); overflow:auto; border:1px solid rgba(255,255,255,0.04); }
+    .modal h2, .modal h3{ color:#fff; text-shadow:0 4px 12px rgba(0,0,0,0.6); margin:0; }
+
+    .input{ height:48px; padding:12px 14px; border-radius:10px; border:1px solid rgba(12,18,24,0.08); background:var(--input-bg); color:var(--input-color); outline:none; font-size:16px; font-weight:700; caret-color:var(--accent); transition:box-shadow 180ms, border-color 180ms, transform 120ms; -webkit-text-fill-color:var(--input-color); }
+    textarea.input{ min-height:120px; resize:vertical; padding-top:12px; padding-bottom:12px; background:var(--input-bg); color:var(--input-color); font-size:16px; font-weight:700; caret-color:var(--accent); }
+    ::placeholder{ color:var(--placeholder-color); opacity:1; }
+    .input:focus, textarea.input:focus{ border-color:var(--accent-2); box-shadow:var(--focus-ring); transform:translateY(-1px); }
+
+    .form-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    @media (max-width:520px){ .form-grid{ grid-template-columns:1fr; } .logo-img{ width:56px;height:56px } h1{ font-size:18px } }
+
+    .companion-list{ display:flex; flex-direction:column; gap:8px; margin-top:6px; }
+    .companion-item{ display:flex; gap:8px; align-items:center; }
+    .companion-item .input{ flex:1; height:44px; }
+
+    .form-actions{ display:flex; gap:10px; margin-top:12px; align-items:center; flex-wrap:wrap; }
+    .feedback{ margin-top:10px; font-size:14px; color:#0b7a3a }
+    .admin-link { margin-left:12px; }
+  </style>
+</head>
+<body>
+  <div class="bg-fixed" aria-hidden="true"></div>
+  <div class="bg-overlay" aria-hidden="true"></div>
+  <div class="confetti" aria-hidden="true"></div>
+
+  <div class="page">
+    <article class="card" role="main" aria-labelledby="page-title">
+      <div class="card-inner">
+        <header class="header">
+          <div style="display:flex;align-items:center;gap:12px">
+            <img class="logo-img" src="roblox-logo.jpg" alt="Roblox logo">
+            <div>
+              <h1 id="page-title">Zavier's 7th Birthday</h1>
+              <p class="lead">Roblox-themed party — games, cake, and costumes!</p>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:center">
+            <button id="loginOpen" class="btn ghost admin-link" type="button">Login</button>
+          </div>
+        </header>
+
+        <section class="layout" aria-label="Invitation layout">
+          <div>
+            <div class="slider" aria-roledescription="carousel" aria-label="Event photos">
+              <div class="slides" id="slides" aria-live="polite">
+                <div class="slide"><img src="1.jpg" alt="Photo 1"></div>
+                <div class="slide"><img src="2.jpg" alt="Photo 2"></div>
+                <div class="slide"><img src="3.jpg" alt="Photo 3"></div>
+                <div class="slide"><img src="4.jpg" alt="Photo 4"></div>
+                <div class="slide"><img src="5.jpg" alt="Photo 5"></div>
+              </div>
+
+              <div class="nav" aria-hidden="false">
+                <button id="prev" type="button" aria-label="Previous photo">◀</button>
+                <button id="next" type="button" aria-label="Next photo">▶</button>
+              </div>
+            </div>
+
+            <div class="dots" id="dots" role="tablist" aria-label="Photo navigation"></div>
+
+            <div class="invite" aria-label="Invitation message">
+              <div class="heading">You're invited</div>
+              <div class="text">Zavier turns 7! Expect Roblox-themed games, prizes, and cake. Dress comfy and bring your best costume.</div>
+            </div>
+          </div>
+
+          <aside>
+            <div class="info-card" role="region" aria-label="Event details">
+              <div class="info-row">
+                <div class="icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="5" width="18" height="16" rx="2" stroke="#ff6b35" stroke-width="1.2" fill="#fff"/><path d="M16 3v4M8 3v4" stroke="#ff6b35" stroke-width="1.2" stroke-linecap="round"/></svg>
+                </div>
+                <div class="info-text"><div class="label">When</div><div class="value">October 26, 2026</div></div>
+              </div>
+
+              <div class="info-row">
+                <div class="icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 21s7-4.5 7-10a7 7 0 10-14 0c0 5.5 7 10 7 10z" stroke="#ffd24a" stroke-width="1.2" fill="#fff"/><circle cx="12" cy="11" r="2" stroke="#ffd24a" stroke-width="1.2" fill="#fff"/></svg>
+                </div>
+                <div class="info-text"><div class="label">Where</div><div class="value">TBD</div></div>
+              </div>
+
+              <div class="info-row">
+                <div class="icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 11c0 0 3-6 9-6s9 6 9 6-3 6-9 6S3 11 3 11z" stroke="#00c2ff" stroke-width="1.2" fill="#fff"/><path d="M8.5 11.5c.8 0 1.5-.6 1.5-1.3S9.3 8.9 8.5 8.9 7 9.5 7 10.2s.7 1.3 1.5 1.3zM15.5 11.5c.8 0 1.5-.6 1.5-1.3s-.7-1.3-1.5-1.3-1.5.6-1.5 1.3.7 1.3 1.5 1.3z" stroke="#00c2ff" stroke-width="1.2" fill="#fff"/></svg>
+                </div>
+                <div class="info-text"><div class="label">Dresscode</div><div class="value">Costume party</div></div>
+              </div>
+
+              <div class="rsvp-actions" aria-label="RSVP actions">
+                <button class="btn primary" id="rsvpOpen" type="button">RSVP</button>
+                <button class="btn regrets" id="regretsOpen" type="button">Regrets</button>
+              </div>
+
+              <div class="contact">
+                <div style="font-size:13px;color:#f3f6f9">Need help? Contact the host</div>
+                <div style="font-weight:900;margin-top:6px;color:#fff">Neil • +63 912 345 6789</div>
+              </div>
+            </div>
+          </aside>
+        </section>
+      </div>
+    </article>
+  </div>
+
+  <!-- RSVP Modal -->
+  <div class="modal-backdrop" id="rsvpModal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal" role="document" aria-labelledby="rsvpTitle">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <h2 id="rsvpTitle">RSVP — Zavier's 7th Birthday</h2>
+        <button class="btn ghost" id="closeRsvp" type="button">Close</button>
+      </div>
+
+      <form id="rsvpForm" novalidate>
+        <div style="margin-bottom:8px">
+          <label for="fullname">Full name</label>
+          <input id="fullname" name="fullname" class="input" type="text" placeholder="Juan dela Cruz" required>
+          <div id="errName" style="color:#b00020;display:none;margin-top:6px"></div>
+        </div>
+
+        <div class="form-grid">
+          <div>
+            <label for="phone">Contact number</label>
+            <input id="phone" name="phone" class="input" type="text" placeholder="09XXXXXXXXX or +63XXXXXXXXXX" inputmode="tel" autocomplete="tel" required>
+            <div id="errPhone" style="color:#b00020;display:none;margin-top:6px"></div>
+          </div>
+
+          <div>
+            <label for="email">Email (optional)</label>
+            <input id="email" name="email" class="input" type="email" placeholder="you@example.com" autocomplete="email">
+            <div id="errEmail" style="color:#b00020;display:none;margin-top:6px"></div>
+          </div>
+        </div>
+
+        <div style="margin-top:10px">
+          <label>Companions</label>
+          <div class="companion-list" id="companions"></div>
+          <div style="margin-top:8px"><button type="button" id="addCompanion" class="btn ghost">+ Add companion</button></div>
+        </div>
+
+        <div style="margin-top:10px">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" class="input" placeholder="Any notes, allergies, or requests"></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn primary">I'm going</button>
+          <button type="button" id="cancelRsvp" class="btn ghost">Cancel</button>
+        </div>
+
+        <div id="rsvpFeedback" class="feedback" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Regrets Modal -->
+  <div class="modal-backdrop" id="regretsModal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal" role="document" aria-labelledby="regretsTitle">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <h2 id="regretsTitle">Regrets</h2>
+        <button class="btn ghost" id="closeRegrets" type="button">Close</button>
+      </div>
+
+      <form id="regretsForm" novalidate>
+        <div style="margin-bottom:8px">
+          <label for="regName">Full name</label>
+          <input id="regName" name="regName" class="input" type="text" placeholder="Your name" required>
+        </div>
+
+        <div style="margin-bottom:8px">
+          <label for="regMessage">Message (optional)</label>
+          <textarea id="regMessage" name="regMessage" class="input" placeholder="Sorry we can't make it"></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn primary">Send regrets</button>
+          <button type="button" id="cancelRegrets" class="btn ghost">Cancel</button>
+        </div>
+
+        <div id="regretsFeedback" class="feedback" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Login Modal (no prefilled credentials) -->
+  <div class="modal-backdrop" id="loginModal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal" role="document" aria-labelledby="loginTitle">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <h2 id="loginTitle">Admin Login</h2>
+        <button class="btn ghost" id="closeLogin" type="button">Close</button>
+      </div>
+
+      <form id="loginForm" novalidate>
+        <div style="margin-bottom:8px">
+          <label for="loginUser">Username</label>
+          <input id="loginUser" name="loginUser" class="input" type="text" placeholder="" autocomplete="username" required>
+        </div>
+
+        <div style="margin-bottom:8px">
+          <label for="loginPass">Password</label>
+          <input id="loginPass" name="loginPass" class="input" type="password" placeholder="" autocomplete="current-password" required>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn primary">Login</button>
+          <button type="button" id="cancelLogin" class="btn ghost">Cancel</button>
+        </div>
+
+        <div id="loginFeedback" class="feedback" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Firebase SDK (ES module CDN) and app logic -->
+  <script type="module">
+    // ---------- Firebase config (from your snippet) ----------
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import {
+      getFirestore, collection, addDoc, query, where, getDocs, orderBy, serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+    import {
+      getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAE50RlfOryMl7-VooU1c7Q2EF2t13_GcE",
+      authDomain: "zaviinvitation.firebaseapp.com",
+      projectId: "zaviinvitation",
+      storageBucket: "zaviinvitation.firebasestorage.app",
+      messagingSenderId: "880486827871",
+      appId: "1:880486827871:web:8326701d76b4e6d3a958ea"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // Replace with the admin email you will use to sign in
+    const ADMIN_EMAIL = 'nadelacruz01@gmail.com';
+
+    // ---------- UI helpers ----------
+    function nowISO(){ return new Date().toISOString(); }
+    function escapeHtml(str=''){ return String(str).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;'); }
+    function normalizeName(name){ return (name||'').trim().replace(/\s+/g,' ').toLowerCase(); }
+    function normalizePhone(phone){ if(!phone) return ''; return phone.replace(/[^\d+]/g,'').trim(); }
+
+    // ---------- Local storage fallback ----------
+    function loadLocalSubmissions(){
+      try { const raw = localStorage.getItem('rsvp_submissions'); return raw ? JSON.parse(raw) : []; } catch(e){ console.error(e); return []; }
+    }
+    function saveLocalSubmission(obj){
+      const arr = loadLocalSubmissions();
+      arr.push(obj);
+      localStorage.setItem('rsvp_submissions', JSON.stringify(arr));
+    }
+
+    // ---------- Firestore helpers ----------
+    async function writeSubmissionToFirestore(sub){
+      try {
+        // Add normalized fields to make duplicate queries efficient
+        const doc = {
+          ...sub,
+          fullname_norm: normalizeName(sub.fullname || sub.regName || ''),
+          phone_norm: normalizePhone(sub.phone || ''),
+          createdAt: serverTimestamp()
+        };
+        await addDoc(collection(db, 'submissions'), doc);
+        return true;
+      } catch (err) {
+        console.error('Firestore write failed', err);
+        return false;
+      }
+    }
+
+    async function isDuplicateInFirestore(fullname, phone){
+      try {
+        const fn = normalizeName(fullname);
+        const pn = normalizePhone(phone);
+        if(!fn || !pn) return false;
+        const q = query(collection(db, 'submissions'), where('fullname_norm', '==', fn), where('phone_norm', '==', pn));
+        const snap = await getDocs(q);
+        return !snap.empty;
+      } catch (err) {
+        console.error('duplicate check failed', err);
+        return false;
+      }
+    }
+
+    // ---------- Slider (unchanged) ----------
+    document.addEventListener('DOMContentLoaded', function () {
+      (function(){
+        const slidesEl = document.getElementById('slides');
+        const prev = document.getElementById('prev');
+        const next = document.getElementById('next');
+        const dotsContainer = document.getElementById('dots');
+        if (!slidesEl) return;
+        const slides = Array.from(slidesEl.children);
+        if (slides.length === 0) return;
+        let index = 0;
+        const total = slides.length;
+        slides.forEach(s => { s.style.flex = '0 0 100%'; s.style.maxWidth = '100%'; });
+        slidesEl.style.width = (total * 100) + '%';
+        slidesEl.style.display = 'flex';
+        slidesEl.style.transition = 'transform 420ms cubic-bezier(.2,.9,.2,1)';
+        dotsContainer.innerHTML = '';
+        for (let i = 0; i < total; i++) {
+          const d = document.createElement('button');
+          d.className = 'dot' + (i === 0 ? ' active' : '');
+          d.setAttribute('data-index', i);
+          d.setAttribute('aria-label', 'Go to photo ' + (i + 1));
+          d.addEventListener('click', () => { index = i; update(); });
+          dotsContainer.appendChild(d);
+        }
+        function update() {
+          slidesEl.style.transform = 'translateX(' + (-index * 100) + '%)';
+          Array.from(dotsContainer.children).forEach((d, i) => {
+            d.classList.toggle('active', i === index);
+            d.setAttribute('aria-selected', i === index ? 'true' : 'false');
+          });
+        }
+        if (prev) prev.addEventListener('click', () => { index = (index - 1 + total) % total; update(); });
+        if (next) next.addEventListener('click', () => { index = (index + 1) % total; update(); });
+        let auto = setInterval(() => { index = (index + 1) % total; update(); }, 5000);
+        const slider = document.querySelector('.slider');
+        if (slider) {
+          slider.addEventListener('mouseenter', () => clearInterval(auto));
+          slider.addEventListener('mouseleave', () => auto = setInterval(() => { index = (index + 1) % total; update(); }, 5000));
+          slider.addEventListener('touchstart', () => clearInterval(auto), { passive: true });
+          slider.addEventListener('touchend', () => auto = setInterval(() => { index = (index + 1) % total; update(); }, 5000));
+        }
+        let startX = 0, currentX = 0, dragging = false;
+        slidesEl.addEventListener('touchstart', (e) => { if (e.touches.length !== 1) return; startX = e.touches[0].clientX; dragging = true; slidesEl.style.transition = 'none'; }, { passive: true });
+        slidesEl.addEventListener('touchmove', (e) => { if (!dragging) return; currentX = e.touches[0].clientX; const dx = currentX - startX; const pct = (dx / slidesEl.clientWidth) * 100; slidesEl.style.transform = 'translateX(' + (-index * 100 + pct) + '%)'; }, { passive: true });
+        slidesEl.addEventListener('touchend', () => { if (!dragging) return; dragging = false; slidesEl.style.transition = 'transform 420ms cubic-bezier(.2,.9,.2,1)'; const dx = currentX - startX; if (Math.abs(dx) > 40) { if (dx < 0) index = (index + 1) % total; else index = (index - 1 + total) % total; } update(); });
+        update();
+      })();
+
+      /* Modals and companions (unchanged) */
+      (function(){
+        const rsvpOpen = document.getElementById('rsvpOpen');
+        const regretsOpen = document.getElementById('regretsOpen');
+        const rsvpModal = document.getElementById('rsvpModal');
+        const regretsModal = document.getElementById('regretsModal');
+        const closeRsvp = document.getElementById('closeRsvp');
+        const cancelRsvp = document.getElementById('cancelRsvp');
+        const closeRegrets = document.getElementById('closeRegrets');
+        const cancelRegrets = document.getElementById('cancelRegrets');
+
+        function openModal(modal){ if (!modal) return; modal.style.display = 'flex'; modal.setAttribute('aria-hidden','false'); const first = modal.querySelector('input,textarea,button'); if(first) first.focus(); document.documentElement.style.overflow = 'hidden'; document.body.style.overflow = 'hidden'; }
+        function closeModal(modal){ if (!modal) return; modal.style.display = 'none'; modal.setAttribute('aria-hidden','true'); document.documentElement.style.overflow = ''; document.body.style.overflow = ''; }
+
+        if (rsvpOpen) rsvpOpen.addEventListener('click', ()=> openModal(rsvpModal));
+        if (regretsOpen) regretsOpen.addEventListener('click', ()=> openModal(regretsModal));
+        if (closeRsvp) closeRsvp.addEventListener('click', ()=> closeModal(rsvpModal));
+        if (cancelRsvp) cancelRsvp.addEventListener('click', ()=> closeModal(rsvpModal));
+        if (closeRegrets) closeRegrets.addEventListener('click', ()=> closeModal(regretsModal));
+        if (cancelRegrets) cancelRegrets.addEventListener('click', ()=> closeModal(regretsModal));
+
+        const companionsEl = document.getElementById('companions');
+        const addCompanionBtn = document.getElementById('addCompanion');
+        function addCompanion(name=''){
+          if (!companionsEl) return;
+          const wrapper = document.createElement('div');
+          wrapper.className = 'companion-item';
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.placeholder = 'Companion name';
+          input.value = name;
+          input.className = 'input';
+          input.style.height = '40px';
+          input.style.flex = '1';
+          const remove = document.createElement('button');
+          remove.type = 'button';
+          remove.innerText = 'Remove';
+          remove.className = 'btn ghost';
+          remove.style.padding = '8px 10px';
+          remove.addEventListener('click', ()=> wrapper.remove());
+          wrapper.appendChild(input);
+          wrapper.appendChild(remove);
+          companionsEl.appendChild(wrapper);
+          input.focus();
+        }
+        addCompanionBtn && addCompanionBtn.addEventListener('click', ()=> addCompanion());
+      })();
+
+      /* Local storage helpers (kept for fallback) */
+      function buildCompanionsString(formEl){
+        return Array.from(formEl.querySelectorAll('.companion-item input'))
+          .map(i => i.value.trim())
+          .filter(Boolean)
+          .join(', ');
+      }
+
+      /* Duplicate detection helpers (local + Firestore) */
+      function isDuplicateEntryLocal(fullname, phone){
+        const normName = normalizeName(fullname);
+        const normPhone = normalizePhone(phone);
+        if(!normName || !normPhone) return false;
+        const arr = loadLocalSubmissions();
+        return arr.some(item => {
+          const iname = normalizeName(item.fullname || item.regName || '');
+          const iphone = normalizePhone(item.phone || '');
+          return iname === normName && iphone === normPhone;
+        });
+      }
+
+      /* RSVP form handler (writes to Firestore, falls back to localStorage) */
+      (function(){
+        const rsvpForm = document.getElementById('rsvpForm');
+        if (!rsvpForm) return;
+        const rsvpFeedback = document.getElementById('rsvpFeedback');
+        const rsvpSubmitBtn = rsvpForm.querySelector('button[type="submit"]');
+
+        function validPHPhone(v){ if(!v) return false; v=v.trim(); return /^(09\d{9}|\+63\d{10})$/.test(v); }
+        function validEmail(v){ if(!v) return true; v=v.trim(); return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+
+        rsvpForm.addEventListener('submit', async function(e){
+          e.preventDefault();
+          rsvpFeedback.innerHTML = '';
+          const errNameEl = document.getElementById('errName');
+          const errPhoneEl = document.getElementById('errPhone');
+          const errEmailEl = document.getElementById('errEmail');
+          if (errNameEl) errNameEl.style.display='none';
+          if (errPhoneEl) errPhoneEl.style.display='none';
+          if (errEmailEl) errEmailEl.style.display='none';
+
+          const name = document.getElementById('fullname').value.trim();
+          const phone = document.getElementById('phone').value.trim();
+          const email = document.getElementById('email').value.trim();
+
+          let ok = true;
+          if(!name){ ok=false; if (errNameEl) { errNameEl.innerText='Please enter your full name.'; errNameEl.style.display='block'; } }
+          if(!validPHPhone(phone)){ ok=false; if (errPhoneEl) { errPhoneEl.innerText='Enter a valid Philippine mobile number (09XXXXXXXXX or +63XXXXXXXXXX).'; errPhoneEl.style.display='block'; } }
+          if(!validEmail(email)){ ok=false; if (errEmailEl) { errEmailEl.innerText='Enter a valid email address or leave blank.'; errEmailEl.style.display='block'; } }
+
+          if(!ok) return;
+
+          // Local duplicate check
+          if (isDuplicateEntryLocal(name, phone)) {
+            rsvpFeedback.innerHTML = '<div style="color:#b00020">You are already registered locally. If there\'s something wrong, please contact Neil Dela Cruz.</div>';
+            return;
+          }
+
+          // Firestore duplicate check
+          const duplicate = await isDuplicateInFirestore(name, phone);
+          if (duplicate) {
+            rsvpFeedback.innerHTML = '<div style="color:#b00020">You are already registered. If there\'s something wrong, please contact Neil Dela Cruz.</div>';
+            return;
+          }
+
+          const companions = buildCompanionsString(rsvpForm);
+          const message = document.getElementById('message').value.trim();
+
+          const submission = {
+            status: 'going',
+            fullname: name,
+            phone: phone,
+            email: email,
+            companions: companions,
+            message: message,
+            timestamp: nowISO()
+          };
+
+          // Try Firestore first
+          const okWrite = await writeSubmissionToFirestore(submission);
+          if (!okWrite) {
+            // fallback to localStorage
+            saveLocalSubmission(submission);
+            console.warn('Saved locally because Firestore write failed.');
+          }
+
+          if (rsvpSubmitBtn) {
+            rsvpSubmitBtn.disabled = true;
+            rsvpSubmitBtn.innerText = 'Saved';
+          }
+
+          const safeName = name || 'friend';
+          const toast = document.createElement('div');
+          toast.style.position = 'fixed';
+          toast.style.left = '50%';
+          toast.style.top = '18%';
+          toast.style.transform = 'translateX(-50%)';
+          toast.style.background = 'linear-gradient(90deg,#fff,#ffd24a)';
+          toast.style.color = '#071021';
+          toast.style.padding = '18px 22px';
+          toast.style.borderRadius = '12px';
+          toast.style.boxShadow = '0 18px 60px rgba(2,6,23,0.45)';
+          toast.style.zIndex = 9999;
+          toast.style.fontWeight = 900;
+          toast.innerText = `Thank you, ${safeName}, for your RSVP — saved.`;
+          document.body.appendChild(toast);
+
+          rsvpForm.reset();
+          setTimeout(()=> {
+            const modal = document.getElementById('rsvpModal');
+            if (modal) modal.style.display = 'none';
+            if (rsvpSubmitBtn) { rsvpSubmitBtn.disabled = false; rsvpSubmitBtn.innerText = "I'm going"; }
+            toast.style.transition = 'opacity 420ms';
+            toast.style.opacity = '0';
+            setTimeout(()=> toast.remove(), 500);
+          }, 1200);
+        });
+      })();
+
+      /* Regrets form handler (stores to Firestore with fallback) */
+      (function(){
+        const regretsForm = document.getElementById('regretsForm');
+        if (!regretsForm) return;
+        const regretsFeedback = document.getElementById('regretsFeedback');
+        const regretsSubmitBtn = regretsForm.querySelector('button[type="submit"]');
+
+        regretsForm.addEventListener('submit', async function(e){
+          e.preventDefault();
+          regretsFeedback.innerHTML = '';
+          const name = document.getElementById('regName').value.trim();
+          const message = document.getElementById('regMessage').value.trim();
+          if(!name){
+            regretsFeedback.innerHTML = '<div style="color:#b00020">Please enter your name.</div>';
+            return;
+          }
+
+          // Check Firestore for same name
+          const fn = normalizeName(name);
+          let foundSameName = false;
+          try {
+            const q = query(collection(db, 'submissions'), where('fullname_norm', '==', fn));
+            const snap = await getDocs(q);
+            foundSameName = !snap.empty;
+          } catch (err) {
+            console.error('name check failed', err);
+          }
+          if (foundSameName) {
+            regretsFeedback.innerHTML = '<div style="color:#b00020">You are already registered. If there\'s something wrong, please contact Neil Dela Cruz.</div>';
+            return;
+          }
+
+          const submission = {
+            status: 'regrets',
+            fullname: name,
+            phone: '',
+            email: '',
+            companions: '',
+            message: message,
+            timestamp: nowISO()
+          };
+
+          const okWrite = await writeSubmissionToFirestore(submission);
+          if (!okWrite) {
+            saveLocalSubmission(submission);
+            console.warn('Saved regrets locally because Firestore write failed.');
+          }
+
+          if (regretsSubmitBtn) {
+            regretsSubmitBtn.disabled = true;
+            regretsSubmitBtn.innerText = 'Saved';
+          }
+
+          const safeName = name || 'friend';
+          const toast = document.createElement('div');
+          toast.style.position = 'fixed';
+          toast.style.left = '50%';
+          toast.style.top = '18%';
+          toast.style.transform = 'translateX(-50%)';
+          toast.style.background = 'linear-gradient(90deg,#fff,#ffd24a)';
+          toast.style.color = '#071021';
+          toast.style.padding = '18px 22px';
+          toast.style.borderRadius = '12px';
+          toast.style.boxShadow = '0 18px 60px rgba(2,6,23,0.45)';
+          toast.style.zIndex = 9999;
+          toast.style.fontWeight = 900;
+          toast.innerText = `Thanks, ${safeName}. Your regrets have been saved.`;
+          document.body.appendChild(toast);
+
+          regretsForm.reset();
+          setTimeout(()=> {
+            const modal = document.getElementById('regretsModal');
+            if (modal) modal.style.display = 'none';
+            if (regretsSubmitBtn) { regretsSubmitBtn.disabled = false; regretsSubmitBtn.innerText = 'Send regrets'; }
+            toast.style.transition = 'opacity 420ms';
+            toast.style.opacity = '0';
+            setTimeout(()=> toast.remove(), 500);
+          }, 1200);
+        });
+      })();
+
+      /* Login modal and admin navigation (keeps existing UI but uses Firebase Auth) */
+      (function(){
+        const loginOpen = document.getElementById('loginOpen');
+        const loginModal = document.getElementById('loginModal');
+        const closeLogin = document.getElementById('closeLogin');
+        const cancelLogin = document.getElementById('cancelLogin');
+        const loginForm = document.getElementById('loginForm');
+        const loginFeedback = document.getElementById('loginFeedback');
+
+        function openModal(modal){ if (!modal) return; modal.style.display = 'flex'; modal.setAttribute('aria-hidden','false'); const first = modal.querySelector('input,textarea,button'); if(first) first.focus(); document.documentElement.style.overflow = 'hidden'; document.body.style.overflow = 'hidden'; }
+        function closeModal(modal){ if (!modal) return; modal.style.display = 'none'; modal.setAttribute('aria-hidden','true'); document.documentElement.style.overflow = ''; document.body.style.overflow = ''; }
+
+        if (loginOpen) loginOpen.addEventListener('click', ()=> openModal(loginModal));
+        if (closeLogin) closeLogin.addEventListener('click', ()=> closeModal(loginModal));
+        if (cancelLogin) cancelLogin.addEventListener('click', ()=> closeModal(loginModal));
+
+        loginForm && loginForm.addEventListener('submit', async function(e){
+          e.preventDefault();
+          loginFeedback.innerHTML = '';
+          const user = document.getElementById('loginUser').value.trim();
+          const pass = document.getElementById('loginPass').value;
+          try {
+            const cred = await signInWithEmailAndPassword(auth, user, pass);
+            // Only allow the configured admin email to proceed to admin.html
+            if (cred.user && cred.user.email === ADMIN_EMAIL) {
+              // keep a short-lived flag for compatibility with admin.html redirect
+              sessionStorage.setItem('admin_logged_in', '1');
+              window.location.href = 'admin.html';
+            } else {
+              await signOut(auth);
+              loginFeedback.innerHTML = '<div style="color:#b00020">Not authorized for admin access.</div>';
+            }
+          } catch (err) {
+            console.error('login failed', err);
+            loginFeedback.innerHTML = '<div style="color:#b00020">Invalid credentials or network error.</div>';
+          }
+        });
+
+        // If user is already signed in and is admin, go to admin page
+        onAuthStateChanged(auth, (user) => {
+          if (user && user.email === ADMIN_EMAIL) {
+            sessionStorage.setItem('admin_logged_in', '1');
+          }
+        });
+      })();
+
+      /* Focus trap for modal */
+      document.addEventListener('focusin', (e)=>{
+        const openModal = document.querySelector('.modal-backdrop[aria-hidden="false"]');
+        if(!openModal) return;
+        if(!openModal.contains(e.target)){
+          const first = openModal.querySelector('input,button,textarea');
+          if(first) first.focus();
+        }
+      });
+
+      console.debug('RSVP flow initialized with Firestore integration.');
+    });
+  </script>
+</body>
+</html>

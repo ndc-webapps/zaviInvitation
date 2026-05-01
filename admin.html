@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin — RSVPs</title>
+  <style>
+    body{ font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; margin:0; padding:18px; background:#071021; color:#fff; }
+    .wrap{ max-width:1100px; margin:18px auto; background:rgba(255,255,255,0.03); padding:18px; border-radius:12px; border:1px solid rgba(255,255,255,0.04); }
+    h1{ margin:0 0 12px 0; font-size:20px; }
+    table{ width:100%; border-collapse:collapse; margin-top:12px; }
+    th,td{ padding:10px 8px; border-bottom:1px solid rgba(255,255,255,0.04); text-align:left; font-size:14px; vertical-align:top; }
+    th{ color:#ffd24a; font-weight:900; }
+    .controls{ display:flex; gap:8px; align-items:center; margin-top:8px; }
+    .btn{ padding:8px 12px; border-radius:8px; border:0; cursor:pointer; font-weight:700; }
+    .btn.ghost{ background:transparent; color:#fff; border:1px solid rgba(255,255,255,0.06); }
+    .btn.warn{ background:#ff6b35; color:#071021; }
+    .empty{ color:#9aa6b2; margin-top:12px; }
+    .small{ font-size:13px; color:#cbd6df; }
+    .nowrap{ white-space:nowrap; }
+    .signin{ display:flex; gap:8px; align-items:center; }
+    .input{ padding:8px 10px; border-radius:8px; border:1px solid rgba(255,255,255,0.06); background:transparent; color:#fff; }
+  </style>
+</head>
+<body>
+  <div class="wrap" id="wrap">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h1>Admin Dashboard — RSVPs</h1>
+      <div id="authArea">
+        <!-- Sign-in UI will be injected here if not signed in -->
+      </div>
+    </div>
+
+    <div class="controls">
+      <button id="refresh" class="btn ghost">Refresh</button>
+      <button id="clearAll" class="btn warn">Clear all saved entries</button>
+      <div style="margin-left:auto" class="small">Primary storage: <strong>Firestore collection submissions</strong></div>
+    </div>
+
+    <div id="tableWrap"></div>
+  </div>
+
+  <script type="module">
+    // ---------- Firebase SDK ----------
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import {
+      getFirestore, collection, getDocs, query, orderBy, deleteDoc, doc
+    } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+    import {
+      getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAE50RlfOryMl7-VooU1c7Q2EF2t13_GcE",
+      authDomain: "zaviinvitation.firebaseapp.com",
+      projectId: "zaviinvitation",
+      storageBucket: "zaviinvitation.firebasestorage.app",
+      messagingSenderId: "880486827871",
+      appId: "1:880486827871:web:8326701d76b4e6d3a958ea"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // Replace with the admin email you will use to sign in
+    const ADMIN_EMAIL = 'nadelacruz01@gmail.com';
+
+    // ---------- UI elements ----------
+    const tableWrap = document.getElementById('tableWrap');
+    const refreshBtn = document.getElementById('refresh');
+    const clearBtn = document.getElementById('clearAll');
+    const authArea = document.getElementById('authArea');
+
+    // ---------- Auth UI ----------
+    function renderSignInForm() {
+      authArea.innerHTML = `
+        <div class="signin">
+          <input id="adminEmail" class="input" placeholder="admin email" value="${ADMIN_EMAIL}" />
+          <input id="adminPass" class="input" placeholder="password" type="password" />
+          <button id="signInBtn" class="btn ghost">Sign in</button>
+        </div>
+      `;
+      document.getElementById('signInBtn').addEventListener('click', async () => {
+        const email = document.getElementById('adminEmail').value.trim();
+        const pass = document.getElementById('adminPass').value;
+        try {
+          const cred = await signInWithEmailAndPassword(auth, email, pass);
+          if (cred.user && cred.user.email === ADMIN_EMAIL) {
+            // signed in
+            renderSignedIn(cred.user.email);
+            loadAndRenderSubmissions();
+          } else {
+            await signOut(auth);
+            alert('Not authorized for admin access.');
+          }
+        } catch (err) {
+          console.error('sign in failed', err);
+          alert('Sign in failed. Check credentials or network.');
+        }
+      });
+    }
+
+    function renderSignedIn(email) {
+      authArea.innerHTML = `
+        <div style="display:flex;gap:8px;align-items:center">
+          <div class="small">Signed in as <strong>${email}</strong></div>
+          <button id="logout" class="btn ghost">Logout</button>
+        </div>
+      `;
+      document.getElementById('logout').addEventListener('click', async () => {
+        await signOut(auth);
+        sessionStorage.removeItem('admin_logged_in');
+        renderSignInForm();
+        tableWrap.innerHTML = '';
+      });
+    }
+
+    // ---------- Firestore read ----------
+    async function loadSubmissionsFromFirestore(){
+      try {
+        const q = query(collection(db, 'submissions'), orderBy('createdAt', 'desc'));
+        const snap = await getDocs(q);
+        const items = [];
+        snap.forEach(docSnap => {
+          const data = docSnap.data();
+          items.push({
+            id: docSnap.id,
+            status: data.status || '',
+            fullname: data.fullname || data.regName || '',
+            phone: data.phone || '',
+            email: data.email || '',
+            companions: data.companions || '',
+            message: data.message || '',
+            timestamp: data.timestamp || data.createdAt?.toDate?.()?.toISOString?.() || ''
+          });
+        });
+        return items;
+      } catch (err) {
+        console.error('Failed to load from Firestore', err);
+        return null;
+      }
+    }
+
+    // ---------- Render table ----------
+    async function loadAndRenderSubmissions(){
+      tableWrap.innerHTML = '<div class="small">Loading…</div>';
+      const items = await loadSubmissionsFromFirestore();
+      if (items === null) {
+        // Firestore read failed — show localStorage fallback
+        const raw = localStorage.getItem('rsvp_submissions');
+        const arr = raw ? JSON.parse(raw) : [];
+        if (!arr.length) {
+          tableWrap.innerHTML = '<div class="empty">No submissions yet.</div>';
+          return;
+        }
+        renderTable(arr.slice().reverse());
+        return;
+      }
+      if (!items.length) {
+        tableWrap.innerHTML = '<div class="empty">No submissions yet.</div>';
+        return;
+      }
+      renderTable(items);
+    }
+
+    function renderTable(arr){
+      let html = '<table><thead><tr><th>#</th><th>Status</th><th>Full name</th><th>Phone</th><th>Email</th><th>Companions</th><th>Message</th><th>Timestamp</th></tr></thead><tbody>';
+      arr.forEach((r, i) => {
+        const idx = i + 1;
+        html += '<tr>';
+        html += '<td class="nowrap">' + idx + '</td>';
+        html += '<td class="nowrap">' + (r.status === 'going' ? 'Going' : 'Regrets') + '</td>';
+        html += '<td>' + (r.fullname || '') + '</td>';
+        html += '<td>' + (r.phone || '') + '</td>';
+        html += '<td>' + (r.email || '') + '</td>';
+        html += '<td>' + (r.companions || '') + '</td>';
+        html += '<td>' + (r.message || '') + '</td>';
+        html += '<td class="nowrap">' + (r.timestamp ? new Date(r.timestamp).toLocaleString() : '') + '</td>';
+        html += '</tr>';
+      });
+      html += '</tbody></table>';
+      tableWrap.innerHTML = html;
+    }
+
+    // ---------- Clear all entries (Firestore) ----------
+    async function clearAllFirestoreEntries(){
+      if (!confirm('Clear all saved entries from Firestore? This cannot be undone.')) return;
+      try {
+        // WARNING: Deleting many documents from client can be slow and is not recommended for large datasets.
+        // For production, implement a secure server-side delete or use the Firebase console.
+        const q = query(collection(db, 'submissions'));
+        const snap = await getDocs(q);
+        const deletes = [];
+        snap.forEach(d => deletes.push(deleteDoc(doc(db, 'submissions', d.id))));
+        await Promise.all(deletes);
+        alert('All entries deleted from Firestore.');
+        loadAndRenderSubmissions();
+      } catch (err) {
+        console.error('clear failed', err);
+        alert('Failed to clear entries. Check permissions and network.');
+      }
+    }
+
+    // ---------- Init ----------
+    (function init(){
+      // If user already has session flag, show sign-in UI as signed in
+      if (sessionStorage.getItem('admin_logged_in') === '1') {
+        // We still verify auth state via Firebase
+        onAuthStateChanged(auth, (user) => {
+          if (user && user.email === ADMIN_EMAIL) {
+            renderSignedIn(user.email);
+            loadAndRenderSubmissions();
+          } else {
+            sessionStorage.removeItem('admin_logged_in');
+            renderSignInForm();
+          }
+        });
+      } else {
+        renderSignInForm();
+      }
+
+      refreshBtn.addEventListener('click', loadAndRenderSubmissions);
+      clearBtn.addEventListener('click', clearAllFirestoreEntries);
+    })();
+
+    // ---------- Recommended Firestore rules (set in Firebase console) ----------
+    /*
+    rules_version = '2';
+    service cloud.firestore {
+      match /databases/{database}/documents {
+        match /submissions/{docId} {
+          allow create: if true; // allow public writes for RSVPs (or tighten with App Check)
+          allow read: if request.auth != null && request.auth.token.email == "neil@example.com";
+          allow delete: if request.auth != null && request.auth.token.email == "neil@example.com";
+        }
+      }
+    }
+    */
+    // Replace neil@example.com in rules with your admin email and consider enabling App Check.
+  </script>
+</body>
+</html>
