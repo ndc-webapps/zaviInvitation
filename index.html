@@ -91,6 +91,20 @@
     .form-actions{ display:flex; gap:10px; margin-top:12px; align-items:center; flex-wrap:wrap; }
     .feedback{ margin-top:10px; font-size:14px; color:#0b7a3a }
     .admin-link { margin-left:12px; }
+
+    /* ---------- New: make modal labels stacked and inputs full width (no color/style changes) ---------- */
+    .modal label { display:block; margin-bottom:6px; font-weight:700; color:inherit; }
+    .modal .input { width:100%; box-sizing:border-box; }
+    .companion-item { display:flex; gap:8px; align-items:center; }
+    .companion-item .input { height:40px; }
+    .password-wrapper { display:flex; gap:8px; align-items:center; }
+    .password-wrapper .input { flex:1; }
+    .toggle-pass-btn { background:transparent; border:0; cursor:pointer; font-size:18px; padding:8px; border-radius:8px; color:inherit; }
+
+    /* Confirmation modal overrides (keeps existing color scheme) */
+    #confirmModal .modal { background: var(--card-bg); color: #fff; border:1px solid rgba(255,255,255,0.04); box-shadow:0 24px 80px rgba(0,0,0,0.6); }
+    #confirmMessage { color: #071021; background: linear-gradient(90deg,#fff,#ffd24a); padding:12px; border-radius:10px; font-weight:900; }
+    #confirmClose { background: transparent; color: #fff; border: 0; cursor: pointer; position:absolute; right:12px; top:12px; padding:6px 10px; border-radius:8px; }
   </style>
 </head>
 <body>
@@ -274,7 +288,10 @@
 
         <div style="margin-bottom:8px">
           <label for="loginPass">Password</label>
-          <input id="loginPass" name="loginPass" class="input" type="password" placeholder="" autocomplete="current-password" required>
+          <div class="password-wrapper">
+            <input id="loginPass" name="loginPass" class="input" type="password" placeholder="" autocomplete="current-password" required>
+            <button id="togglePass" type="button" class="toggle-pass-btn" aria-label="Show password" title="Show password">👁</button>
+          </div>
         </div>
 
         <div class="form-actions">
@@ -284,6 +301,17 @@
 
         <div id="loginFeedback" class="feedback" aria-live="polite"></div>
       </form>
+    </div>
+  </div>
+
+  <!-- Submission Confirmation Modal (persistent) -->
+  <div class="modal-backdrop" id="confirmModal" role="dialog" aria-modal="true" aria-hidden="true" style="display:none;align-items:center;justify-content:center;">
+    <div class="modal" role="document" aria-labelledby="confirmTitle" style="max-width:480px;position:relative;">
+      <button id="confirmClose" class="btn ghost" type="button" aria-label="Close confirmation">✕</button>
+      <div style="padding-top:6px">
+        <h3 id="confirmTitle" style="margin:0 0 8px 0;font-size:18px">Saved</h3>
+        <div id="confirmMessage" style="color:#071021;background:linear-gradient(90deg,#fff,#ffd24a);padding:12px;border-radius:10px;font-weight:900;"></div>
+      </div>
     </div>
   </div>
 
@@ -480,6 +508,10 @@
         });
       }
 
+      /* Prevent double submissions: flags */
+      let rsvpSubmitting = false;
+      let regretsSubmitting = false;
+
       /* RSVP form handler (writes to Firestore, falls back to localStorage) */
       (function(){
         const rsvpForm = document.getElementById('rsvpForm');
@@ -492,6 +524,10 @@
 
         rsvpForm.addEventListener('submit', async function(e){
           e.preventDefault();
+          if (rsvpSubmitting) return; // ignore repeated clicks
+          rsvpSubmitting = true;
+          if (rsvpSubmitBtn) { rsvpSubmitBtn.disabled = true; rsvpSubmitBtn.innerText = 'Saving...'; }
+
           rsvpFeedback.innerHTML = '';
           const errNameEl = document.getElementById('errName');
           const errPhoneEl = document.getElementById('errPhone');
@@ -509,18 +545,33 @@
           if(!validPHPhone(phone)){ ok=false; if (errPhoneEl) { errPhoneEl.innerText='Enter a valid Philippine mobile number (09XXXXXXXXX or +63XXXXXXXXXX).'; errPhoneEl.style.display='block'; } }
           if(!validEmail(email)){ ok=false; if (errEmailEl) { errEmailEl.innerText='Enter a valid email address or leave blank.'; errEmailEl.style.display='block'; } }
 
-          if(!ok) return;
+          if(!ok) {
+            // re-enable so user can correct
+            rsvpSubmitting = false;
+            if (rsvpSubmitBtn) { rsvpSubmitBtn.disabled = false; rsvpSubmitBtn.innerText = "I'm going"; }
+            return;
+          }
 
           // Local duplicate check
           if (isDuplicateEntryLocal(name, phone)) {
             rsvpFeedback.innerHTML = '<div style="color:#b00020">You are already registered locally. If there\'s something wrong, please contact Neil Dela Cruz.</div>';
+            rsvpSubmitting = false;
+            if (rsvpSubmitBtn) { rsvpSubmitBtn.disabled = false; rsvpSubmitBtn.innerText = "I'm going"; }
             return;
           }
 
           // Firestore duplicate check
-          const duplicate = await isDuplicateInFirestore(name, phone);
+          let duplicate = false;
+          try {
+            duplicate = await isDuplicateInFirestore(name, phone);
+          } catch (err) {
+            console.error('duplicate check error', err);
+            duplicate = false;
+          }
           if (duplicate) {
             rsvpFeedback.innerHTML = '<div style="color:#b00020">You are already registered. If there\'s something wrong, please contact Neil Dela Cruz.</div>';
+            rsvpSubmitting = false;
+            if (rsvpSubmitBtn) { rsvpSubmitBtn.disabled = false; rsvpSubmitBtn.innerText = "I'm going"; }
             return;
           }
 
@@ -538,43 +589,74 @@
           };
 
           // Try Firestore first
-          const okWrite = await writeSubmissionToFirestore(submission);
+          let okWrite = false;
+          try {
+            okWrite = await writeSubmissionToFirestore(submission);
+          } catch (err) {
+            console.error('write error', err);
+            okWrite = false;
+          }
           if (!okWrite) {
             // fallback to localStorage
             saveLocalSubmission(submission);
             console.warn('Saved locally because Firestore write failed.');
           }
 
-          if (rsvpSubmitBtn) {
-            rsvpSubmitBtn.disabled = true;
-            rsvpSubmitBtn.innerText = 'Saved';
-          }
-
           const safeName = name || 'friend';
-          const toast = document.createElement('div');
-          toast.style.position = 'fixed';
-          toast.style.left = '50%';
-          toast.style.top = '18%';
-          toast.style.transform = 'translateX(-50%)';
-          toast.style.background = 'linear-gradient(90deg,#fff,#ffd24a)';
-          toast.style.color = '#071021';
-          toast.style.padding = '18px 22px';
-          toast.style.borderRadius = '12px';
-          toast.style.boxShadow = '0 18px 60px rgba(2,6,23,0.45)';
-          toast.style.zIndex = 9999;
-          toast.style.fontWeight = 900;
-          toast.innerText = `Thank you, ${safeName}, for your RSVP — saved.`;
-          document.body.appendChild(toast);
+
+          // Show persistent confirmation modal
+          (function showConfirmation(msg){
+            try {
+              const modal = document.getElementById('confirmModal');
+              const msgEl = document.getElementById('confirmMessage');
+              const closeBtn = document.getElementById('confirmClose');
+              if (!modal || !msgEl || !closeBtn) {
+                // fallback to toast if modal missing
+                const toast = document.createElement('div');
+                toast.style.position = 'fixed';
+                toast.style.left = '50%';
+                toast.style.top = '18%';
+                toast.style.transform = 'translateX(-50%)';
+                toast.style.background = 'linear-gradient(90deg,#fff,#ffd24a)';
+                toast.style.color = '#071021';
+                toast.style.padding = '18px 22px';
+                toast.style.borderRadius = '12px';
+                toast.style.boxShadow = '0 18px 60px rgba(2,6,23,0.45)';
+                toast.style.zIndex = 9999;
+                toast.style.fontWeight = 900;
+                toast.innerText = msg;
+                document.body.appendChild(toast);
+                setTimeout(()=> { toast.style.opacity = '0'; setTimeout(()=> toast.remove(), 500); }, 1800);
+                return;
+              }
+
+              msgEl.innerText = msg;
+              modal.style.display = 'flex';
+              modal.setAttribute('aria-hidden','false');
+
+              // focus the close button for accessibility
+              closeBtn.focus();
+
+              // close handler (one-time)
+              const onClose = () => {
+                modal.style.display = 'none';
+                modal.setAttribute('aria-hidden','true');
+                closeBtn.removeEventListener('click', onClose);
+              };
+              closeBtn.addEventListener('click', onClose);
+            } catch (e) {
+              console.error('showConfirmation error', e);
+            }
+          })(`Thank you, ${safeName}, for your RSVP — saved.`);
 
           rsvpForm.reset();
+          // close RSVP modal after a short delay so user sees the confirmation modal
           setTimeout(()=> {
             const modal = document.getElementById('rsvpModal');
             if (modal) modal.style.display = 'none';
             if (rsvpSubmitBtn) { rsvpSubmitBtn.disabled = false; rsvpSubmitBtn.innerText = "I'm going"; }
-            toast.style.transition = 'opacity 420ms';
-            toast.style.opacity = '0';
-            setTimeout(()=> toast.remove(), 500);
-          }, 1200);
+            rsvpSubmitting = false;
+          }, 800);
         });
       })();
 
@@ -587,11 +669,17 @@
 
         regretsForm.addEventListener('submit', async function(e){
           e.preventDefault();
+          if (regretsSubmitting) return;
+          regretsSubmitting = true;
+          if (regretsSubmitBtn) { regretsSubmitBtn.disabled = true; regretsSubmitBtn.innerText = 'Saving...'; }
+
           regretsFeedback.innerHTML = '';
           const name = document.getElementById('regName').value.trim();
           const message = document.getElementById('regMessage').value.trim();
           if(!name){
             regretsFeedback.innerHTML = '<div style="color:#b00020">Please enter your name.</div>';
+            regretsSubmitting = false;
+            if (regretsSubmitBtn) { regretsSubmitBtn.disabled = false; regretsSubmitBtn.innerText = 'Send regrets'; }
             return;
           }
 
@@ -604,9 +692,12 @@
             foundSameName = !snap.empty;
           } catch (err) {
             console.error('name check failed', err);
+            foundSameName = false;
           }
           if (foundSameName) {
             regretsFeedback.innerHTML = '<div style="color:#b00020">You are already registered. If there\'s something wrong, please contact Neil Dela Cruz.</div>';
+            regretsSubmitting = false;
+            if (regretsSubmitBtn) { regretsSubmitBtn.disabled = false; regretsSubmitBtn.innerText = 'Send regrets'; }
             return;
           }
 
@@ -620,7 +711,13 @@
             timestamp: nowISO()
           };
 
-          const okWrite = await writeSubmissionToFirestore(submission);
+          let okWrite = false;
+          try {
+            okWrite = await writeSubmissionToFirestore(submission);
+          } catch (err) {
+            console.error('write error', err);
+            okWrite = false;
+          }
           if (!okWrite) {
             saveLocalSubmission(submission);
             console.warn('Saved regrets locally because Firestore write failed.');
@@ -632,30 +729,59 @@
           }
 
           const safeName = name || 'friend';
-          const toast = document.createElement('div');
-          toast.style.position = 'fixed';
-          toast.style.left = '50%';
-          toast.style.top = '18%';
-          toast.style.transform = 'translateX(-50%)';
-          toast.style.background = 'linear-gradient(90deg,#fff,#ffd24a)';
-          toast.style.color = '#071021';
-          toast.style.padding = '18px 22px';
-          toast.style.borderRadius = '12px';
-          toast.style.boxShadow = '0 18px 60px rgba(2,6,23,0.45)';
-          toast.style.zIndex = 9999;
-          toast.style.fontWeight = 900;
-          toast.innerText = `Thanks, ${safeName}. Your regrets have been saved.`;
-          document.body.appendChild(toast);
+
+          // Show persistent confirmation modal
+          (function showConfirmation(msg){
+            try {
+              const modal = document.getElementById('confirmModal');
+              const msgEl = document.getElementById('confirmMessage');
+              const closeBtn = document.getElementById('confirmClose');
+              if (!modal || !msgEl || !closeBtn) {
+                // fallback to toast if modal missing
+                const toast = document.createElement('div');
+                toast.style.position = 'fixed';
+                toast.style.left = '50%';
+                toast.style.top = '18%';
+                toast.style.transform = 'translateX(-50%)';
+                toast.style.background = 'linear-gradient(90deg,#fff,#ffd24a)';
+                toast.style.color = '#071021';
+                toast.style.padding = '18px 22px';
+                toast.style.borderRadius = '12px';
+                toast.style.boxShadow = '0 18px 60px rgba(2,6,23,0.45)';
+                toast.style.zIndex = 9999;
+                toast.style.fontWeight = 900;
+                toast.innerText = msg;
+                document.body.appendChild(toast);
+                setTimeout(()=> { toast.style.opacity = '0'; setTimeout(()=> toast.remove(), 500); }, 1800);
+                return;
+              }
+
+              msgEl.innerText = msg;
+              modal.style.display = 'flex';
+              modal.setAttribute('aria-hidden','false');
+
+              // focus the close button for accessibility
+              closeBtn.focus();
+
+              // close handler (one-time)
+              const onClose = () => {
+                modal.style.display = 'none';
+                modal.setAttribute('aria-hidden','true');
+                closeBtn.removeEventListener('click', onClose);
+              };
+              closeBtn.addEventListener('click', onClose);
+            } catch (e) {
+              console.error('showConfirmation error', e);
+            }
+          })(`Thanks, ${safeName}. Your regrets have been saved.`);
 
           regretsForm.reset();
           setTimeout(()=> {
             const modal = document.getElementById('regretsModal');
             if (modal) modal.style.display = 'none';
             if (regretsSubmitBtn) { regretsSubmitBtn.disabled = false; regretsSubmitBtn.innerText = 'Send regrets'; }
-            toast.style.transition = 'opacity 420ms';
-            toast.style.opacity = '0';
-            setTimeout(()=> toast.remove(), 500);
-          }, 1200);
+            regretsSubmitting = false;
+          }, 800);
         });
       })();
 
@@ -667,6 +793,7 @@
         const cancelLogin = document.getElementById('cancelLogin');
         const loginForm = document.getElementById('loginForm');
         const loginFeedback = document.getElementById('loginFeedback');
+        const togglePass = document.getElementById('togglePass');
 
         function openModal(modal){ if (!modal) return; modal.style.display = 'flex'; modal.setAttribute('aria-hidden','false'); const first = modal.querySelector('input,textarea,button'); if(first) first.focus(); document.documentElement.style.overflow = 'hidden'; document.body.style.overflow = 'hidden'; }
         function closeModal(modal){ if (!modal) return; modal.style.display = 'none'; modal.setAttribute('aria-hidden','true'); document.documentElement.style.overflow = ''; document.body.style.overflow = ''; }
@@ -674,6 +801,26 @@
         if (loginOpen) loginOpen.addEventListener('click', ()=> openModal(loginModal));
         if (closeLogin) closeLogin.addEventListener('click', ()=> closeModal(loginModal));
         if (cancelLogin) cancelLogin.addEventListener('click', ()=> closeModal(loginModal));
+
+        // Toggle password visibility
+        if (togglePass) {
+          togglePass.addEventListener('click', () => {
+            const pass = document.getElementById('loginPass');
+            if (!pass) return;
+            if (pass.type === 'password') {
+              pass.type = 'text';
+              togglePass.innerText = '🙈';
+              togglePass.setAttribute('aria-label', 'Hide password');
+              togglePass.title = 'Hide password';
+            } else {
+              pass.type = 'password';
+              togglePass.innerText = '👁';
+              togglePass.setAttribute('aria-label', 'Show password');
+              togglePass.title = 'Show password';
+            }
+            pass.focus();
+          });
+        }
 
         loginForm && loginForm.addEventListener('submit', async function(e){
           e.preventDefault();
@@ -712,6 +859,17 @@
         if(!openModal.contains(e.target)){
           const first = openModal.querySelector('input,button,textarea');
           if(first) first.focus();
+        }
+      });
+
+      // Close confirmation modal with Escape key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          const modal = document.getElementById('confirmModal');
+          if (modal && modal.style.display === 'flex') {
+            const closeBtn = document.getElementById('confirmClose');
+            if (closeBtn) closeBtn.click();
+          }
         }
       });
 
