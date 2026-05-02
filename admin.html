@@ -20,6 +20,22 @@
     .nowrap{ white-space:nowrap; }
     .signin{ display:flex; gap:8px; align-items:center; }
     .input{ padding:8px 10px; border-radius:8px; border:1px solid rgba(255,255,255,0.06); background:transparent; color:#fff; }
+
+    /* small icon buttons (keeps existing styles) */
+    .icon-btn { display:inline-flex; align-items:center; gap:8px; padding:8px 10px; border-radius:8px; border:0; cursor:pointer; font-weight:700; background:transparent; color:inherit; }
+
+    .delete-btn { background:transparent; border:1px solid rgba(255,255,255,0.06); color:#fff; padding:6px 8px; border-radius:8px; cursor:pointer; font-weight:700; }
+    .delete-btn.warn { background:#ff6b35; color:#071021; border:0; }
+    .disabled { opacity:0.45; pointer-events:none; }
+
+    /* Login modal (appears when admin.html is opened without auth) */
+    .modal-backdrop{ position:fixed; inset:0; display:none; z-index:1000; background: rgba(0,0,0,0.6); align-items:center; justify-content:center; padding:20px; }
+    .modal{ width:100%; max-width:420px; border-radius:12px; background: #061018; color:#ffffff; padding:18px; box-shadow:0 24px 80px rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.04); }
+    .modal h2{ margin:0 0 12px 0; color:#fff; font-size:18px; }
+    .modal .field{ margin-bottom:10px; }
+    .modal label{ display:block; margin-bottom:6px; font-weight:700; color:inherit; }
+    .modal .input{ width:100%; box-sizing:border-box; }
+    .modal .form-actions{ display:flex; gap:8px; justify-content:flex-end; margin-top:8px; }
   </style>
 </head>
 <body>
@@ -34,14 +50,46 @@
     <div class="controls">
       <button id="refresh" class="btn ghost">Refresh</button>
       <button id="clearAll" class="btn warn">Clear all saved entries</button>
+
+      <!-- Export buttons -->
+      <button id="exportPdf" class="icon-btn btn ghost" title="Export as PDF">📄 PDF</button>
+      <button id="exportExcel" class="icon-btn btn ghost" title="Export as Excel (CSV)">📥 Excel</button>
+
+      <!-- Back to site button (logs out and returns to index.html) -->
+      <button id="backToSite" class="btn ghost" style="margin-left:8px">Back to site</button>
+
       <div style="margin-left:auto" class="small">Primary storage: <strong>Firestore collection submissions</strong></div>
     </div>
 
     <div id="tableWrap"></div>
   </div>
 
+  <!-- Login modal shown when admin.html is opened without a valid admin session -->
+  <div class="modal-backdrop" id="loginModal" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal" role="document" aria-labelledby="loginTitle">
+      <h2 id="loginTitle">Admin Login</h2>
+
+      <div class="field">
+        <label for="adminEmailModal">Email</label>
+        <input id="adminEmailModal" class="input" placeholder="admin email" value="">
+      </div>
+
+      <div class="field">
+        <label for="adminPassModal">Password</label>
+        <input id="adminPassModal" class="input" placeholder="password" type="password">
+      </div>
+
+      <div id="loginError" style="color:#b00020; display:none; margin-bottom:8px"></div>
+
+      <div class="form-actions">
+        <button id="loginSubmit" class="btn primary">Sign in</button>
+        <button id="loginCancel" class="btn ghost">Cancel</button>
+      </div>
+    </div>
+  </div>
+
   <script type="module">
-    // ---------- Firebase SDK ----------
+    // Firebase SDK (ES module CDN)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
     import {
       getFirestore, collection, getDocs, query, orderBy, deleteDoc, doc
@@ -63,17 +111,58 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
 
-    // Replace with the admin email you will use to sign in
+    // Admin email to allow
     const ADMIN_EMAIL = 'nadelacruz01@gmail.com';
 
-    // ---------- UI elements ----------
+    // UI elements
     const tableWrap = document.getElementById('tableWrap');
     const refreshBtn = document.getElementById('refresh');
     const clearBtn = document.getElementById('clearAll');
     const authArea = document.getElementById('authArea');
+    const exportPdfBtn = document.getElementById('exportPdf');
+    const exportExcelBtn = document.getElementById('exportExcel');
+    const backToSiteBtn = document.getElementById('backToSite');
 
-    // ---------- Auth UI ----------
-    function renderSignInForm() {
+    const loginModal = document.getElementById('loginModal');
+    const loginSubmit = document.getElementById('loginSubmit');
+    const loginCancel = document.getElementById('loginCancel');
+    const adminEmailModal = document.getElementById('adminEmailModal');
+    const adminPassModal = document.getElementById('adminPassModal');
+    const loginError = document.getElementById('loginError');
+
+    // Disable controls until authenticated
+    function setControlsDisabled(disabled) {
+      [refreshBtn, clearBtn, exportPdfBtn, exportExcelBtn].forEach(b => {
+        if (!b) return;
+        if (disabled) {
+          b.classList.add('disabled');
+          b.setAttribute('aria-disabled', 'true');
+        } else {
+          b.classList.remove('disabled');
+          b.removeAttribute('aria-disabled');
+        }
+      });
+      if (disabled) {
+        tableWrap.innerHTML = '<div class="small">Sign in to view submissions.</div>';
+      }
+    }
+
+    // Show/hide login modal
+    function showLoginModal(show = true) {
+      if (show) {
+        loginModal.style.display = 'flex';
+        loginModal.setAttribute('aria-hidden', 'false');
+        adminEmailModal.focus();
+        setControlsDisabled(true);
+      } else {
+        loginModal.style.display = 'none';
+        loginModal.setAttribute('aria-hidden', 'true');
+        setControlsDisabled(false);
+      }
+    }
+
+    // Render inline sign-in UI (top-right)
+    function renderSignInFormInline() {
       authArea.innerHTML = `
         <div class="signin">
           <input id="adminEmail" class="input" placeholder="admin email" value="${ADMIN_EMAIL}" />
@@ -84,23 +173,11 @@
       document.getElementById('signInBtn').addEventListener('click', async () => {
         const email = document.getElementById('adminEmail').value.trim();
         const pass = document.getElementById('adminPass').value;
-        try {
-          const cred = await signInWithEmailAndPassword(auth, email, pass);
-          if (cred.user && cred.user.email === ADMIN_EMAIL) {
-            // signed in
-            renderSignedIn(cred.user.email);
-            loadAndRenderSubmissions();
-          } else {
-            await signOut(auth);
-            alert('Not authorized for admin access.');
-          }
-        } catch (err) {
-          console.error('sign in failed', err);
-          alert('Sign in failed. Check credentials or network.');
-        }
+        await attemptSignIn(email, pass);
       });
     }
 
+    // Render signed-in UI
     function renderSignedIn(email) {
       authArea.innerHTML = `
         <div style="display:flex;gap:8px;align-items:center">
@@ -109,15 +186,54 @@
         </div>
       `;
       document.getElementById('logout').addEventListener('click', async () => {
-        await signOut(auth);
+        try { await signOut(auth); } catch(e){ console.error(e); }
         sessionStorage.removeItem('admin_logged_in');
-        renderSignInForm();
-        tableWrap.innerHTML = '';
+        // redirect to index after logout
+        window.location.href = 'index.html';
       });
+
+      // Back to site button: sign out and redirect
+      const backBtn = document.getElementById('backToSite');
+      if (backBtn) {
+        backBtn.addEventListener('click', async () => {
+          try { await signOut(auth); } catch(e){ console.error(e); }
+          sessionStorage.removeItem('admin_logged_in');
+          window.location.href = 'index.html';
+        });
+      }
     }
 
-    // ---------- Firestore read ----------
+    // Attempt sign-in helper used by modal and inline form
+    async function attemptSignIn(email, pass) {
+      loginError.style.display = 'none';
+      try {
+        const cred = await signInWithEmailAndPassword(auth, email, pass);
+        if (cred.user && cred.user.email === ADMIN_EMAIL) {
+          sessionStorage.setItem('admin_logged_in', '1');
+          showLoginModal(false);
+          renderSignedIn(cred.user.email);
+          await loadAndRenderSubmissions();
+        } else {
+          await signOut(auth);
+          loginError.innerText = 'Not authorized for admin access.';
+          loginError.style.display = 'block';
+        }
+      } catch (err) {
+        console.error('sign in failed', err);
+        loginError.innerText = 'Sign in failed. Check credentials or network.';
+        loginError.style.display = 'block';
+      }
+    }
+
+    // Firestore read (guarded)
     async function loadSubmissionsFromFirestore(){
+      // ensure admin
+      const user = auth.currentUser;
+      if (!user || user.email !== ADMIN_EMAIL) {
+        showLoginModal(true);
+        return null;
+      }
+
       try {
         const q = query(collection(db, 'submissions'), orderBy('createdAt', 'desc'));
         const snap = await getDocs(q);
@@ -142,8 +258,40 @@
       }
     }
 
-    // ---------- Render table ----------
+    // Render table (isLocal indicates localStorage fallback)
+    function renderTable(arr, isLocal = false){
+      let html = '<table id="rsvpTable"><thead><tr><th>#</th><th>Status</th><th>Full name</th><th>Phone</th><th>Email</th><th>Companions</th><th>Message</th><th>Timestamp</th><th>Action</th></tr></thead><tbody>';
+      arr.forEach((r, i) => {
+        const idx = i + 1;
+        html += '<tr data-index="' + i + '" ' + (r.id ? 'data-id="' + r.id + '"' : '') + '>';
+        html += '<td class="nowrap">' + idx + '</td>';
+        html += '<td class="nowrap">' + (r.status === 'going' ? 'Going' : 'Regrets') + '</td>';
+        html += '<td>' + (r.fullname || '') + '</td>';
+        html += '<td>' + (r.phone || '') + '</td>';
+        html += '<td>' + (r.email || '') + '</td>';
+        html += '<td>' + (r.companions || '') + '</td>';
+        html += '<td>' + (r.message || '') + '</td>';
+        html += '<td class="nowrap">' + (r.timestamp ? new Date(r.timestamp).toLocaleString() : '') + '</td>';
+        if (isLocal) {
+          html += '<td><button class="delete-btn" data-local-index="' + i + '">Delete</button></td>';
+        } else {
+          html += '<td><button class="delete-btn" data-id="' + (r.id || '') + '">Delete</button></td>';
+        }
+        html += '</tr>';
+      });
+      html += '</tbody></table>';
+      tableWrap.innerHTML = html;
+    }
+
+    // Load and render submissions (guarded)
     async function loadAndRenderSubmissions(){
+      // ensure admin
+      const user = auth.currentUser;
+      if (!user || user.email !== ADMIN_EMAIL) {
+        showLoginModal(true);
+        return;
+      }
+
       tableWrap.innerHTML = '<div class="small">Loading…</div>';
       const items = await loadSubmissionsFromFirestore();
       if (items === null) {
@@ -154,41 +302,77 @@
           tableWrap.innerHTML = '<div class="empty">No submissions yet.</div>';
           return;
         }
-        renderTable(arr.slice().reverse());
+        renderTable(arr.slice().reverse(), true);
         return;
       }
       if (!items.length) {
         tableWrap.innerHTML = '<div class="empty">No submissions yet.</div>';
         return;
       }
-      renderTable(items);
+      renderTable(items, false);
     }
 
-    function renderTable(arr){
-      let html = '<table><thead><tr><th>#</th><th>Status</th><th>Full name</th><th>Phone</th><th>Email</th><th>Companions</th><th>Message</th><th>Timestamp</th></tr></thead><tbody>';
-      arr.forEach((r, i) => {
-        const idx = i + 1;
-        html += '<tr>';
-        html += '<td class="nowrap">' + idx + '</td>';
-        html += '<td class="nowrap">' + (r.status === 'going' ? 'Going' : 'Regrets') + '</td>';
-        html += '<td>' + (r.fullname || '') + '</td>';
-        html += '<td>' + (r.phone || '') + '</td>';
-        html += '<td>' + (r.email || '') + '</td>';
-        html += '<td>' + (r.companions || '') + '</td>';
-        html += '<td>' + (r.message || '') + '</td>';
-        html += '<td class="nowrap">' + (r.timestamp ? new Date(r.timestamp).toLocaleString() : '') + '</td>';
-        html += '</tr>';
-      });
-      html += '</tbody></table>';
-      tableWrap.innerHTML = html;
+    // Delete single Firestore entry (guarded)
+    async function deleteFirestoreEntry(id){
+      const user = auth.currentUser;
+      if (!user || user.email !== ADMIN_EMAIL) {
+        showLoginModal(true);
+        return;
+      }
+      if (!confirm('Delete this entry from Firestore? This cannot be undone.')) return;
+      try {
+        await deleteDoc(doc(db, 'submissions', id));
+        alert('Entry deleted.');
+        loadAndRenderSubmissions();
+      } catch (err) {
+        console.error('delete failed', err);
+        alert('Failed to delete entry. Check permissions and network.');
+      }
     }
 
-    // ---------- Clear all entries (Firestore) ----------
+    // Delete local fallback entry by index
+    function deleteLocalEntryByIndex(localIndex){
+      if (!confirm('Delete this local entry? This cannot be undone.')) return;
+      try {
+        const raw = localStorage.getItem('rsvp_submissions');
+        const arr = raw ? JSON.parse(raw) : [];
+        const removeIndex = arr.length - 1 - localIndex;
+        if (removeIndex >= 0 && removeIndex < arr.length) {
+          arr.splice(removeIndex, 1);
+          localStorage.setItem('rsvp_submissions', JSON.stringify(arr));
+          alert('Local entry deleted.');
+          loadAndRenderSubmissions();
+        } else {
+          alert('Could not find local entry to delete.');
+        }
+      } catch (err) {
+        console.error('local delete failed', err);
+        alert('Failed to delete local entry.');
+      }
+    }
+
+    // Event delegation for delete buttons (guarded)
+    tableWrap.addEventListener('click', (e) => {
+      const btn = e.target.closest('.delete-btn');
+      if (!btn) return;
+      const id = btn.getAttribute('data-id');
+      const localIndex = btn.hasAttribute('data-local-index') ? parseInt(btn.getAttribute('data-local-index'), 10) : null;
+      if (id) {
+        deleteFirestoreEntry(id);
+      } else if (localIndex !== null && !isNaN(localIndex)) {
+        deleteLocalEntryByIndex(localIndex);
+      }
+    });
+
+    // Clear all entries (guarded)
     async function clearAllFirestoreEntries(){
+      const user = auth.currentUser;
+      if (!user || user.email !== ADMIN_EMAIL) {
+        showLoginModal(true);
+        return;
+      }
       if (!confirm('Clear all saved entries from Firestore? This cannot be undone.')) return;
       try {
-        // WARNING: Deleting many documents from client can be slow and is not recommended for large datasets.
-        // For production, implement a secure server-side delete or use the Firebase console.
         const q = query(collection(db, 'submissions'));
         const snap = await getDocs(q);
         const deletes = [];
@@ -202,42 +386,142 @@
       }
     }
 
-    // ---------- Init ----------
+    // Export helpers (guarded)
+    function exportTableToCSV(filename = 'rsvps.csv') {
+      const user = auth.currentUser;
+      if (!user || user.email !== ADMIN_EMAIL) { showLoginModal(true); return; }
+
+      const table = document.getElementById('rsvpTable');
+      if (!table) { alert('No table to export'); return; }
+      const rows = Array.from(table.querySelectorAll('tr'));
+      const csv = rows.map(row => {
+        const cols = Array.from(row.querySelectorAll('th,td')).map(cell => {
+          const txt = (cell.innerText || '').replace(/"/g, '""');
+          return `"${txt}"`;
+        });
+        return cols.join(',');
+      }).join('\n');
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function exportTableToPDF() {
+      const user = auth.currentUser;
+      if (!user || user.email !== ADMIN_EMAIL) { showLoginModal(true); return; }
+
+      const table = document.getElementById('rsvpTable');
+      if (!table) { alert('No table to export'); return; }
+      const w = window.open('', '_blank', 'noopener');
+      if (!w) { alert('Unable to open print window.'); return; }
+      const style = `
+        <style>
+          body{ font-family: Arial, Helvetica, sans-serif; color:#000; padding:12px; }
+          table{ width:100%; border-collapse:collapse; }
+          th,td{ border:1px solid #ccc; padding:6px; text-align:left; font-size:12px; }
+          th{ background:#f2f2f2; }
+        </style>
+      `;
+      w.document.write('<html><head><title>RSVPs</title>' + style + '</head><body>');
+      w.document.write('<h2>RSVPs</h2>');
+      w.document.write(table.outerHTML);
+      w.document.write('</body></html>');
+      w.document.close();
+      setTimeout(() => { w.print(); }, 300);
+    }
+
+    // Wire buttons and init
     (function init(){
-      // If user already has session flag, show sign-in UI as signed in
+      // Start with controls disabled and show login modal
+      setControlsDisabled(true);
+      renderSignInFormInline();
+      showLoginModal(true);
+
+      refreshBtn.addEventListener('click', async () => {
+        const user = auth.currentUser;
+        if (!user || user.email !== ADMIN_EMAIL) { showLoginModal(true); return; }
+        await loadAndRenderSubmissions();
+      });
+
+      clearBtn.addEventListener('click', clearAllFirestoreEntries);
+
+      exportExcelBtn && exportExcelBtn.addEventListener('click', () => {
+        exportTableToCSV('rsvps.csv');
+      });
+      exportPdfBtn && exportPdfBtn.addEventListener('click', () => {
+        exportTableToPDF();
+      });
+
+      backToSiteBtn && backToSiteBtn.addEventListener('click', async () => {
+        try { await signOut(auth); } catch(e){ console.error(e); }
+        sessionStorage.removeItem('admin_logged_in');
+        window.location.href = 'index.html';
+      });
+
+      // Modal sign-in handlers
+      loginSubmit.addEventListener('click', async () => {
+        const email = adminEmailModal.value.trim();
+        const pass = adminPassModal.value;
+        await attemptSignIn(email, pass);
+      });
+      loginCancel.addEventListener('click', () => {
+        sessionStorage.removeItem('admin_logged_in');
+        window.location.href = 'index.html';
+      });
+
+      // If session flag exists, verify with Firebase auth state
       if (sessionStorage.getItem('admin_logged_in') === '1') {
-        // We still verify auth state via Firebase
         onAuthStateChanged(auth, (user) => {
           if (user && user.email === ADMIN_EMAIL) {
+            showLoginModal(false);
             renderSignedIn(user.email);
             loadAndRenderSubmissions();
           } else {
             sessionStorage.removeItem('admin_logged_in');
-            renderSignInForm();
+            renderSignInFormInline();
+            showLoginModal(true);
           }
         });
       } else {
-        renderSignInForm();
+        renderSignInFormInline();
+        showLoginModal(true);
       }
-
-      refreshBtn.addEventListener('click', loadAndRenderSubmissions);
-      clearBtn.addEventListener('click', clearAllFirestoreEntries);
     })();
 
-    // ---------- Recommended Firestore rules (set in Firebase console) ----------
-    /*
+    // Keep auth state in sync
+    onAuthStateChanged(auth, (user) => {
+      if (user && user.email === ADMIN_EMAIL) {
+        sessionStorage.setItem('admin_logged_in', '1');
+        showLoginModal(false);
+        renderSignedIn(user.email);
+        loadAndRenderSubmissions();
+      } else {
+        sessionStorage.removeItem('admin_logged_in');
+        renderSignInFormInline();
+        showLoginModal(true);
+      }
+    });
+  </script>
+
+  <!-- Recommended Firestore rules (set in Firebase console) -->
+  <!--
     rules_version = '2';
     service cloud.firestore {
       match /databases/{database}/documents {
         match /submissions/{docId} {
           allow create: if true; // allow public writes for RSVPs (or tighten with App Check)
-          allow read: if request.auth != null && request.auth.token.email == "neil@example.com";
-          allow delete: if request.auth != null && request.auth.token.email == "neil@example.com";
+          allow read: if request.auth != null && request.auth.token.email == "nadelacruz01@gmail.com";
+          allow delete: if request.auth != null && request.auth.token.email == "nadelacruz01@gmail.com";
         }
       }
     }
-    */
-    // Replace neil@example.com in rules with your admin email and consider enabling App Check.
-  </script>
+  -->
 </body>
 </html>
