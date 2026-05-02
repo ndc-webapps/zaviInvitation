@@ -424,13 +424,13 @@
         }
         if (prev) prev.addEventListener('click', () => { index = (index - 1 + total) % total; update(); });
         if (next) next.addEventListener('click', () => { index = (index + 1) % total; update(); });
-        let auto = setInterval(() => { index = (index + 1) % total; update(); }, 2000);
+        let auto = setInterval(() => { index = (index + 1) % total; update(); }, 3000);
         const slider = document.querySelector('.slider');
         if (slider) {
           slider.addEventListener('mouseenter', () => clearInterval(auto));
-          slider.addEventListener('mouseleave', () => auto = setInterval(() => { index = (index + 1) % total; update(); }, 2000));
+          slider.addEventListener('mouseleave', () => auto = setInterval(() => { index = (index + 1) % total; update(); }, 3000));
           slider.addEventListener('touchstart', () => clearInterval(auto), { passive: true });
-          slider.addEventListener('touchend', () => auto = setInterval(() => { index = (index + 1) % total; update(); }, 2000));
+          slider.addEventListener('touchend', () => auto = setInterval(() => { index = (index + 1) % total; update(); }, 3000));
         }
         let startX = 0, currentX = 0, dragging = false;
         slidesEl.addEventListener('touchstart', (e) => { if (e.touches.length !== 1) return; startX = e.touches[0].clientX; dragging = true; slidesEl.style.transition = 'none'; }, { passive: true });
