@@ -3,42 +3,40 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Zavier's 7th Birthday — Invitation</title>
+  <title>Zavier's 7th Birthday — Costume Party! 🎭</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
   <style>
-    /* ===== DESIGN TOKENS - VIBRANT KIDS-FRIENDLY ===== */
+    /* ===== DESIGN TOKENS ===== */
     :root {
-      --bg:         #0D1B2F;
-      --bg-2:       #1A2E47;
-      --bg-3:       #2A3F5F;
-      --primary:    #FF6B9D;
-      --primary-2:  #FF82B2;
-      --lime:       #A4E839;
-      --cyan:       #00D9FF;
-      --cyan-2:     #39F0FF;
-      --purple:     #9D4EDD;
-      --orange:     #FF8C42;
-      --yellow:     #FFD60A;
-      --card:       rgba(255,255,255,0.08);
-      --card-2:     rgba(255,255,255,0.12);
-      --border:     rgba(255,255,255,0.12);
-      --border-2:   rgba(255,255,255,0.2);
-      --text:       #FFFFFF;
-      --text-2:     #B0C4DE;
-      --white:      #ffffff;
-      --input-bg:   #FFFFFF;
-      --input-fg:   #0D1B2F;
-      --r-sm:       12px;
-      --r-md:       20px;
-      --r-lg:       28px;
-      --r-xl:       40px;
-      --shadow-pink: 0 12px 50px rgba(255, 107, 157, 0.35);
-      --shadow-card: 0 20px 70px rgba(0, 0, 0, 0.5);
-      --font-head:  'Fredoka', system-ui, sans-serif;
-      --font-body:  'Outfit', system-ui, sans-serif;
+      --bg:          #08051a;
+      --bg-2:        #130f2e;
+      --primary:     #FF2D78;
+      --primary-2:   #FF6FA3;
+      --gold:        #FFD700;
+      --gold-2:      #FFEC6E;
+      --mint:        #00F5A0;
+      --mint-2:      #6FFFC8;
+      --purple:      #9B5DE5;
+      --purple-2:    #C084FC;
+      --orange:      #FF8C00;
+      --blue:        #00BFFF;
+      --card:        rgba(255,255,255,0.07);
+      --card-2:      rgba(255,255,255,0.11);
+      --border:      rgba(255,255,255,0.12);
+      --text:        #FFFFFF;
+      --text-2:      #C5BAE8;
+      --white:       #ffffff;
+      --input-bg:    #ffffff;
+      --input-fg:    #120e2a;
+      --r-sm:        10px;
+      --r-md:        18px;
+      --r-lg:        26px;
+      --r-xl:        999px;
+      --font-head:   'Baloo 2', system-ui, sans-serif;
+      --font-body:   'Nunito', system-ui, sans-serif;
     }
 
     /* ===== RESET ===== */
@@ -46,14 +44,14 @@
     html { scroll-behavior: smooth; }
     body {
       font-family: var(--font-body);
-      background: linear-gradient(135deg, #0D1B2F 0%, #1A2E47 50%, #2A1B3F 100%);
+      background: var(--bg);
       color: var(--text);
       min-height: 100vh;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ===== BACKGROUND - NEON GRADIENTS ===== */
+    /* ===== STARFIELD BACKGROUND ===== */
     .bg-canvas {
       position: fixed;
       inset: 0;
@@ -61,48 +59,70 @@
       overflow: hidden;
       pointer-events: none;
     }
+
+    /* Radial glow blobs */
     .bg-canvas::before {
       content: '';
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(ellipse 50% 50% at 20% 30%, rgba(255, 107, 157, 0.15) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 40% at 80% 20%, rgba(0, 217, 255, 0.12) 0%, transparent 55%),
-        radial-gradient(ellipse 40% 50% at 50% 80%, rgba(164, 232, 57, 0.08) 0%, transparent 60%);
+        radial-gradient(ellipse 55% 45% at 15% 20%, rgba(155,93,229,0.28) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 55% at 85% 15%, rgba(255,45,120,0.22) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 40% at 50% 85%, rgba(0,245,160,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 35% 35% at 75% 60%, rgba(255,215,0,0.10) 0%, transparent 50%);
     }
+
+    /* Halftone dot texture */
     .bg-canvas::after {
       content: '';
       position: absolute;
       inset: 0;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.008) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.008) 1px, transparent 1px);
-      background-size: 50px 50px;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 28px 28px;
     }
 
-    /* Floating pixel blocks - LARGER & MORE VIBRANT */
-    .pixel {
+    /* Twinkling stars */
+    .star {
       position: absolute;
-      border-radius: 8px;
-      opacity: 0.15;
-      animation: floatBlock linear infinite;
-      box-shadow: 0 0 20px currentColor;
+      border-radius: 50%;
+      background: #fff;
+      animation: twinkle ease-in-out infinite;
     }
-    .pixel-1  { width:35px;height:35px;background:var(--primary);   top:8%;  left:6%;  animation-duration:16s; animation-delay:-2s; color: var(--primary); }
-    .pixel-2  { width:25px;height:25px;background:var(--lime);      top:18%; left:88%; animation-duration:20s; animation-delay:-7s; color: var(--lime); }
-    .pixel-3  { width:40px;height:40px;background:var(--cyan);      top:60%; left:4%;  animation-duration:24s; animation-delay:-4s; color: var(--cyan); }
-    .pixel-4  { width:28px;height:28px;background:var(--purple);    top:72%; left:92%; animation-duration:18s; animation-delay:-9s; color: var(--purple); }
-    .pixel-5  { width:20px;height:20px;background:var(--orange);    top:40%; left:95%; animation-duration:22s; animation-delay:-1s; color: var(--orange); }
-    .pixel-6  { width:32px;height:32px;background:var(--primary-2); top:85%; left:14%; animation-duration:26s; animation-delay:-13s; color: var(--primary-2); }
-    .pixel-7  { width:24px;height:24px;background:var(--cyan-2);    top:30%; left:2%;  animation-duration:19s; animation-delay:-6s; color: var(--cyan-2); }
-    .pixel-8  { width:30px;height:30px;background:var(--yellow);    top:92%; left:76%; animation-duration:21s; animation-delay:-11s; color: var(--yellow); }
-
-    @keyframes floatBlock {
-      0%   { transform: translateY(0px) rotate(0deg) scale(1);   opacity:0.15; }
-      50%  { transform: translateY(-40px) rotate(180deg) scale(1.1); opacity:0.25; }
-      100% { transform: translateY(0px) rotate(360deg) scale(1);   opacity:0.15; }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.1; transform: scale(1); }
+      50%       { opacity: 0.8; transform: scale(1.4); }
     }
 
+    /* Floating costume emojis */
+    .floaty {
+      position: absolute;
+      font-size: 2.4rem;
+      animation: floatUp linear infinite;
+      opacity: 0;
+      user-select: none;
+      pointer-events: none;
+      filter: drop-shadow(0 0 8px rgba(255,215,0,0.5));
+    }
+    @keyframes floatUp {
+      0%   { opacity: 0;   transform: translateY(0) rotate(0deg) scale(0.8); }
+      10%  { opacity: 0.7; }
+      80%  { opacity: 0.5; }
+      100% { opacity: 0;   transform: translateY(-120vh) rotate(360deg) scale(1.1); }
+    }
+
+    /* Confetti pieces */
+    .confetti {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+      animation: confettiFall linear infinite;
+      opacity: 0;
+    }
+    @keyframes confettiFall {
+      0%   { opacity: 1; transform: translateY(-10px) rotate(0deg); }
+      100% { opacity: 0.3; transform: translateY(100vh) rotate(720deg); }
+    }
 
     /* ===== PAGE WRAPPER ===== */
     .page {
@@ -111,19 +131,19 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 0 16px 60px;
+      padding: 0 16px 70px;
       min-height: 100vh;
     }
 
-    /* ===== ADMIN BUTTON - NEON STYLE ===== */
+    /* ===== ADMIN BUTTON ===== */
     .admin-trigger {
       position: fixed;
       top: 14px;
       right: 14px;
       z-index: 200;
-      background: rgba(157, 78, 221, 0.15);
+      background: rgba(155,93,229,0.15);
       border: 2px solid var(--purple);
-      color: var(--cyan-2);
+      color: var(--purple-2);
       width: 44px;
       height: 44px;
       border-radius: 12px;
@@ -134,96 +154,215 @@
       font-size: 18px;
       transition: all 0.3s;
       backdrop-filter: blur(12px);
-      box-shadow: 0 0 15px rgba(157, 78, 221, 0.3);
+      box-shadow: 0 0 15px rgba(155,93,229,0.3);
     }
-    .admin-trigger:hover { 
-      background: rgba(157, 78, 221, 0.3);
-      transform: scale(1.1);
-      box-shadow: 0 0 25px rgba(157, 78, 221, 0.5);
+    .admin-trigger:hover {
+      background: rgba(155,93,229,0.3);
+      transform: scale(1.1) rotate(30deg);
+      box-shadow: 0 0 28px rgba(155,93,229,0.5);
     }
 
-    /* ===== HERO - VIBRANT & PLAYFUL ===== */
+    /* ===== HERO ===== */
     .hero {
       width: 100%;
-      max-width: 900px;
+      max-width: 860px;
       text-align: center;
-      padding: 60px 16px 40px;
+      padding: 64px 16px 32px;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 0;
-      animation: fadeUp 0.8s ease both;
+      animation: fadeUp 0.9s ease both;
     }
 
+    /* Starburst badge */
     .hero-badge {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: linear-gradient(135deg, rgba(255, 107, 157, 0.2), rgba(164, 232, 57, 0.15));
-      border: 2px solid var(--primary);
-      color: var(--primary-2);
-      font-family: var(--font-head);
-      font-size: 14px;
-      font-weight: 800;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      padding: 8px 18px;
+      padding: 10px 22px;
       border-radius: 999px;
-      margin-bottom: 24px;
-      animation: fadeUp 0.7s 0.1s ease both;
-      box-shadow: 0 0 20px rgba(255, 107, 157, 0.25);
+      background: linear-gradient(135deg, var(--gold), var(--orange));
+      color: #1a0800;
+      font-family: var(--font-head);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      box-shadow: 0 0 30px rgba(255,215,0,0.5), 0 4px 20px rgba(255,140,0,0.4);
+      animation: badgePop 0.7s 0.1s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    @keyframes badgePop {
+      from { opacity: 0; transform: scale(0.5) rotate(-10deg); }
+      to   { opacity: 1; transform: scale(1) rotate(0deg); }
     }
 
-    .hero-logo {
-      width: 100px;
-      height: 100px;
-      border-radius: 24px;
-      object-fit: contain;
-      box-shadow: 0 0 0 3px var(--primary), 0 20px 60px rgba(255, 107, 157, 0.35);
-      background: linear-gradient(135deg, #1A2E47, #2A3F5F);
-      margin-bottom: 28px;
+    /* Bouncy number reveal */
+    .hero-age-ring {
+      position: relative;
+      width: 130px;
+      height: 130px;
+      margin-bottom: 20px;
       animation: fadeUp 0.7s 0.15s ease both;
-      border: 3px solid var(--primary);
+    }
+    .hero-age-ring svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      animation: spinSlow 12s linear infinite;
+    }
+    @keyframes spinSlow {
+      to { transform: rotate(360deg); }
+    }
+    .hero-age-num {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-head);
+      font-size: 56px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--gold), var(--primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
     }
 
     .hero-title {
       font-family: var(--font-head);
-      font-size: clamp(44px, 10vw, 92px);
-      font-weight: 900;
-      line-height: 1.1;
+      font-size: clamp(42px, 9vw, 86px);
+      font-weight: 800;
+      line-height: 1.0;
       color: var(--white);
-      letter-spacing: -0.015em;
-      margin-bottom: 16px;
+      letter-spacing: -0.01em;
+      margin-bottom: 12px;
       animation: fadeUp 0.7s 0.2s ease both;
     }
-    .hero-title .accent {
-      background: linear-gradient(90deg, var(--primary), var(--lime), var(--cyan));
+    .hero-title .name {
+      background: linear-gradient(135deg, var(--primary), var(--gold), var(--mint));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
     .hero-sub {
-      font-size: clamp(15px, 3.5vw, 20px);
+      font-family: var(--font-body);
+      font-size: clamp(15px, 3.2vw, 19px);
       color: var(--text-2);
-      font-weight: 600;
-      margin-bottom: 40px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      line-height: 1.7;
       animation: fadeUp 0.7s 0.25s ease both;
-      line-height: 1.6;
     }
-    .hero-sub strong { color: var(--lime); font-weight: 800; }
+    .hero-sub .hl { color: var(--mint-2); font-weight: 900; }
+
+    /* Costume parade strip */
+    .costume-strip {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: 18px 0 24px;
+      animation: fadeUp 0.7s 0.3s ease both;
+    }
+    .costume-chip {
+      background: var(--card-2);
+      border: 2px solid rgba(255,255,255,0.15);
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+      cursor: default;
+      backdrop-filter: blur(8px);
+    }
+    .costume-chip:hover {
+      transform: translateY(-4px) scale(1.06);
+      border-color: var(--gold);
+      background: rgba(255,215,0,0.12);
+      box-shadow: 0 8px 24px rgba(255,215,0,0.2);
+    }
 
     .hero-actions {
       display: flex;
-      gap: 16px;
+      gap: 14px;
       flex-wrap: wrap;
       justify-content: center;
-      animation: fadeUp 0.7s 0.3s ease both;
+      animation: fadeUp 0.7s 0.35s ease both;
     }
 
-    /* ===== BUTTONS - NEON GLOW ===== */
+    /* ===== COUNTDOWN ===== */
+    .countdown-wrap {
+      width: 100%;
+      max-width: 680px;
+      margin: 10px 0 28px;
+      animation: fadeUp 0.8s 0.4s ease both;
+    }
+    .countdown-label {
+      text-align: center;
+      font-family: var(--font-head);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 14px;
+      opacity: 0.85;
+    }
+    .countdown-grid {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+    .cd-block {
+      flex: 1;
+      max-width: 110px;
+      background: rgba(255,255,255,0.06);
+      border: 2px solid rgba(255,215,0,0.25);
+      border-radius: var(--r-md);
+      padding: 16px 8px 12px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+      transition: border-color 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .cd-block::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--primary), var(--gold));
+    }
+    .cd-num {
+      font-family: var(--font-head);
+      font-size: clamp(28px, 5vw, 40px);
+      font-weight: 800;
+      color: var(--gold-2);
+      line-height: 1;
+      display: block;
+    }
+    .cd-unit {
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-2);
+      margin-top: 6px;
+      display: block;
+    }
+
+    /* ===== BUTTONS ===== */
     .btn-primary {
-      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      background: linear-gradient(135deg, var(--primary), #c0185c);
       color: var(--white);
       border: none;
       border-radius: var(--r-xl);
@@ -235,32 +374,47 @@
       display: inline-flex;
       align-items: center;
       gap: 10px;
-      box-shadow: var(--shadow-pink), inset 0 1px 0 rgba(255,255,255,0.2);
-      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 10px 40px rgba(255,45,120,0.45), inset 0 1px 0 rgba(255,255,255,0.2);
+      transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
       min-height: 56px;
-      letter-spacing: 0.01em;
+      letter-spacing: 0.02em;
       text-transform: uppercase;
       position: relative;
       overflow: hidden;
     }
-    .btn-primary::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: rgba(255,255,255,0.1);
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
     .btn-primary:hover {
-      transform: translateY(-3px) scale(1.02);
-      box-shadow: 0 16px 60px var(--shadow-pink);
+      transform: translateY(-3px) scale(1.04);
+      box-shadow: 0 18px 50px rgba(255,45,120,0.55);
     }
     .btn-primary:active { transform: translateY(-1px); }
 
-    .btn-secondary {
-      background: rgba(255,255,255,0.1);
-      color: var(--cyan-2);
-      border: 2px solid var(--cyan);
+    .btn-gold {
+      background: linear-gradient(135deg, var(--gold), var(--orange));
+      color: #1a0800;
+      border: none;
+      border-radius: var(--r-xl);
+      padding: 16px 36px;
+      font-family: var(--font-head);
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 10px 40px rgba(255,215,0,0.35);
+      transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+      min-height: 56px;
+      text-transform: uppercase;
+    }
+    .btn-gold:hover {
+      transform: translateY(-3px) scale(1.04);
+      box-shadow: 0 18px 50px rgba(255,215,0,0.5);
+    }
+
+    .btn-ghost {
+      background: rgba(255,255,255,0.08);
+      color: var(--mint-2);
+      border: 2px solid var(--mint);
       border-radius: var(--r-xl);
       padding: 14px 32px;
       font-family: var(--font-head);
@@ -270,305 +424,296 @@
       display: inline-flex;
       align-items: center;
       gap: 10px;
-      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
       min-height: 56px;
       backdrop-filter: blur(12px);
       letter-spacing: 0.01em;
-      box-shadow: 0 0 20px rgba(0, 217, 255, 0.15);
+      box-shadow: 0 0 20px rgba(0,245,160,0.12);
     }
-    .btn-secondary:hover {
-      background: rgba(0, 217, 255, 0.15);
-      border-color: var(--cyan-2);
+    .btn-ghost:hover {
+      background: rgba(0,245,160,0.14);
+      border-color: var(--mint-2);
       transform: translateY(-3px);
-      box-shadow: 0 12px 40px rgba(0, 217, 255, 0.3);
+      box-shadow: 0 12px 35px rgba(0,245,160,0.28);
     }
 
-    .btn-yellow {
-      background: linear-gradient(135deg, var(--lime), var(--yellow));
-      color: #0D1B2F;
-      border: none;
-      border-radius: var(--r-xl);
-      padding: 16px 36px;
-      font-family: var(--font-head);
-      font-size: 16px;
-      font-weight: 800;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      box-shadow: 0 12px 50px rgba(164, 232, 57, 0.35);
-      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-      min-height: 56px;
-      text-transform: uppercase;
-    }
-    .btn-yellow:hover { 
-      transform: translateY(-3px) scale(1.02);
-      box-shadow: 0 16px 60px rgba(164, 232, 57, 0.45);
-    }
-
-    /* ===== MAIN CONTENT GRID ===== */
+    /* ===== CONTENT GRID ===== */
     .content-grid {
       width: 100%;
-      max-width: 1000px;
+      max-width: 1020px;
       display: grid;
       grid-template-columns: 1fr 360px;
       gap: 24px;
-      margin-top: 12px;
-      animation: fadeUp 0.8s 0.35s ease both;
+      margin-top: 8px;
+      animation: fadeUp 0.8s 0.45s ease both;
     }
     @media (max-width: 800px) {
       .content-grid { grid-template-columns: 1fr; }
     }
 
-   /* ===== SLIDER - ENHANCED ===== */
-.slider-wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
+    /* ===== SLIDER ===== */
+    .slider-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
 
-.slider {
-  position: relative;
-  border-radius: var(--r-lg);
-  overflow: hidden;
-  background: linear-gradient(135deg, rgba(26, 46, 71, 0.8), rgba(42, 63, 95, 0.8));
-  border: 3px solid var(--primary);
-  height: clamp(220px, 42vw, 480px);
-  box-shadow: 0 20px 70px rgba(255, 107, 157, 0.25);
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
-}
+    .slider {
+      position: relative;
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(19,15,46,0.9), rgba(40,25,80,0.9));
+      border: 3px solid var(--primary);
+      height: clamp(220px, 42vw, 480px);
+      box-shadow: 0 0 0 6px rgba(255,45,120,0.1), 0 24px 70px rgba(255,45,120,0.3);
+    }
 
-.slides {
-  display: flex;
-  height: 100%;
-  transition: transform 420ms cubic-bezier(.2,.9,.2,1);
-  will-change: transform;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
-  touch-action: pan-y;
-  flex-wrap: nowrap;
-}
+    .slides {
+      display: flex;
+      height: 100%;
+      transition: transform 420ms cubic-bezier(.2,.9,.2,1);
+      will-change: transform;
+      backface-visibility: hidden;
+      touch-action: pan-y;
+      flex-wrap: nowrap;
+    }
 
-.slide {
-  flex: 0 0 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
-  contain: paint;
-}
+    .slide {
+      flex: 0 0 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      contain: paint;
+    }
+    .slide img {
+      width: 100%;
+      height: auto;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 14px;
+      display: block;
+    }
 
-.slide img {
-  width: 100%;
-  height: auto;
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-  border-radius: 16px;
-  display: block;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
-  image-rendering: auto;
-  transition: none;
-}
+    .slider-nav {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+      padding: 0 14px;
+      z-index: 10;
+    }
+    .slider-nav button {
+      pointer-events: auto;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.3);
+      background: rgba(0,0,0,0.45);
+      color: var(--white);
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(10px);
+      transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+      font-weight: 800;
+    }
+    .slider-nav button:hover {
+      background: rgba(255,45,120,0.4);
+      border-color: var(--primary);
+      transform: scale(1.15);
+      box-shadow: 0 0 20px rgba(255,45,120,0.5);
+    }
 
-/* Nav arrows */
-.slider-nav {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  pointer-events: none;
-  padding: 0 14px;
-  z-index: 10;
-}
-
-.slider-nav button {
-  pointer-events: auto;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 2px solid var(--cyan);
-  background: rgba(0, 217, 255, 0.1);
-  color: var(--cyan-2);
-  font-size: 20px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(12px);
-  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: 0 0 20px rgba(0, 217, 255, 0.2);
-  font-weight: 800;
-}
-
-.slider-nav button:hover {
-  background: rgba(0, 217, 255, 0.25);
-  transform: scale(1.15);
-  box-shadow: 0 0 30px rgba(0, 217, 255, 0.4);
-}
-
-.slides.fade-mode .slide {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  transition: opacity 420ms cubic-bezier(.2,.9,.2,1);
-}
-.slides.fade-mode .slide.is-active { opacity: 1; position: relative; }
-
-    /* Dots */
     .dots {
       display: flex;
       gap: 10px;
       justify-content: center;
     }
     .dot {
-      width: 12px; height: 12px;
+      width: 10px; height: 10px;
       border-radius: 999px;
       background: rgba(255,255,255,0.2);
       border: 2px solid transparent;
       cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
     }
     .dot.active {
-      background: linear-gradient(135deg, var(--primary), var(--lime));
-      width: 32px;
-      box-shadow: 0 0 15px var(--primary);
+      background: linear-gradient(135deg, var(--primary), var(--gold));
+      width: 30px;
+      box-shadow: 0 0 12px var(--primary);
       border-color: var(--primary);
     }
 
-    /* ===== EVENT DETAILS CARD ===== */
+    /* ===== PARTY FEATURES STRIP ===== */
+    .party-features {
+      display: grid;
+      grid-template-columns: repeat(4,1fr);
+      gap: 10px;
+    }
+    .feat-item {
+      background: var(--card);
+      border: 2px solid rgba(255,255,255,0.1);
+      border-radius: var(--r-md);
+      padding: 14px 10px;
+      text-align: center;
+      transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+      cursor: default;
+    }
+    .feat-item:hover {
+      background: var(--card-2);
+      transform: translateY(-4px);
+      border-color: var(--gold);
+      box-shadow: 0 8px 24px rgba(255,215,0,0.15);
+    }
+    .feat-emoji { font-size: 24px; display: block; margin-bottom: 5px; }
+    .feat-label { font-size: 12px; font-weight: 800; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* ===== DETAILS CARD ===== */
     .details-card {
-      background: linear-gradient(135deg, rgba(26, 46, 71, 0.6), rgba(42, 63, 95, 0.6));
-      border: 2px solid var(--cyan);
+      background: rgba(20,14,48,0.7);
+      border: 2px solid rgba(155,93,229,0.4);
       border-radius: var(--r-lg);
       padding: 28px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      box-shadow: 0 20px 70px rgba(0, 217, 255, 0.15);
-      backdrop-filter: blur(12px);
+      gap: 14px;
+      box-shadow: 0 24px 70px rgba(155,93,229,0.2), inset 0 1px 0 rgba(255,255,255,0.08);
+      backdrop-filter: blur(16px);
+      position: relative;
+      overflow: hidden;
     }
+    .details-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--gold), var(--mint), var(--purple));
+    }
+
     .details-heading {
       font-family: var(--font-head);
-      font-size: 26px;
-      font-weight: 900;
-      color: var(--cyan-2);
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .details-heading::before {
+      content: '🎪';
+      font-size: 22px;
     }
 
     .info-row {
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       gap: 14px;
-      padding: 16px;
+      padding: 14px;
       border-radius: var(--r-md);
-      background: rgba(255,255,255,0.06);
-      border: 2px solid rgba(0, 217, 255, 0.3);
+      background: rgba(255,255,255,0.05);
+      border: 1.5px solid rgba(255,255,255,0.1);
       transition: all 0.3s;
     }
-    .info-row:hover { 
-      background: rgba(0, 217, 255, 0.12);
-      border-color: var(--cyan-2);
+    .info-row:hover {
+      background: rgba(255,255,255,0.09);
+      border-color: rgba(155,93,229,0.5);
       transform: translateX(4px);
     }
 
     .info-icon {
-      width: 50px; height: 50px;
-      border-radius: var(--r-md);
-      background: linear-gradient(135deg, rgba(255, 107, 157, 0.2), rgba(164, 232, 57, 0.1));
-      border: 2px solid var(--primary);
+      width: 46px; height: 46px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(255,45,120,0.2), rgba(155,93,229,0.2));
+      border: 2px solid rgba(255,45,120,0.3);
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      box-shadow: 0 0 15px rgba(255, 107, 157, 0.2);
+      font-size: 20px;
     }
     .info-text .label {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 900;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
       color: var(--text-2);
-      margin-bottom: 4px;
+      margin-bottom: 3px;
     }
     .info-text .value {
-      font-size: 17px;
+      font-size: 16px;
       font-weight: 800;
-      color: var(--cyan-2);
+      color: var(--white);
       line-height: 1.3;
     }
 
     /* Invite blurb */
     .invite-blurb {
-      background: linear-gradient(135deg, rgba(255, 107, 157, 0.15), rgba(164, 232, 57, 0.1));
-      border: 2px dashed var(--primary);
+      background: linear-gradient(135deg, rgba(255,45,120,0.12), rgba(155,93,229,0.12));
+      border: 2px dashed rgba(255,45,120,0.4);
       border-radius: var(--r-md);
-      padding: 18px;
-      margin-top: 4px;
-      box-shadow: 0 0 20px rgba(255, 107, 157, 0.1);
+      padding: 16px;
+      position: relative;
     }
     .invite-blurb .blurb-title {
       font-family: var(--font-head);
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 800;
-      color: var(--lime);
-      margin-bottom: 8px;
-      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 6px;
     }
     .invite-blurb p {
-      font-size: 15px;
+      font-size: 14px;
       color: var(--text-2);
       line-height: 1.7;
       font-weight: 600;
     }
 
-    /* Action buttons inside card */
+    /* Card action buttons */
     .card-actions {
       display: flex;
-      gap: 12px;
-      margin-top: 8px;
+      gap: 10px;
+      margin-top: 4px;
     }
     .card-actions .btn-primary,
-    .card-actions .btn-yellow { flex: 1; justify-content: center; font-size: 14px; padding: 13px 10px; }
+    .card-actions .btn-gold {
+      flex: 1;
+      justify-content: center;
+      font-size: 13px;
+      padding: 12px 10px;
+      min-height: 48px;
+    }
 
     /* Contact row */
     .contact-row {
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 14px;
+      padding: 12px 14px;
       border-radius: var(--r-md);
-      background: rgba(0, 217, 255, 0.08);
-      border: 2px solid rgba(0, 217, 255, 0.3);
-      font-size: 14px;
+      background: rgba(0,191,255,0.08);
+      border: 1.5px solid rgba(0,191,255,0.25);
+      font-size: 13px;
       color: var(--text-2);
-      font-weight: 600;
+      font-weight: 700;
     }
-    .contact-row strong { color: var(--lime); }
+    .contact-row strong { color: var(--mint-2); }
 
     /* ===== FOOTER ===== */
     .footer {
       margin-top: 60px;
       text-align: center;
       color: var(--text-2);
-      font-size: 14px;
-      opacity: 0.8;
-      animation: fadeUp 0.7s 0.5s ease both;
-      font-weight: 600;
+      font-size: 13px;
+      opacity: 0.7;
+      animation: fadeUp 0.7s 0.55s ease both;
+      font-weight: 700;
     }
 
     /* ===== MODALS ===== */
@@ -576,8 +721,8 @@
       position: fixed;
       inset: 0;
       z-index: 500;
-      background: rgba(0,0,0,0.85);
-      backdrop-filter: blur(8px);
+      background: rgba(5,2,18,0.88);
+      backdrop-filter: blur(10px);
       display: none;
       align-items: flex-start;
       justify-content: center;
@@ -589,17 +734,26 @@
     .modal {
       width: 100%;
       max-width: 540px;
-      background: linear-gradient(135deg, #1A2E47 0%, #2A3F5F 100%);
-      border: 2px solid var(--primary);
+      background: linear-gradient(160deg, #120d2e 0%, #1e1445 100%);
+      border: 2px solid rgba(155,93,229,0.4);
       border-radius: var(--r-lg);
       padding: 32px;
-      box-shadow: 0 40px 120px rgba(255, 107, 157, 0.3);
+      box-shadow: 0 40px 120px rgba(155,93,229,0.3), 0 0 0 1px rgba(255,255,255,0.06);
       max-height: calc(100vh - 40px);
       overflow-y: auto;
       animation: modalIn 0.35s cubic-bezier(.4,0,.2,1) both;
+      position: relative;
+    }
+    .modal::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--gold), var(--mint));
+      border-radius: var(--r-lg) var(--r-lg) 0 0;
     }
     @keyframes modalIn {
-      from { opacity:0; transform: translateY(20px) scale(0.95); }
+      from { opacity:0; transform: translateY(24px) scale(0.95); }
       to   { opacity:1; transform: translateY(0) scale(1); }
     }
 
@@ -611,133 +765,121 @@
     }
     .modal-header h2 {
       font-family: var(--font-head);
-      font-size: 26px;
-      font-weight: 900;
-      color: var(--primary-2);
-      text-transform: uppercase;
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--white);
     }
 
-    /* Form inputs */
-    .field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
-    .field label { font-size: 14px; font-weight: 700; color: var(--cyan-2); letter-spacing: 0.05em; text-transform: uppercase; }
+    /* Form */
+    .field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 14px; }
+    .field label { font-size: 12px; font-weight: 900; color: var(--mint-2); letter-spacing: 0.1em; text-transform: uppercase; }
     .input {
-      height: 52px;
+      height: 50px;
       padding: 0 16px;
       border-radius: var(--r-md);
-      border: 2px solid rgba(255, 107, 157, 0.3);
+      border: 2px solid rgba(155,93,229,0.3);
       background: var(--input-bg);
       color: var(--input-fg);
       font-family: var(--font-body);
       font-size: 16px;
-      font-weight: 600;
+      font-weight: 700;
       outline: none;
       transition: all 0.25s;
       width: 100%;
-      box-sizing: border-box;
       caret-color: var(--primary);
     }
     textarea.input {
       height: auto;
-      min-height: 120px;
+      min-height: 110px;
       padding: 14px 16px;
       resize: vertical;
       line-height: 1.6;
     }
-    .input::placeholder { color: #B8A8C8; }
+    .input::placeholder { color: #9086aa; }
     .input:focus {
       border-color: var(--primary);
-      box-shadow: 0 0 0 4px rgba(255, 107, 157, 0.2);
+      box-shadow: 0 0 0 4px rgba(255,45,120,0.18);
     }
 
     .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     @media (max-width: 480px) { .form-grid-2 { grid-template-columns: 1fr; } }
 
-    /* Error messages */
-    .field-error {
-      font-size: 13px;
-      color: #FF6B9D;
-      font-weight: 700;
-      display: none;
-    }
+    .field-error { font-size: 12px; color: var(--primary-2); font-weight: 700; display: none; }
 
-    /* Companions */
-    .companion-list { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
-    .companion-item { display: flex; gap: 12px; align-items: center; }
-    .companion-item .input { flex: 1; height: 44px; }
+    .companion-list { display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+    .companion-item { display: flex; gap: 10px; align-items: center; }
+    .companion-item .input { flex: 1; height: 42px; }
 
-    /* Feedback */
-    .feedback { margin-top: 12px; font-size: 14px; font-weight: 700; color: var(--lime); }
+    .feedback { margin-top: 10px; font-size: 13px; font-weight: 700; color: var(--mint); }
 
-    /* Form actions */
-    .form-actions { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+    .form-actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
 
-    /* In-modal button variants */
     .btn-modal-primary {
-      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      background: linear-gradient(135deg, var(--primary), #c0185c);
       color: #fff;
       border: none;
       border-radius: var(--r-md);
-      padding: 14px 26px;
+      padding: 13px 24px;
       font-family: var(--font-head);
       font-size: 15px;
       font-weight: 800;
       cursor: pointer;
-      min-height: 50px;
-      box-shadow: var(--shadow-pink);
-      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      min-height: 48px;
+      box-shadow: 0 8px 28px rgba(255,45,120,0.4);
+      transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
       text-transform: uppercase;
     }
-    .btn-modal-primary:hover { 
+    .btn-modal-primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 12px 40px var(--shadow-pink);
+      box-shadow: 0 12px 36px rgba(255,45,120,0.5);
     }
 
     .btn-modal-yellow {
-      background: linear-gradient(135deg, var(--lime), var(--yellow));
-      color: #0D1B2F;
+      background: linear-gradient(135deg, var(--gold), var(--orange));
+      color: #1a0800;
       border: none;
       border-radius: var(--r-md);
-      padding: 14px 26px;
+      padding: 13px 24px;
       font-family: var(--font-head);
       font-size: 15px;
       font-weight: 800;
       cursor: pointer;
-      min-height: 50px;
-      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      min-height: 48px;
+      transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
       text-transform: uppercase;
     }
-    .btn-modal-yellow:hover { 
+    .btn-modal-yellow:hover {
       transform: translateY(-2px);
-      box-shadow: 0 12px 40px rgba(164, 232, 57, 0.35);
+      box-shadow: 0 12px 36px rgba(255,215,0,0.4);
     }
 
     .btn-modal-ghost {
-      background: rgba(255,255,255,0.08);
-      color: var(--cyan-2);
-      border: 2px solid var(--cyan);
+      background: rgba(255,255,255,0.07);
+      color: var(--text-2);
+      border: 2px solid rgba(255,255,255,0.18);
       border-radius: var(--r-md);
-      padding: 12px 22px;
+      padding: 11px 20px;
       font-family: var(--font-body);
       font-size: 14px;
       font-weight: 700;
       cursor: pointer;
-      min-height: 50px;
+      min-height: 48px;
       transition: all 0.25s;
     }
-    .btn-modal-ghost:hover { 
-      background: rgba(0, 217, 255, 0.15);
+    .btn-modal-ghost:hover {
+      background: rgba(255,255,255,0.12);
       color: var(--text);
-      box-shadow: 0 0 20px rgba(0, 217, 255, 0.2);
+      border-color: rgba(255,255,255,0.3);
     }
 
     /* Password wrapper */
     .password-wrapper { display: flex; gap: 10px; align-items: center; }
     .password-wrapper .input { flex: 1; }
     .toggle-pass-btn {
-      background: rgba(0, 217, 255, 0.1);
-      border: 2px solid var(--cyan);
-      color: var(--cyan-2);
-      width: 52px; height: 52px;
+      background: rgba(155,93,229,0.12);
+      border: 2px solid var(--purple);
+      color: var(--purple-2);
+      width: 50px; height: 50px;
       border-radius: var(--r-md);
       cursor: pointer;
       font-size: 18px;
@@ -746,15 +888,15 @@
       transition: all 0.25s;
     }
     .toggle-pass-btn:hover {
-      background: rgba(0, 217, 255, 0.2);
-      box-shadow: 0 0 15px rgba(0, 217, 255, 0.3);
+      background: rgba(155,93,229,0.22);
+      box-shadow: 0 0 14px rgba(155,93,229,0.3);
     }
 
-    /* Confirmation modal */
-    #confirmModal .modal { max-width: 440px; }
+    /* Confirm modal */
+    #confirmModal .modal { max-width: 420px; }
     #confirmMessage {
-      background: linear-gradient(135deg, var(--lime), var(--yellow));
-      color: #0D1B2F;
+      background: linear-gradient(135deg, var(--gold), var(--orange));
+      color: #1a0800;
       padding: 16px 20px;
       border-radius: var(--r-md);
       font-weight: 800;
@@ -764,103 +906,147 @@
     }
     #confirmClose {
       position: absolute;
-      right: 16px; top: 16px;
-      background: rgba(255, 107, 157, 0.1);
+      right: 16px; top: 20px;
+      background: rgba(255,45,120,0.12);
       border: 2px solid var(--primary);
       color: var(--primary-2);
-      width: 40px; height: 40px;
+      width: 38px; height: 38px;
       border-radius: 50%;
       cursor: pointer;
-      font-size: 18px;
+      font-size: 16px;
       display: flex; align-items: center; justify-content: center;
       transition: all 0.25s;
       font-weight: 800;
     }
     #confirmClose:hover {
-      background: rgba(255, 107, 157, 0.2);
-      transform: scale(1.1);
+      background: rgba(255,45,120,0.25);
+      transform: scale(1.1) rotate(90deg);
     }
-    #confirmModal .modal { position: relative; }
 
     /* ===== ANIMATIONS ===== */
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(28px); }
+      from { opacity: 0; transform: translateY(30px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
     /* ===== SCROLLBAR ===== */
-    ::-webkit-scrollbar { width: 8px; }
-    ::-webkit-scrollbar-track { background: rgba(26, 46, 71, 0.5); }
-    ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--primary), var(--cyan)); border-radius: 4px; }
+    ::-webkit-scrollbar { width: 7px; }
+    ::-webkit-scrollbar-track { background: rgba(20,14,48,0.5); }
+    ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--primary), var(--purple)); border-radius: 4px; }
 
-    /* ===== RESPONSIVE TWEAKS ===== */
+    /* ===== RESPONSIVE ===== */
     @media (max-width: 520px) {
-      .hero { padding: 48px 8px 32px; }
+      .hero { padding: 50px 8px 24px; }
       .details-card { padding: 20px; }
       .card-actions { flex-direction: column; }
-      .card-actions .btn-primary,
-      .card-actions .btn-yellow { width: 100%; }
-      .hero-actions { gap: 12px; }
-      .btn-primary, .btn-secondary, .btn-yellow { padding: 14px 24px; font-size: 15px; }
-      .modal { padding: 24px; border-radius: var(--r-md); }
-      .hero-title { font-size: 42px; }
+      .card-actions .btn-primary, .card-actions .btn-gold { width: 100%; }
+      .hero-actions { gap: 10px; }
+      .party-features { grid-template-columns: repeat(2,1fr); }
+      .countdown-grid { gap: 8px; }
+      .cd-block { padding: 12px 6px 10px; }
     }
     @media (max-width: 380px) {
       .hero-title { font-size: 38px; }
       .slider { height: 220px; }
+      .hero-age-ring { width: 100px; height: 100px; }
+      .hero-age-num { font-size: 44px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Decorative background -->
-  <div class="bg-canvas" aria-hidden="true">
-    <div class="pixel pixel-1"></div>
-    <div class="pixel pixel-2"></div>
-    <div class="pixel pixel-3"></div>
-    <div class="pixel pixel-4"></div>
-    <div class="pixel pixel-5"></div>
-    <div class="pixel pixel-6"></div>
-    <div class="pixel pixel-7"></div>
-    <div class="pixel pixel-8"></div>
+  <!-- ===== ANIMATED BACKGROUND ===== -->
+  <div class="bg-canvas" aria-hidden="true" id="bgCanvas">
+    <!-- Stars and confetti injected by JS below -->
   </div>
 
-  <!-- Admin trigger (fixed top-right) -->
+  <!-- Admin trigger -->
   <button id="loginOpen" class="admin-trigger" type="button" title="Admin login" aria-label="Admin login">⚙</button>
 
   <div class="page">
 
     <!-- ===== HERO ===== -->
     <header class="hero" role="banner">
-      <div class="hero-badge">🎮 Costume Party Celebration</div>
-      <h1 class="hero-title" id="page-title">Zavier's <span class="accent">7th</span> Birthday</h1>
-      <p class="hero-sub">Games &nbsp;•&nbsp; Prizes &nbsp;•&nbsp; Costumes &nbsp;•&nbsp; Cake<br>
-        <strong>October 26, 2026</strong>
+      <div class="hero-badge">🎭 Costume Party · October 26, 2026</div>
+
+      <!-- Spinning age ring -->
+      <div class="hero-age-ring" aria-hidden="true">
+        <svg viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%"   stop-color="#FF2D78"/>
+              <stop offset="50%"  stop-color="#FFD700"/>
+              <stop offset="100%" stop-color="#00F5A0"/>
+            </linearGradient>
+          </defs>
+          <!-- Outer dashed ring -->
+          <circle cx="65" cy="65" r="58" fill="none" stroke="url(#ringGrad)" stroke-width="3"
+            stroke-dasharray="14 6" stroke-linecap="round" opacity="0.9"/>
+          <!-- Stars on ring -->
+          <text x="65" y="12"  text-anchor="middle" font-size="10">⭐</text>
+          <text x="118" y="68" text-anchor="middle" font-size="10">⭐</text>
+          <text x="12"  y="68" text-anchor="middle" font-size="10">⭐</text>
+          <text x="65" y="128" text-anchor="middle" font-size="10">⭐</text>
+        </svg>
+        <div class="hero-age-num">7</div>
+      </div>
+
+      <h1 class="hero-title" id="page-title"><span class="name">Zavier's</span><br>7th Birthday!</h1>
+      <p class="hero-sub">Games &nbsp;·&nbsp; Prizes &nbsp;·&nbsp; Cake<br>
+        <span class="hl">Come dressed as your favourite character!</span>
       </p>
+
+      <!-- Costume chips -->
+      <div class="costume-strip" role="list" aria-label="Costume ideas">
+        <div class="costume-chip" role="listitem">🦸 Superhero</div>
+        <div class="costume-chip" role="listitem">🧙 Wizard</div>
+        <div class="costume-chip" role="listitem">🦄 Unicorn</div>
+        <div class="costume-chip" role="listitem">🦹 Villain</div>
+        <div class="costume-chip" role="listitem">👾 Game Char</div>
+        <div class="costume-chip" role="listitem">🐉 Dragon</div>
+      </div>
+
     </header>
+
+    <!-- ===== COUNTDOWN ===== -->
+    <div class="countdown-wrap" aria-label="Countdown to party">
+      <div class="countdown-label">⏳ Countdown to the Party</div>
+      <div class="countdown-grid">
+        <div class="cd-block"><span class="cd-num" id="cdDays">--</span><span class="cd-unit">Days</span></div>
+        <div class="cd-block"><span class="cd-num" id="cdHrs">--</span><span class="cd-unit">Hours</span></div>
+        <div class="cd-block"><span class="cd-num" id="cdMins">--</span><span class="cd-unit">Mins</span></div>
+        <div class="cd-block"><span class="cd-num" id="cdSecs">--</span><span class="cd-unit">Secs</span></div>
+      </div>
+    </div>
 
     <!-- ===== MAIN CONTENT ===== -->
     <main class="content-grid" aria-label="Invitation details">
 
-      <!-- Photo slider -->
-<section class="slider-wrap" aria-label="Event photos">
-  <div class="slider" aria-roledescription="carousel">
-    <div class="slides" id="slides" aria-live="polite" role="list">
-      <div class="slide" role="listitem"><img src="1.jpg" alt="Party photo 1" width="1200" height="800" decoding="async" loading="eager"></div>
-      <div class="slide" role="listitem"><img src="2.jpg" alt="Party photo 2" width="1200" height="800" decoding="async" loading="eager"></div>
-      <div class="slide" role="listitem"><img src="3.jpg" alt="Party photo 3" width="1200" height="800" decoding="async" loading="eager"></div>
-      <div class="slide" role="listitem"><img src="4.jpg" alt="Party photo 4" width="1200" height="800" decoding="async" loading="eager"></div>
-      <div class="slide" role="listitem"><img src="5.jpg" alt="Party photo 5" width="1200" height="800" decoding="async" loading="eager"></div>
-    </div>
+      <!-- Photo slider + features -->
+      <section class="slider-wrap" aria-label="Event photos and features">
+        <div class="slider" aria-roledescription="carousel">
+          <div class="slides" id="slides" aria-live="polite" role="list">
+            <div class="slide" role="listitem"><img src="1.jpg" alt="Party photo 1" width="1200" height="800" decoding="async" loading="eager"></div>
+            <div class="slide" role="listitem"><img src="2.jpg" alt="Party photo 2" width="1200" height="800" decoding="async" loading="eager"></div>
+            <div class="slide" role="listitem"><img src="3.jpg" alt="Party photo 3" width="1200" height="800" decoding="async" loading="eager"></div>
+            <div class="slide" role="listitem"><img src="4.jpg" alt="Party photo 4" width="1200" height="800" decoding="async" loading="eager"></div>
+            <div class="slide" role="listitem"><img src="5.jpg" alt="Party photo 5" width="1200" height="800" decoding="async" loading="eager"></div>
+          </div>
+          <div class="slider-nav" aria-hidden="true">
+            <button id="prev" type="button" aria-label="Previous photo">◀</button>
+            <button id="next" type="button" aria-label="Next photo">▶</button>
+          </div>
+        </div>
+        <div class="dots" id="dots" role="tablist" aria-label="Photo navigation"></div>
 
-    <div class="slider-nav" aria-hidden="true">
-      <button id="prev" type="button" aria-label="Previous photo">◀</button>
-      <button id="next" type="button" aria-label="Next photo">▶</button>
-    </div>
-  </div>
-
-  <div class="dots" id="dots" role="tablist" aria-label="Photo navigation"></div>
-</section>
+        <!-- Party features -->
+        <div class="party-features" aria-label="What to expect">
+          <div class="feat-item"><span class="feat-emoji">🎮</span><span class="feat-label">Roblox Games</span></div>
+          <div class="feat-item"><span class="feat-emoji">🏆</span><span class="feat-label">Prizes</span></div>
+          <div class="feat-item"><span class="feat-emoji">🎂</span><span class="feat-label">Cake</span></div>
+          <div class="feat-item"><span class="feat-emoji">🎭</span><span class="feat-label">Costumes</span></div>
+        </div>
+      </section>
 
       <!-- Event details -->
       <aside>
@@ -868,12 +1054,7 @@
           <div class="details-heading">Party Details</div>
 
           <div class="info-row">
-            <div class="info-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none">
-                <rect x="3" y="5" width="18" height="16" rx="2" stroke="#e8243c" stroke-width="1.5" fill="none"/>
-                <path d="M16 3v4M8 3v4M3 10h18" stroke="#e8243c" stroke-width="1.5" stroke-linecap="round"/>
-              </svg>
-            </div>
+            <div class="info-icon" aria-hidden="true">📅</div>
             <div class="info-text">
               <div class="label">When</div>
               <div class="value">October 26, 2026</div>
@@ -881,12 +1062,7 @@
           </div>
 
           <div class="info-row">
-            <div class="info-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none">
-                <path d="M12 21s7-4.5 7-10a7 7 0 10-14 0c0 5.5 7 10 7 10z" stroke="#ffc107" stroke-width="1.5" fill="none"/>
-                <circle cx="12" cy="11" r="2.5" stroke="#ffc107" stroke-width="1.5" fill="none"/>
-              </svg>
-            </div>
+            <div class="info-icon" aria-hidden="true">📍</div>
             <div class="info-text">
               <div class="label">Where</div>
               <div class="value">TBD</div>
@@ -894,33 +1070,26 @@
           </div>
 
           <div class="info-row">
-            <div class="info-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none">
-                <circle cx="12" cy="8" r="4" stroke="#0ea5e9" stroke-width="1.5" fill="none"/>
-                <path d="M6 20c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="#0ea5e9" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-              </svg>
-            </div>
+            <div class="info-icon" aria-hidden="true">🎭</div>
             <div class="info-text">
               <div class="label">Dress Code</div>
-              <div class="value">Costume Party 🎭</div>
+              <div class="value">Costume Party!</div>
             </div>
           </div>
 
           <div class="invite-blurb">
-            <div class="blurb-title">You're Invited! 🎂</div>
-            <p>Zavier turns 7! Expect Roblox-themed games, prizes, and cake. Dress comfy and bring your best costume.</p>
+            <div class="blurb-title">🎂 You're Invited!</div>
+            <p>Zavier turns 7! Expect Roblox-themed games, prizes, and cake. Dress comfy and bring your best costume — best costume wins a prize!</p>
           </div>
 
           <div class="card-actions">
-            <button class="btn-primary" id="rsvpOpen2" type="button">🎉 RSVP</button>
-            <button class="btn-yellow" id="regretsOpen2" type="button">😢 Can't make it</button>
+            <button class="btn-primary" id="rsvpOpen2"    type="button">🎉 RSVP Now</button>
+            <button class="btn-gold"    id="regretsOpen2" type="button">😢 Can't Go</button>
           </div>
 
           <div class="contact-row">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" style="flex-shrink:0">
-              <path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C9.6 21 3 14.4 3 6c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z" stroke="#9198bc" stroke-width="1.5" fill="none"/>
-            </svg>
-            <span>Need help? Contact <strong>Neil • +63 912 345 6789</strong></span>
+            <span>📞</span>
+            <span>Questions? Contact <strong>Neil • +63 912 345 6789</strong></span>
           </div>
         </div>
       </aside>
@@ -928,27 +1097,27 @@
     </main>
 
     <footer class="footer">
-      <p>Made with ❤️ for Zavier's birthday · October 2026</p>
+      <p>Made with ❤️ for Zavier's birthday · October 2026 🎉</p>
     </footer>
   </div>
 
-  <!-- ===== MODALS (RSVP, Regrets, Login, Confirm) ===== -->
+  <!-- ===== MODALS (IDs/forms preserved exactly) ===== -->
+
+  <!-- RSVP Modal -->
   <div class="modal-backdrop" id="rsvpModal" role="dialog" aria-modal="true" aria-hidden="true" style="display:none">
     <div class="modal" role="document" aria-labelledby="rsvpTitle">
       <div class="modal-header">
-        <h2 id="rsvpTitle">RSVP — Zavier's 7th 🎂</h2>
+        <h2 id="rsvpTitle">🎉 RSVP — Zavier's 7th</h2>
       </div>
-
       <form id="rsvpForm" novalidate>
         <div class="field">
-          <label for="fullname">Full name</label>
+          <label for="fullname">Full Name</label>
           <input id="fullname" name="fullname" class="input" type="text" placeholder="Juan dela Cruz" required>
           <span id="errName" class="field-error"></span>
         </div>
-
         <div class="form-grid-2">
           <div class="field">
-            <label for="phone">Contact number</label>
+            <label for="phone">Contact Number</label>
             <input id="phone" name="phone" class="input" type="text" placeholder="09XXXXXXXXX" inputmode="tel" autocomplete="tel" required>
             <span id="errPhone" class="field-error"></span>
           </div>
@@ -958,20 +1127,17 @@
             <span id="errEmail" class="field-error"></span>
           </div>
         </div>
-
         <div class="field">
           <label>Companions</label>
           <div class="companion-list" id="companions"></div>
           <div style="margin-top:8px">
-            <button type="button" id="addCompanion" class="btn-modal-ghost" style="font-size:14px; width:100%">＋ Add companion</button>
+            <button type="button" id="addCompanion" class="btn-modal-ghost" style="font-size:13px;width:100%">＋ Add Companion</button>
           </div>
         </div>
-
         <div class="field">
           <label for="message">Message <span style="opacity:.5;font-weight:400">(optional)</span></label>
           <textarea id="message" name="message" class="input" placeholder="Allergies, notes, or anything else…"></textarea>
         </div>
-
         <div class="form-actions">
           <button type="submit" class="btn-modal-primary">🎉 I'm Going!</button>
           <button type="button" id="cancelRsvp" class="btn-modal-ghost">Cancel</button>
@@ -981,15 +1147,15 @@
     </div>
   </div>
 
+  <!-- Regrets Modal -->
   <div class="modal-backdrop" id="regretsModal" role="dialog" aria-modal="true" aria-hidden="true" style="display:none">
     <div class="modal" role="document" aria-labelledby="regretsTitle">
       <div class="modal-header">
-        <h2 id="regretsTitle">Can't Make It 😢</h2>
+        <h2 id="regretsTitle">😢 Can't Make It</h2>
       </div>
-
       <form id="regretsForm" novalidate>
         <div class="field">
-          <label for="regName">Full name</label>
+          <label for="regName">Full Name</label>
           <input id="regName" name="regName" class="input" type="text" placeholder="Your name" required>
         </div>
         <div class="field">
@@ -1005,12 +1171,12 @@
     </div>
   </div>
 
+  <!-- Login Modal -->
   <div class="modal-backdrop" id="loginModal" role="dialog" aria-modal="true" aria-hidden="true" style="display:none">
     <div class="modal" role="document" aria-labelledby="loginTitle">
       <div class="modal-header">
         <h2 id="loginTitle">Admin Login ⚙</h2>
       </div>
-
       <form id="loginForm" novalidate>
         <div class="field">
           <label for="loginUser">Username</label>
@@ -1032,15 +1198,88 @@
     </div>
   </div>
 
+  <!-- Confirm Modal -->
   <div class="modal-backdrop" id="confirmModal" role="dialog" aria-modal="true" aria-hidden="true" style="display:none;align-items:center;justify-content:center">
     <div class="modal" role="document" aria-labelledby="confirmTitle" style="max-width:420px;position:relative;">
       <button id="confirmClose" aria-label="Close confirmation">✕</button>
       <div style="padding-top:8px">
-        <h3 id="confirmTitle" style="font-family:var(--font-head);font-size:20px;color:var(--white);margin-bottom:10px">🎉 Saved!</h3>
+        <h3 id="confirmTitle" style="font-family:var(--font-head);font-size:22px;color:var(--white);margin-bottom:10px">🎉 Saved!</h3>
         <div id="confirmMessage"></div>
       </div>
     </div>
   </div>
+
+  <!-- ===== BACKGROUND ANIMATOR ===== -->
+  <script>
+    (function() {
+      const canvas = document.getElementById('bgCanvas');
+      const costumes = ['🦸','🧙','🦄','🎃','🦹','⚡','🌟','🎭','👻','🐉','🦊','🎪'];
+      const confettiColors = ['#FF2D78','#FFD700','#00F5A0','#9B5DE5','#00BFFF','#FF8C00'];
+
+      // Stars
+      for (let i = 0; i < 60; i++) {
+        const s = document.createElement('div');
+        s.className = 'star';
+        const sz = Math.random() * 3 + 1;
+        s.style.cssText = `width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;animation-duration:${2+Math.random()*4}s;animation-delay:${-Math.random()*6}s`;
+        canvas.appendChild(s);
+      }
+
+      // Floating costumes
+      costumes.forEach((emoji, i) => {
+        const f = document.createElement('div');
+        f.className = 'floaty';
+        f.textContent = emoji;
+        const dur = 14 + Math.random() * 12;
+        f.style.cssText = `left:${5+Math.random()*90}%;bottom:-60px;animation-duration:${dur}s;animation-delay:${-Math.random()*dur}s;font-size:${1.6+Math.random()*1.4}rem`;
+        canvas.appendChild(f);
+      });
+
+      // Confetti
+      for (let i = 0; i < 30; i++) {
+        const c = document.createElement('div');
+        c.className = 'confetti';
+        const col = confettiColors[Math.floor(Math.random()*confettiColors.length)];
+        const dur = 5 + Math.random() * 8;
+        c.style.cssText = `background:${col};left:${Math.random()*100}%;top:-10px;animation-duration:${dur}s;animation-delay:${-Math.random()*dur}s;transform:rotate(${Math.random()*360}deg);width:${5+Math.random()*7}px;height:${5+Math.random()*7}px;border-radius:${Math.random()>0.5?'50%':'2px'}`;
+        canvas.appendChild(c);
+      }
+    })();
+  </script>
+
+  <!-- ===== COUNTDOWN TIMER ===== -->
+  <script>
+    (function() {
+      const target = new Date('2026-10-26T00:00:00').getTime();
+      const els = {
+        d: document.getElementById('cdDays'),
+        h: document.getElementById('cdHrs'),
+        m: document.getElementById('cdMins'),
+        s: document.getElementById('cdSecs')
+      };
+      function pad(n){ return String(n).padStart(2,'0'); }
+      function tick() {
+        const diff = target - Date.now();
+        if (diff <= 0) {
+          if(els.d) els.d.textContent = '00';
+          if(els.h) els.h.textContent = '00';
+          if(els.m) els.m.textContent = '00';
+          if(els.s) els.s.textContent = '🎉';
+          return;
+        }
+        const days = Math.floor(diff / 86400000);
+        const hrs  = Math.floor((diff % 86400000) / 3600000);
+        const mins = Math.floor((diff % 3600000) / 60000);
+        const secs = Math.floor((diff % 60000) / 1000);
+        if(els.d) els.d.textContent = pad(days);
+        if(els.h) els.h.textContent = pad(hrs);
+        if(els.m) els.m.textContent = pad(mins);
+        if(els.s) els.s.textContent = pad(secs);
+      }
+      tick();
+      setInterval(tick, 1000);
+    })();
+  </script>
 
   <!-- ===== FIREBASE + APP LOGIC (unchanged) ===== -->
   <script type="module">
@@ -1111,7 +1350,7 @@
 
     document.addEventListener('DOMContentLoaded', function () {
 
-      /* ---- Slider JS (fixed sizing + transform math) ---- */
+      /* ---- Slider JS ---- */
       (function () {
         const slidesEl = document.getElementById('slides');
         const prev = document.getElementById('prev');
@@ -1130,7 +1369,6 @@
         let isAnimating = false;
         let autoId = null;
 
-        // Layout: slidesEl width = total * 100%
         slides.forEach(s => {
           s.style.flex = `0 0 ${100 / total}%`;
           s.style.maxWidth = `${100 / total}%`;
@@ -1145,7 +1383,6 @@
         slidesEl.style.touchAction = 'pan-y';
         slidesEl.style.gap = '0';
 
-        // Dots
         if (dotsContainer) {
           dotsContainer.innerHTML = '';
           for (let i = 0; i < total; i++) {
@@ -1158,7 +1395,6 @@
           }
         }
 
-        // Ensure images are not transitioned and are preloaded
         slides.forEach(slide => {
           const img = slide.querySelector('img');
           if (!img) return;
@@ -1166,7 +1402,6 @@
           img.decoding = img.decoding || 'async';
         });
 
-        // Translate percent per slide relative to slidesEl width
         const pctPerSlide = 100 / total;
 
         function setTransformForIndex(i, instant = false) {
@@ -1201,7 +1436,6 @@
         if (prev) prev.addEventListener('click', () => goTo(index - 1));
         if (next) next.addEventListener('click', () => goTo(index + 1));
 
-        // Autoplay control
         function startAuto(ms = 4000) {
           stopAuto();
           autoId = setInterval(() => {
@@ -1219,7 +1453,6 @@
           sliderEl.addEventListener('touchend', () => startAuto(4000));
         }
 
-        // Touch drag with rAF
         let startX = 0, currentX = 0, dragging = false, rafId = null;
         function applyDragTransform(pct) {
           slidesEl.style.transition = 'none';
@@ -1239,9 +1472,7 @@
           if (!dragging) return;
           currentX = e.touches[0].clientX;
           const dx = currentX - startX;
-          // slider viewport width
           const sliderWidth = sliderEl.clientWidth || sliderEl.getBoundingClientRect().width;
-          // percent relative to slidesEl width: dx / sliderWidth * pctPerSlide
           const pct = (dx / sliderWidth) * pctPerSlide;
           const targetPct = -index * pctPerSlide + pct;
           if (rafId) cancelAnimationFrame(rafId);
@@ -1261,12 +1492,10 @@
           setTimeout(() => startAuto(4000), DEBOUNCE_MS);
         }, { passive: true });
 
-        // Init
         setTransformForIndex(0, true);
         updateDots();
         requestAnimationFrame(() => startAuto(4000));
       })();
-
 
       /* ---- Modal helpers ---- */
       function openModal(modal){ if (!modal) return; modal.style.display = 'flex'; modal.setAttribute('aria-hidden','false'); const first = modal.querySelector('input,textarea,button'); if(first) first.focus(); document.documentElement.style.overflow = 'hidden'; document.body.style.overflow = 'hidden'; }
@@ -1277,7 +1506,6 @@
         const rsvpModal    = document.getElementById('rsvpModal');
         const regretsModal = document.getElementById('regretsModal');
 
-        // Multiple buttons can open the same modal
         ['rsvpOpen','rsvpOpen2'].forEach(id => {
           const btn = document.getElementById(id);
           if (btn) btn.addEventListener('click', () => openModal(rsvpModal));
@@ -1287,12 +1515,11 @@
           if (btn) btn.addEventListener('click', () => openModal(regretsModal));
         });
 
-        const cancelRsvp   = document.getElementById('cancelRsvp');
-        const cancelRegrets= document.getElementById('cancelRegrets');
-        if (cancelRsvp)   cancelRsvp.addEventListener('click',   () => closeModal(rsvpModal));
-        if (cancelRegrets)cancelRegrets.addEventListener('click',() => closeModal(regretsModal));
+        const cancelRsvp    = document.getElementById('cancelRsvp');
+        const cancelRegrets = document.getElementById('cancelRegrets');
+        if (cancelRsvp)    cancelRsvp.addEventListener('click',    () => closeModal(rsvpModal));
+        if (cancelRegrets) cancelRegrets.addEventListener('click', () => closeModal(regretsModal));
 
-        // Close on backdrop click
         [rsvpModal, regretsModal].forEach(m => {
           if (!m) return;
           m.addEventListener('click', (e) => { if (e.target === m) closeModal(m); });
@@ -1316,7 +1543,7 @@
           remove.type = 'button';
           remove.innerText = 'Remove';
           remove.className = 'btn-modal-ghost';
-          remove.style.cssText = 'padding:12px 20px;font-size:13px;height:44px;flex-shrink:0';
+          remove.style.cssText = 'padding:10px 16px;font-size:13px;height:42px;flex-shrink:0';
           remove.addEventListener('click', () => wrapper.remove());
           wrapper.appendChild(input);
           wrapper.appendChild(remove);
@@ -1386,7 +1613,7 @@
           }
 
           if(isDuplicateEntryLocal(name, phone)){
-            rsvpFeedback.innerHTML = '<div style="color:#ff4d63">You are already registered locally. Contact Neil Dela Cruz if there\'s an issue.</div>';
+            rsvpFeedback.innerHTML = '<div style="color:#FF6FA3">You are already registered locally. Contact Neil Dela Cruz if there\'s an issue.</div>';
             rsvpSubmitting = false;
             if (rsvpSubmitBtn) { rsvpSubmitBtn.disabled=false; rsvpSubmitBtn.innerText="🎉 I'm Going!"; }
             return;
@@ -1395,7 +1622,7 @@
           let duplicate = false;
           try { duplicate = await isDuplicateInFirestore(name, phone); } catch(err){ duplicate=false; }
           if(duplicate){
-            rsvpFeedback.innerHTML = '<div style="color:#ff4d63">You are already registered. Contact Neil Dela Cruz if there\'s an issue.</div>';
+            rsvpFeedback.innerHTML = '<div style="color:#FF6FA3">You are already registered. Contact Neil Dela Cruz if there\'s an issue.</div>';
             rsvpSubmitting = false;
             if (rsvpSubmitBtn) { rsvpSubmitBtn.disabled=false; rsvpSubmitBtn.innerText="🎉 I'm Going!"; }
             return;
@@ -1417,7 +1644,7 @@
               const closeBtn= document.getElementById('confirmClose');
               if(!modal || !msgEl || !closeBtn){
                 const toast = document.createElement('div');
-                toast.style.cssText='position:fixed;left:50%;top:18%;transform:translateX(-50%);background:linear-gradient(90deg,#fff,#ffe066);color:#1a1200;padding:18px 22px;border-radius:14px;box-shadow:0 18px 60px rgba(0,0,0,.45);z-index:9999;font-weight:700;font-family:Outfit,sans-serif';
+                toast.style.cssText='position:fixed;left:50%;top:18%;transform:translateX(-50%);background:linear-gradient(90deg,var(--gold),var(--orange));color:#1a0800;padding:18px 22px;border-radius:14px;box-shadow:0 18px 60px rgba(0,0,0,.45);z-index:9999;font-weight:800;font-family:Baloo 2,sans-serif';
                 toast.innerText = msg;
                 document.body.appendChild(toast);
                 setTimeout(()=>{ toast.style.opacity='0'; toast.style.transition='opacity .4s'; setTimeout(()=>toast.remove(),500); },1800);
@@ -1459,7 +1686,7 @@
           const name    = document.getElementById('regName').value.trim();
           const message = document.getElementById('regMessage').value.trim();
           if(!name){
-            regretsFeedback.innerHTML='<div style="color:#ff4d63">Please enter your name.</div>';
+            regretsFeedback.innerHTML='<div style="color:#FF6FA3">Please enter your name.</div>';
             regretsSubmitting=false;
             if(regretsSubmitBtn){ regretsSubmitBtn.disabled=false; regretsSubmitBtn.innerText='Send Regrets'; }
             return;
@@ -1473,7 +1700,7 @@
             foundSameName = !snap.empty;
           } catch(err){ foundSameName=false; }
           if(foundSameName){
-            regretsFeedback.innerHTML="<div style='color:#ff4d63'>You are already registered. Contact Neil Dela Cruz if there's an issue.</div>";
+            regretsFeedback.innerHTML="<div style='color:#FF6FA3'>You are already registered. Contact Neil Dela Cruz if there's an issue.</div>";
             regretsSubmitting=false;
             if(regretsSubmitBtn){ regretsSubmitBtn.disabled=false; regretsSubmitBtn.innerText='Send Regrets'; }
             return;
@@ -1494,7 +1721,7 @@
               const closeBtn= document.getElementById('confirmClose');
               if(!modal || !msgEl || !closeBtn){
                 const toast = document.createElement('div');
-                toast.style.cssText='position:fixed;left:50%;top:18%;transform:translateX(-50%);background:linear-gradient(90deg,#fff,#ffe066);color:#1a1200;padding:18px 22px;border-radius:14px;box-shadow:0 18px 60px rgba(0,0,0,.45);z-index:9999;font-weight:700;font-family:Outfit,sans-serif';
+                toast.style.cssText='position:fixed;left:50%;top:18%;transform:translateX(-50%);background:linear-gradient(90deg,var(--gold),var(--orange));color:#1a0800;padding:18px 22px;border-radius:14px;box-shadow:0 18px 60px rgba(0,0,0,.45);z-index:9999;font-weight:800;font-family:Baloo 2,sans-serif';
                 toast.innerText = msg;
                 document.body.appendChild(toast);
                 setTimeout(()=>{ toast.style.opacity='0'; toast.style.transition='opacity .4s'; setTimeout(()=>toast.remove(),500); },1800);
@@ -1557,10 +1784,10 @@
               window.location.href='admin.html';
             } else {
               await signOut(auth);
-              loginFeedback.innerHTML='<div style="color:#ff4d63">Not authorized for admin access.</div>';
+              loginFeedback.innerHTML='<div style="color:#FF6FA3">Not authorized for admin access.</div>';
             }
           } catch(err){
-            loginFeedback.innerHTML='<div style="color:#ff4d63">Invalid credentials or network error.</div>';
+            loginFeedback.innerHTML='<div style="color:#FF6FA3">Invalid credentials or network error.</div>';
           }
         });
 
