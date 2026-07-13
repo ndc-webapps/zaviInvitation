@@ -6,37 +6,37 @@
   <title>Admin — Zavier's 7th Birthday RSVPs</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
     /* ===== DESIGN TOKENS (mirrored from index.html) ===== */
     :root {
-      --bg:          #08051a;
-      --bg-2:        #130f2e;
-      --primary:     #FF2D78;
-      --primary-2:   #FF6FA3;
-      --gold:        #FFD700;
-      --gold-2:      #FFEC6E;
-      --mint:        #00F5A0;
-      --mint-2:      #6FFFC8;
-      --purple:      #9B5DE5;
-      --purple-2:    #C084FC;
-      --orange:      #FF8C00;
-      --blue:        #00BFFF;
-      --card:        rgba(255,255,255,0.07);
-      --card-2:      rgba(255,255,255,0.11);
-      --border:      rgba(255,255,255,0.12);
+      --bg:          #06040f;
+      --bg-2:        #120c30;
+      --primary:     #FF3D8A;
+      --primary-2:   #FF82B8;
+      --gold:        #FFC53D;
+      --gold-2:      #FFE08A;
+      --mint:        #23E5B0;
+      --mint-2:      #86FFDA;
+      --purple:      #8B5CF6;
+      --purple-2:    #C7ADFF;
+      --orange:      #ff9d1f;
+      --blue:        #3DC7FF;
+      --card:        rgba(255,255,255,0.055);
+      --card-2:      rgba(255,255,255,0.10);
+      --border:      rgba(255,255,255,0.14);
       --text:        #FFFFFF;
-      --text-2:      #C5BAE8;
+      --text-2:      #D6D0F0;
       --white:       #ffffff;
       --input-bg:    #ffffff;
-      --input-fg:    #120e2a;
-      --r-sm:        10px;
-      --r-md:        18px;
-      --r-lg:        26px;
+      --input-fg:    #17102f;
+      --r-sm:        12px;
+      --r-md:        20px;
+      --r-lg:        30px;
       --r-xl:        999px;
-      --font-head:   'Baloo 2', system-ui, sans-serif;
-      --font-body:   'Nunito', system-ui, sans-serif;
+      --font-head:   'Fraunces', 'Georgia', serif;
+      --font-body:   'Plus Jakarta Sans', system-ui, sans-serif;
     }
 
     /* ===== RESET ===== */
@@ -969,6 +969,10 @@
 
     const ADMIN_EMAIL = 'nadelacruz01@gmail.com';
 
+    function escapeHtml(str = '') {
+      return String(str).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
+    }
+
     // UI elements
     const tableWrap     = document.getElementById('tableWrap');
     const refreshBtn    = document.getElementById('refresh');
@@ -1174,15 +1178,15 @@
           ? `data-local-index="${i}"`
           : `data-id="${r.id || ''}"`;
 
-        html += `<tr data-index="${i}" ${r.id ? `data-id="${r.id}"` : ''}>
+        html += `<tr data-index="${i}" ${r.id ? `data-id="${escapeHtml(r.id)}"` : ''}>
           <td><span class="row-num">${i + 1}</span></td>
           <td>${badge}</td>
-          <td><span class="cell-name">${r.fullname || '—'}</span></td>
-          <td><span class="cell-meta">${r.phone || '—'}</span></td>
-          <td><span class="cell-meta">${r.email || '—'}</span></td>
-          <td><span class="cell-meta">${r.companions || '—'}</span></td>
-          <td><span class="cell-msg">${r.message || '—'}</span></td>
-          <td><span class="cell-ts">${ts}</span></td>
+          <td><span class="cell-name">${escapeHtml(r.fullname) || '—'}</span></td>
+          <td><span class="cell-meta">${escapeHtml(r.phone) || '—'}</span></td>
+          <td><span class="cell-meta">${escapeHtml(r.email) || '—'}</span></td>
+          <td><span class="cell-meta">${escapeHtml(r.companions) || '—'}</span></td>
+          <td><span class="cell-msg">${escapeHtml(r.message) || '—'}</span></td>
+          <td><span class="cell-ts">${escapeHtml(ts)}</span></td>
           <td><button class="delete-btn" ${deleteBtnAttr}>🗑 Delete</button></td>
         </tr>`;
       });

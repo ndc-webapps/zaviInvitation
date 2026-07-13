@@ -4,1288 +4,501 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Zavier's 7th Birthday — Costume Party! 🎭</title>
+  <meta name="description" content="Zavier turns seven. Halloween costume party, October 31 2026 at Jollibee 1000th Store BGC. Games, prizes, cake. RSVP now.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-
-  <style>
-    /* ===== DESIGN TOKENS ===== */
-    :root {
-      --bg:          #08051a;
-      --bg-2:        #130f2e;
-      --primary:     #FF2D78;
-      --primary-2:   #FF6FA3;
-      --gold:        #FFD700;
-      --gold-2:      #FFEC6E;
-      --mint:        #00F5A0;
-      --mint-2:      #6FFFC8;
-      --purple:      #9B5DE5;
-      --purple-2:    #C084FC;
-      --orange:      #FF8C00;
-      --blue:        #00BFFF;
-      --card:        rgba(255,255,255,0.07);
-      --card-2:      rgba(255,255,255,0.11);
-      --border:      rgba(255,255,255,0.12);
-      --text:        #FFFFFF;
-      --text-2:      #C5BAE8;
-      --white:       #ffffff;
-      --input-bg:    #ffffff;
-      --input-fg:    #120e2a;
-      --r-sm:        10px;
-      --r-md:        18px;
-      --r-lg:        26px;
-      --r-xl:        999px;
-      --font-head:   'Baloo 2', system-ui, sans-serif;
-      --font-body:   'Nunito', system-ui, sans-serif;
-    }
-
-    /* ===== RESET ===== */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      font-family: var(--font-body);
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    /* ===== STARFIELD BACKGROUND ===== */
-    .bg-canvas {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      overflow: hidden;
-      pointer-events: none;
-    }
-
-    /* Radial glow blobs */
-    .bg-canvas::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(ellipse 55% 45% at 15% 20%, rgba(155,93,229,0.28) 0%, transparent 60%),
-        radial-gradient(ellipse 40% 55% at 85% 15%, rgba(255,45,120,0.22) 0%, transparent 55%),
-        radial-gradient(ellipse 50% 40% at 50% 85%, rgba(0,245,160,0.12) 0%, transparent 60%),
-        radial-gradient(ellipse 35% 35% at 75% 60%, rgba(255,215,0,0.10) 0%, transparent 50%);
-    }
-
-    /* Halftone dot texture */
-    .bg-canvas::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
-      background-size: 28px 28px;
-    }
-
-    /* Twinkling stars */
-    .star {
-      position: absolute;
-      border-radius: 50%;
-      background: #fff;
-      animation: twinkle ease-in-out infinite;
-    }
-    @keyframes twinkle {
-      0%, 100% { opacity: 0.1; transform: scale(1); }
-      50%       { opacity: 0.8; transform: scale(1.4); }
-    }
-
-    /* Floating costume emojis */
-    .floaty {
-      position: absolute;
-      font-size: 2.4rem;
-      animation: floatUp linear infinite;
-      opacity: 0;
-      user-select: none;
-      pointer-events: none;
-      filter: drop-shadow(0 0 8px rgba(255,215,0,0.5));
-    }
-    @keyframes floatUp {
-      0%   { opacity: 0;   transform: translateY(0) rotate(0deg) scale(0.8); }
-      10%  { opacity: 0.7; }
-      80%  { opacity: 0.5; }
-      100% { opacity: 0;   transform: translateY(-120vh) rotate(360deg) scale(1.1); }
-    }
-
-    /* Confetti pieces */
-    .confetti {
-      position: absolute;
-      width: 8px;
-      height: 8px;
-      border-radius: 2px;
-      animation: confettiFall linear infinite;
-      opacity: 0;
-    }
-    @keyframes confettiFall {
-      0%   { opacity: 1; transform: translateY(-10px) rotate(0deg); }
-      100% { opacity: 0.3; transform: translateY(100vh) rotate(720deg); }
-    }
-
-    /* ===== PAGE WRAPPER ===== */
-    .page {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 0 16px 70px;
-      min-height: 100vh;
-    }
-
-    /* ===== ADMIN BUTTON ===== */
-    .admin-trigger {
-      position: fixed;
-      top: 14px;
-      right: 14px;
-      z-index: 200;
-      background: rgba(155,93,229,0.15);
-      border: 2px solid var(--purple);
-      color: var(--purple-2);
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      transition: all 0.3s;
-      backdrop-filter: blur(12px);
-      box-shadow: 0 0 15px rgba(155,93,229,0.3);
-    }
-    .admin-trigger:hover {
-      background: rgba(155,93,229,0.3);
-      transform: scale(1.1) rotate(30deg);
-      box-shadow: 0 0 28px rgba(155,93,229,0.5);
-    }
-
-    /* ===== HERO ===== */
-    .hero {
-      width: 100%;
-      max-width: 860px;
-      text-align: center;
-      padding: 64px 16px 32px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0;
-      animation: fadeUp 0.9s ease both;
-    }
-
-    /* Starburst badge */
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 22px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, var(--gold), var(--orange));
-      color: #1a0800;
-      font-family: var(--font-head);
-      font-size: 13px;
-      font-weight: 800;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      margin-bottom: 20px;
-      box-shadow: 0 0 30px rgba(255,215,0,0.5), 0 4px 20px rgba(255,140,0,0.4);
-      animation: badgePop 0.7s 0.1s cubic-bezier(0.34,1.56,0.64,1) both;
-    }
-    @keyframes badgePop {
-      from { opacity: 0; transform: scale(0.5) rotate(-10deg); }
-      to   { opacity: 1; transform: scale(1) rotate(0deg); }
-    }
-
-    /* Bouncy number reveal */
-    .hero-age-ring {
-      position: relative;
-      width: 130px;
-      height: 130px;
-      margin-bottom: 20px;
-      animation: fadeUp 0.7s 0.15s ease both;
-    }
-    .hero-age-ring svg {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      animation: spinSlow 12s linear infinite;
-    }
-    @keyframes spinSlow {
-      to { transform: rotate(360deg); }
-    }
-    .hero-age-num {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--font-head);
-      font-size: 56px;
-      font-weight: 800;
-      background: linear-gradient(135deg, var(--gold), var(--primary));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      line-height: 1;
-    }
-
-    .hero-title {
-      font-family: var(--font-head);
-      font-size: clamp(42px, 9vw, 86px);
-      font-weight: 800;
-      line-height: 1.0;
-      color: var(--white);
-      letter-spacing: -0.01em;
-      margin-bottom: 12px;
-      animation: fadeUp 0.7s 0.2s ease both;
-    }
-    .hero-title .name {
-      background: linear-gradient(135deg, var(--primary), var(--gold), var(--mint));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .hero-sub {
-      font-family: var(--font-body);
-      font-size: clamp(15px, 3.2vw, 19px);
-      color: var(--text-2);
-      font-weight: 700;
-      margin-bottom: 12px;
-      line-height: 1.7;
-      animation: fadeUp 0.7s 0.25s ease both;
-    }
-    .hero-sub .hl { color: var(--mint-2); font-weight: 900; }
-
-    /* Costume parade strip */
-    .costume-strip {
-      display: flex;
-      gap: 14px;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin: 18px 0 24px;
-      animation: fadeUp 0.7s 0.3s ease both;
-    }
-    .costume-chip {
-      background: var(--card-2);
-      border: 2px solid rgba(255,255,255,0.15);
-      border-radius: 999px;
-      padding: 8px 16px;
-      font-size: 14px;
-      font-weight: 800;
-      color: var(--text);
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
-      cursor: default;
-      backdrop-filter: blur(8px);
-    }
-    .costume-chip:hover {
-      transform: translateY(-4px) scale(1.06);
-      border-color: var(--gold);
-      background: rgba(255,215,0,0.12);
-      box-shadow: 0 8px 24px rgba(255,215,0,0.2);
-    }
-
-    .hero-actions {
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-      justify-content: center;
-      animation: fadeUp 0.7s 0.35s ease both;
-    }
-
-    /* ===== COUNTDOWN ===== */
-    .countdown-wrap {
-      width: 100%;
-      max-width: 680px;
-      margin: 10px 0 28px;
-      animation: fadeUp 0.8s 0.4s ease both;
-    }
-    .countdown-label {
-      text-align: center;
-      font-family: var(--font-head);
-      font-size: 13px;
-      font-weight: 800;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 14px;
-      opacity: 0.85;
-    }
-    .countdown-grid {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-    }
-    .cd-block {
-      flex: 1;
-      max-width: 110px;
-      background: rgba(255,255,255,0.06);
-      border: 2px solid rgba(255,215,0,0.25);
-      border-radius: var(--r-md);
-      padding: 16px 8px 12px;
-      text-align: center;
-      backdrop-filter: blur(10px);
-      transition: border-color 0.3s;
-      position: relative;
-      overflow: hidden;
-    }
-    .cd-block::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, var(--primary), var(--gold));
-    }
-    .cd-num {
-      font-family: var(--font-head);
-      font-size: clamp(28px, 5vw, 40px);
-      font-weight: 800;
-      color: var(--gold-2);
-      line-height: 1;
-      display: block;
-    }
-    .cd-unit {
-      font-size: 11px;
-      font-weight: 900;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--text-2);
-      margin-top: 6px;
-      display: block;
-    }
-
-    /* ===== BUTTONS ===== */
-    .btn-primary {
-      background: linear-gradient(135deg, var(--primary), #c0185c);
-      color: var(--white);
-      border: none;
-      border-radius: var(--r-xl);
-      padding: 16px 36px;
-      font-family: var(--font-head);
-      font-size: 16px;
-      font-weight: 800;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      box-shadow: 0 10px 40px rgba(255,45,120,0.45), inset 0 1px 0 rgba(255,255,255,0.2);
-      transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
-      min-height: 56px;
-      letter-spacing: 0.02em;
-      text-transform: uppercase;
-      position: relative;
-      overflow: hidden;
-    }
-    .btn-primary:hover {
-      transform: translateY(-3px) scale(1.04);
-      box-shadow: 0 18px 50px rgba(255,45,120,0.55);
-    }
-    .btn-primary:active { transform: translateY(-1px); }
-
-    .btn-gold {
-      background: linear-gradient(135deg, var(--gold), var(--orange));
-      color: #1a0800;
-      border: none;
-      border-radius: var(--r-xl);
-      padding: 16px 36px;
-      font-family: var(--font-head);
-      font-size: 16px;
-      font-weight: 800;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      box-shadow: 0 10px 40px rgba(255,215,0,0.35);
-      transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
-      min-height: 56px;
-      text-transform: uppercase;
-    }
-    .btn-gold:hover {
-      transform: translateY(-3px) scale(1.04);
-      box-shadow: 0 18px 50px rgba(255,215,0,0.5);
-    }
-
-    .btn-ghost {
-      background: rgba(255,255,255,0.08);
-      color: var(--mint-2);
-      border: 2px solid var(--mint);
-      border-radius: var(--r-xl);
-      padding: 14px 32px;
-      font-family: var(--font-head);
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
-      min-height: 56px;
-      backdrop-filter: blur(12px);
-      letter-spacing: 0.01em;
-      box-shadow: 0 0 20px rgba(0,245,160,0.12);
-    }
-    .btn-ghost:hover {
-      background: rgba(0,245,160,0.14);
-      border-color: var(--mint-2);
-      transform: translateY(-3px);
-      box-shadow: 0 12px 35px rgba(0,245,160,0.28);
-    }
-
-    /* ===== CONTENT GRID ===== */
-    .content-grid {
-      width: 100%;
-      max-width: 1020px;
-      display: grid;
-      grid-template-columns: 1fr 360px;
-      gap: 24px;
-      margin-top: 8px;
-      animation: fadeUp 0.8s 0.45s ease both;
-    }
-    @media (max-width: 800px) {
-      .content-grid { grid-template-columns: 1fr; }
-    }
-
-    /* ===== SLIDER ===== */
-    .slider-wrap {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .slider {
-      position: relative;
-      border-radius: var(--r-lg);
-      overflow: hidden;
-      background: linear-gradient(135deg, rgba(19,15,46,0.9), rgba(40,25,80,0.9));
-      border: 3px solid var(--primary);
-      height: clamp(220px, 42vw, 480px);
-      box-shadow: 0 0 0 6px rgba(255,45,120,0.1), 0 24px 70px rgba(255,45,120,0.3);
-    }
-
-    .slides {
-      display: flex;
-      height: 100%;
-      transition: transform 420ms cubic-bezier(.2,.9,.2,1);
-      will-change: transform;
-      backface-visibility: hidden;
-      touch-action: pan-y;
-      flex-wrap: nowrap;
-    }
-
-    .slide {
-      flex: 0 0 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      contain: paint;
-    }
-    .slide img {
-      width: 100%;
-      height: auto;
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-      border-radius: 14px;
-      display: block;
-    }
-
-    .slider-nav {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      pointer-events: none;
-      padding: 0 14px;
-      z-index: 10;
-    }
-    .slider-nav button {
-      pointer-events: auto;
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      border: 2px solid rgba(255,255,255,0.3);
-      background: rgba(0,0,0,0.45);
-      color: var(--white);
-      font-size: 18px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      backdrop-filter: blur(10px);
-      transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
-      font-weight: 800;
-    }
-    .slider-nav button:hover {
-      background: rgba(255,45,120,0.4);
-      border-color: var(--primary);
-      transform: scale(1.15);
-      box-shadow: 0 0 20px rgba(255,45,120,0.5);
-    }
-
-    .dots {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-    }
-    .dot {
-      width: 10px; height: 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.2);
-      border: 2px solid transparent;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
-    }
-    .dot.active {
-      background: linear-gradient(135deg, var(--primary), var(--gold));
-      width: 30px;
-      box-shadow: 0 0 12px var(--primary);
-      border-color: var(--primary);
-    }
-
-    /* ===== PARTY FEATURES STRIP ===== */
-    .party-features {
-      display: grid;
-      grid-template-columns: repeat(4,1fr);
-      gap: 10px;
-    }
-    .feat-item {
-      background: var(--card);
-      border: 2px solid rgba(255,255,255,0.1);
-      border-radius: var(--r-md);
-      padding: 14px 10px;
-      text-align: center;
-      transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
-      cursor: default;
-    }
-    .feat-item:hover {
-      background: var(--card-2);
-      transform: translateY(-4px);
-      border-color: var(--gold);
-      box-shadow: 0 8px 24px rgba(255,215,0,0.15);
-    }
-    .feat-emoji { font-size: 24px; display: block; margin-bottom: 5px; }
-    .feat-label { font-size: 12px; font-weight: 800; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.06em; }
-
-    /* ===== DETAILS CARD ===== */
-    .details-card {
-      background: rgba(20,14,48,0.7);
-      border: 2px solid rgba(155,93,229,0.4);
-      border-radius: var(--r-lg);
-      padding: 28px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      box-shadow: 0 24px 70px rgba(155,93,229,0.2), inset 0 1px 0 rgba(255,255,255,0.08);
-      backdrop-filter: blur(16px);
-      position: relative;
-      overflow: hidden;
-    }
-    .details-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--primary), var(--gold), var(--mint), var(--purple));
-    }
-
-    .details-heading {
-      font-family: var(--font-head);
-      font-size: 22px;
-      font-weight: 800;
-      color: var(--white);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .details-heading::before {
-      content: '🎪';
-      font-size: 22px;
-    }
-
-    .info-row {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 14px;
-      border-radius: var(--r-md);
-      background: rgba(255,255,255,0.05);
-      border: 1.5px solid rgba(255,255,255,0.1);
-      transition: all 0.3s;
-    }
-    .info-row:hover {
-      background: rgba(255,255,255,0.09);
-      border-color: rgba(155,93,229,0.5);
-      transform: translateX(4px);
-    }
-
-    .info-icon {
-      width: 46px; height: 46px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, rgba(255,45,120,0.2), rgba(155,93,229,0.2));
-      border: 2px solid rgba(255,45,120,0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      font-size: 20px;
-    }
-    .info-text .label {
-      font-size: 11px;
-      font-weight: 900;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--text-2);
-      margin-bottom: 3px;
-    }
-    .info-text .value {
-      font-size: 16px;
-      font-weight: 800;
-      color: var(--white);
-      line-height: 1.3;
-    }
-
-    /* Invite blurb */
-    .invite-blurb {
-      background: linear-gradient(135deg, rgba(255,45,120,0.12), rgba(155,93,229,0.12));
-      border: 2px dashed rgba(255,45,120,0.4);
-      border-radius: var(--r-md);
-      padding: 16px;
-      position: relative;
-    }
-    .invite-blurb .blurb-title {
-      font-family: var(--font-head);
-      font-size: 16px;
-      font-weight: 800;
-      color: var(--gold);
-      margin-bottom: 6px;
-    }
-    .invite-blurb p {
-      font-size: 14px;
-      color: var(--text-2);
-      line-height: 1.7;
-      font-weight: 600;
-    }
-
-    /* Card action buttons */
-    .card-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 4px;
-    }
-    .card-actions .btn-primary,
-    .card-actions .btn-gold {
-      flex: 1;
-      justify-content: center;
-      font-size: 13px;
-      padding: 12px 10px;
-      min-height: 48px;
-    }
-
-    /* Contact row */
-    .contact-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 14px;
-      border-radius: var(--r-md);
-      background: rgba(0,191,255,0.08);
-      border: 1.5px solid rgba(0,191,255,0.25);
-      font-size: 13px;
-      color: var(--text-2);
-      font-weight: 700;
-    }
-    .contact-row strong { color: var(--mint-2); }
-
-    /* ===== FOOTER ===== */
-    .footer {
-      margin-top: 60px;
-      text-align: center;
-      color: var(--text-2);
-      font-size: 13px;
-      opacity: 0.7;
-      animation: fadeUp 0.7s 0.55s ease both;
-      font-weight: 700;
-    }
-
-    /* ===== MODALS ===== */
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      z-index: 500;
-      background: rgba(5,2,18,0.88);
-      backdrop-filter: blur(10px);
-      display: none;
-      align-items: flex-start;
-      justify-content: center;
-      padding: max(env(safe-area-inset-top, 16px), 16px) 12px 16px;
-      overflow-y: auto;
-    }
-    .modal-backdrop[aria-hidden="false"] { display: flex; }
-
-    .modal {
-      width: 100%;
-      max-width: 540px;
-      background: linear-gradient(160deg, #120d2e 0%, #1e1445 100%);
-      border: 2px solid rgba(155,93,229,0.4);
-      border-radius: var(--r-lg);
-      padding: 32px;
-      box-shadow: 0 40px 120px rgba(155,93,229,0.3), 0 0 0 1px rgba(255,255,255,0.06);
-      max-height: calc(100vh - 40px);
-      overflow-y: auto;
-      animation: modalIn 0.35s cubic-bezier(.4,0,.2,1) both;
-      position: relative;
-    }
-    .modal::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--primary), var(--gold), var(--mint));
-      border-radius: var(--r-lg) var(--r-lg) 0 0;
-    }
-    @keyframes modalIn {
-      from { opacity:0; transform: translateY(24px) scale(0.95); }
-      to   { opacity:1; transform: translateY(0) scale(1); }
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-    }
-    .modal-header h2 {
-      font-family: var(--font-head);
-      font-size: 24px;
-      font-weight: 800;
-      color: var(--white);
-    }
-
-    /* Form */
-    .field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 14px; }
-    .field label { font-size: 12px; font-weight: 900; color: var(--mint-2); letter-spacing: 0.1em; text-transform: uppercase; }
-    .input {
-      height: 50px;
-      padding: 0 16px;
-      border-radius: var(--r-md);
-      border: 2px solid rgba(155,93,229,0.3);
-      background: var(--input-bg);
-      color: var(--input-fg);
-      font-family: var(--font-body);
-      font-size: 16px;
-      font-weight: 700;
-      outline: none;
-      transition: all 0.25s;
-      width: 100%;
-      caret-color: var(--primary);
-    }
-    textarea.input {
-      height: auto;
-      min-height: 110px;
-      padding: 14px 16px;
-      resize: vertical;
-      line-height: 1.6;
-    }
-    .input::placeholder { color: #9086aa; }
-    .input:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 4px rgba(255,45,120,0.18);
-    }
-
-    .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    @media (max-width: 480px) { .form-grid-2 { grid-template-columns: 1fr; } }
-
-    .field-error { font-size: 12px; color: var(--primary-2); font-weight: 700; display: none; }
-
-    .companion-list { display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
-    .companion-item { display: flex; gap: 10px; align-items: center; }
-    .companion-item .input { flex: 1; height: 42px; }
-
-    .feedback { margin-top: 10px; font-size: 13px; font-weight: 700; color: var(--mint); }
-
-    .form-actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
-
-    .btn-modal-primary {
-      background: linear-gradient(135deg, var(--primary), #c0185c);
-      color: #fff;
-      border: none;
-      border-radius: var(--r-md);
-      padding: 13px 24px;
-      font-family: var(--font-head);
-      font-size: 15px;
-      font-weight: 800;
-      cursor: pointer;
-      min-height: 48px;
-      box-shadow: 0 8px 28px rgba(255,45,120,0.4);
-      transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
-      text-transform: uppercase;
-    }
-    .btn-modal-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 36px rgba(255,45,120,0.5);
-    }
-
-    .btn-modal-yellow {
-      background: linear-gradient(135deg, var(--gold), var(--orange));
-      color: #1a0800;
-      border: none;
-      border-radius: var(--r-md);
-      padding: 13px 24px;
-      font-family: var(--font-head);
-      font-size: 15px;
-      font-weight: 800;
-      cursor: pointer;
-      min-height: 48px;
-      transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
-      text-transform: uppercase;
-    }
-    .btn-modal-yellow:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 36px rgba(255,215,0,0.4);
-    }
-
-    .btn-modal-ghost {
-      background: rgba(255,255,255,0.07);
-      color: var(--text-2);
-      border: 2px solid rgba(255,255,255,0.18);
-      border-radius: var(--r-md);
-      padding: 11px 20px;
-      font-family: var(--font-body);
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      min-height: 48px;
-      transition: all 0.25s;
-    }
-    .btn-modal-ghost:hover {
-      background: rgba(255,255,255,0.12);
-      color: var(--text);
-      border-color: rgba(255,255,255,0.3);
-    }
-
-    /* Password wrapper */
-    .password-wrapper { display: flex; gap: 10px; align-items: center; }
-    .password-wrapper .input { flex: 1; }
-    .toggle-pass-btn {
-      background: rgba(155,93,229,0.12);
-      border: 2px solid var(--purple);
-      color: var(--purple-2);
-      width: 50px; height: 50px;
-      border-radius: var(--r-md);
-      cursor: pointer;
-      font-size: 18px;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-      transition: all 0.25s;
-    }
-    .toggle-pass-btn:hover {
-      background: rgba(155,93,229,0.22);
-      box-shadow: 0 0 14px rgba(155,93,229,0.3);
-    }
-
-    /* Confirm modal */
-    #confirmModal .modal { max-width: 420px; }
-    #confirmMessage {
-      background: linear-gradient(135deg, var(--gold), var(--orange));
-      color: #1a0800;
-      padding: 16px 20px;
-      border-radius: var(--r-md);
-      font-weight: 800;
-      font-size: 16px;
-      margin-top: 8px;
-      line-height: 1.5;
-    }
-    #confirmClose {
-      position: absolute;
-      right: 16px; top: 20px;
-      background: rgba(255,45,120,0.12);
-      border: 2px solid var(--primary);
-      color: var(--primary-2);
-      width: 38px; height: 38px;
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 16px;
-      display: flex; align-items: center; justify-content: center;
-      transition: all 0.25s;
-      font-weight: 800;
-    }
-    #confirmClose:hover {
-      background: rgba(255,45,120,0.25);
-      transform: scale(1.1) rotate(90deg);
-    }
-
-    /* ===== ANIMATIONS ===== */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ===== SCROLLBAR ===== */
-    ::-webkit-scrollbar { width: 7px; }
-    ::-webkit-scrollbar-track { background: rgba(20,14,48,0.5); }
-    ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--primary), var(--purple)); border-radius: 4px; }
-
-    /* ===== RESPONSIVE ===== */
-    @media (max-width: 520px) {
-      .hero { padding: 50px 8px 24px; }
-      .details-card { padding: 20px; }
-      .card-actions { flex-direction: column; }
-      .card-actions .btn-primary, .card-actions .btn-gold { width: 100%; }
-      .hero-actions { gap: 10px; }
-      .party-features { grid-template-columns: repeat(2,1fr); }
-      .countdown-grid { gap: 8px; }
-      .cd-block { padding: 12px 6px 10px; }
-    }
-    @media (max-width: 380px) {
-      .hero-title { font-size: 38px; }
-      .slider { height: 220px; }
-      .hero-age-ring { width: 100px; height: 100px; }
-      .hero-age-num { font-size: 44px; }
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <noscript><style>.preloader{display:none}</style></noscript>
 </head>
 <body>
 
-  <!-- ===== ANIMATED BACKGROUND ===== -->
-  <div class="bg-canvas" aria-hidden="true" id="bgCanvas">
-    <!-- Stars and confetti injected by JS below -->
+  <!-- ===== PRELOADER ===== -->
+  <div class="preloader" id="preloader" aria-hidden="true">
+    <div class="preloader-count" id="preCount">0</div>
+    <div class="preloader-label">Zavier's 7th — Loading</div>
   </div>
 
-  <!-- Admin trigger -->
-  <button id="loginOpen" class="admin-trigger" type="button" title="Admin login" aria-label="Admin login">⚙</button>
+  <!-- ===== BACKGROUND SCENE ===== -->
+  <div class="bg-scene" aria-hidden="true">
+    <div class="aurora-blob aurora-1"></div>
+    <div class="aurora-blob aurora-2"></div>
+    <div class="aurora-blob aurora-3"></div>
+    <canvas id="bg3d"></canvas>
+    <canvas id="bgParticles"></canvas>
+    <div class="ghost-seven">7</div>
+    <div class="bg-vignette"></div>
+  </div>
+  <div class="film-grain" aria-hidden="true"></div>
 
-  <div class="page">
+  <!-- ===== CHROME ===== -->
+  <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+  <div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+  <button id="loginOpen" class="admin-fab" type="button" data-open-modal="loginModal" title="Admin login" aria-label="Admin login">⚙</button>
+
+  <main>
 
     <!-- ===== HERO ===== -->
     <header class="hero" role="banner">
-      <div class="hero-badge">🎭 Costume Party · October 26, 2026</div>
 
-      <!-- Spinning age ring -->
-      <div class="hero-age-ring" aria-hidden="true">
-        <svg viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%"   stop-color="#FF2D78"/>
-              <stop offset="50%"  stop-color="#FFD700"/>
-              <stop offset="100%" stop-color="#00F5A0"/>
-            </linearGradient>
-          </defs>
-          <!-- Outer dashed ring -->
-          <circle cx="65" cy="65" r="58" fill="none" stroke="url(#ringGrad)" stroke-width="3"
-            stroke-dasharray="14 6" stroke-linecap="round" opacity="0.9"/>
-          <!-- Stars on ring -->
-          <text x="65" y="12"  text-anchor="middle" font-size="10">⭐</text>
-          <text x="118" y="68" text-anchor="middle" font-size="10">⭐</text>
-          <text x="12"  y="68" text-anchor="middle" font-size="10">⭐</text>
-          <text x="65" y="128" text-anchor="middle" font-size="10">⭐</text>
-        </svg>
-        <div class="hero-age-num">7</div>
+      <figure class="hero-photo hp-1" data-depth="0.05">
+        <div class="hp-frame">
+          <img src="2.jpg" alt="Zavier in a straw hat costume" width="720" height="1024" loading="eager" decoding="async">
+          <figcaption>Costume day</figcaption>
+        </div>
+      </figure>
+      <figure class="hero-photo hp-2" data-depth="0.09">
+        <div class="hp-frame">
+          <img src="3.jpg" alt="Zavier in a Kid Scout uniform saluting" width="768" height="1005" loading="eager" decoding="async">
+          <figcaption>Kid scout</figcaption>
+        </div>
+      </figure>
+      <figure class="hero-photo hp-3" data-depth="0.07">
+        <div class="hp-frame">
+          <img src="5.jpg" alt="Zavier playing on a swing" width="386" height="515" loading="eager" decoding="async">
+          <figcaption>Pure joy</figcaption>
+        </div>
+      </figure>
+
+      <div class="hero-core">
+        <div class="hero-badge"><span class="dot"></span> Costume Party · October 31, 2026</div>
+
+        <h1 class="mega-title" id="page-title">
+          <span class="mega-line" data-split>Zavier</span>
+          <span class="mega-line mega-line--accent"><span class="line-inner">turns seven!</span></span>
+        </h1>
+
+        <p class="hero-sub">Games · Prizes · Cake<br>
+          <span class="hl">Come dressed as your favourite character!</span>
+        </p>
+
+        <div class="hero-actions">
+          <button class="btn btn--primary" type="button" data-open-modal="rsvpModal"><span class="btn-text">🎉 RSVP Now</span></button>
+          <button class="btn btn--ghost" type="button" data-open-modal="regretsModal"><span class="btn-text">😢 Can't Go</span></button>
+        </div>
       </div>
 
-      <h1 class="hero-title" id="page-title"><span class="name">Zavier's</span><br>7th Birthday!</h1>
-      <p class="hero-sub">Games &nbsp;·&nbsp; Prizes &nbsp;·&nbsp; Cake<br>
-        <span class="hl">Come dressed as your favourite character!</span>
-      </p>
-
-      <!-- Costume chips -->
-      <div class="costume-strip" role="list" aria-label="Costume ideas">
-        <div class="costume-chip" role="listitem">🦸 Superhero</div>
-        <div class="costume-chip" role="listitem">🧙 Wizard</div>
-        <div class="costume-chip" role="listitem">🦄 Unicorn</div>
-        <div class="costume-chip" role="listitem">🦹 Villain</div>
-        <div class="costume-chip" role="listitem">👾 Game Char</div>
-        <div class="costume-chip" role="listitem">🐉 Dragon</div>
-      </div>
-
+      <button class="scroll-cue" type="button" aria-label="Scroll to explore">
+        <span>Scroll</span><span class="stem"></span>
+      </button>
     </header>
 
-    <!-- ===== COUNTDOWN ===== -->
-    <div class="countdown-wrap" aria-label="Countdown to party">
-      <div class="countdown-label">⏳ Countdown to the Party</div>
-      <div class="countdown-grid">
-        <div class="cd-block"><span class="cd-num" id="cdDays">--</span><span class="cd-unit">Days</span></div>
-        <div class="cd-block"><span class="cd-num" id="cdHrs">--</span><span class="cd-unit">Hours</span></div>
-        <div class="cd-block"><span class="cd-num" id="cdMins">--</span><span class="cd-unit">Mins</span></div>
-        <div class="cd-block"><span class="cd-num" id="cdSecs">--</span><span class="cd-unit">Secs</span></div>
+    <!-- ===== MARQUEE ===== -->
+    <div class="marquee marquee--tilt" aria-hidden="true">
+      <div class="marquee-inner skewable">
+        <div class="marquee-chunk">
+          <span>Zavier turns seven</span><span class="star">✦</span>
+          <span class="ghosted">October 31 · 2026</span><span class="star">✦</span>
+          <span>Costume party</span><span class="star">✦</span>
+          <span class="ghosted">Games · Prizes · Cake</span><span class="star">✦</span>
+        </div>
+        <div class="marquee-chunk">
+          <span>Zavier turns seven</span><span class="star">✦</span>
+          <span class="ghosted">October 31 · 2026</span><span class="star">✦</span>
+          <span>Costume party</span><span class="star">✦</span>
+          <span class="ghosted">Games · Prizes · Cake</span><span class="star">✦</span>
+        </div>
       </div>
     </div>
 
-    <!-- ===== MAIN CONTENT ===== -->
-    <main class="content-grid" aria-label="Invitation details">
+    <!-- ===== COUNTDOWN ===== -->
+    <section class="section countdown" id="countdown-section" aria-label="Countdown to the party">
+      <div class="container">
+        <div class="eyebrow eyebrow--center" data-reveal="up"><span class="idx">01</span> Save the date</div>
+        <h2 class="sec-title" data-reveal="up">The countdown is <em>on</em></h2>
+        <div class="cd-row" data-reveal="up">
+          <div class="cd-unit-block"><span class="cd-num" id="cdDays">--</span><span class="cd-unit">Days</span></div>
+          <span class="cd-sep">:</span>
+          <div class="cd-unit-block"><span class="cd-num" id="cdHrs">--</span><span class="cd-unit">Hours</span></div>
+          <span class="cd-sep">:</span>
+          <div class="cd-unit-block"><span class="cd-num" id="cdMins">--</span><span class="cd-unit">Mins</span></div>
+          <span class="cd-sep">:</span>
+          <div class="cd-unit-block"><span class="cd-num" id="cdSecs">--</span><span class="cd-unit">Secs</span></div>
+        </div>
+      </div>
+    </section>
 
-      <!-- Photo slider + features -->
-      <section class="slider-wrap" aria-label="Event photos and features">
-        <div class="slider" aria-roledescription="carousel">
-          <div class="slides" id="slides" aria-live="polite" role="list">
-            <div class="slide" role="listitem"><img src="1.jpg" alt="Party photo 1" width="1200" height="800" decoding="async" loading="eager"></div>
-            <div class="slide" role="listitem"><img src="2.jpg" alt="Party photo 2" width="1200" height="800" decoding="async" loading="eager"></div>
-            <div class="slide" role="listitem"><img src="3.jpg" alt="Party photo 3" width="1200" height="800" decoding="async" loading="eager"></div>
-            <div class="slide" role="listitem"><img src="4.jpg" alt="Party photo 4" width="1200" height="800" decoding="async" loading="eager"></div>
-            <div class="slide" role="listitem"><img src="5.jpg" alt="Party photo 5" width="1200" height="800" decoding="async" loading="eager"></div>
+    <!-- ===== DETAILS ===== -->
+    <section class="section" aria-label="Party details">
+      <div class="container">
+        <div class="eyebrow" data-reveal="up"><span class="idx">02</span> The details</div>
+        <h2 class="sec-title" data-reveal="up">Everything you<br>need to <em>know</em></h2>
+
+        <div class="detail-rows">
+          <div class="detail-row" data-reveal="up">
+            <span class="detail-idx">(01)</span>
+            <span class="detail-label">When</span>
+            <span class="detail-value">October 31, <em>2026</em>
+              <span class="detail-note">Halloween Saturday — the perfect day for costumes 🎃</span>
+            </span>
+            <span class="detail-arrow">→</span>
           </div>
-          <div class="slider-nav" aria-hidden="true">
-            <button id="prev" type="button" aria-label="Previous photo">◀</button>
-            <button id="next" type="button" aria-label="Next photo">▶</button>
+          <a class="detail-row" data-reveal="up" href="https://www.google.com/maps/search/?api=1&amp;query=Jollibee+1000th+Store+39th+Street+corner+Triangle+Drive+BGC+Taguig" target="_blank" rel="noopener">
+            <span class="detail-idx">(02)</span>
+            <span class="detail-label">Where</span>
+            <span class="detail-value">Jollibee <em>1000th Store</em>
+              <span class="detail-note">39th Street corner Triangle Drive, Bonifacio Global City (BGC), Taguig — tap for directions 📍</span>
+            </span>
+            <span class="detail-arrow">→</span>
+          </a>
+          <div class="detail-row" data-reveal="up">
+            <span class="detail-idx">(03)</span>
+            <span class="detail-label">Dress code</span>
+            <span class="detail-value">Come as <em>anything!</em>
+              <span class="detail-note">Hero, monster, animal, movie star, game character — anyone or anything you love. There's no wrong costume.</span>
+              <span class="chip-row">
+                <span class="chip">🦸 Heroes</span>
+                <span class="chip">👻 Spooky</span>
+                <span class="chip">👾 Game Characters</span>
+                <span class="chip">🐉 Creatures</span>
+                <span class="chip">✨ Anything goes!</span>
+              </span>
+            </span>
+            <span class="detail-arrow">→</span>
           </div>
         </div>
-        <div class="dots" id="dots" role="tablist" aria-label="Photo navigation"></div>
+      </div>
+    </section>
 
-        <!-- Party features -->
-        <div class="party-features" aria-label="What to expect">
-          <div class="feat-item"><span class="feat-emoji">🎮</span><span class="feat-label">Roblox Games</span></div>
-          <div class="feat-item"><span class="feat-emoji">🏆</span><span class="feat-label">Prizes</span></div>
-          <div class="feat-item"><span class="feat-emoji">🎂</span><span class="feat-label">Cake</span></div>
-          <div class="feat-item"><span class="feat-emoji">🎭</span><span class="feat-label">Costumes</span></div>
-        </div>
-      </section>
-
-      <!-- Event details -->
-      <aside>
-        <div class="details-card" role="region" aria-label="Event details">
-          <div class="details-heading">Party Details</div>
-
-          <div class="info-row">
-            <div class="info-icon" aria-hidden="true">📅</div>
-            <div class="info-text">
-              <div class="label">When</div>
-              <div class="value">October 26, 2026</div>
-            </div>
-          </div>
-
-          <div class="info-row">
-            <div class="info-icon" aria-hidden="true">📍</div>
-            <div class="info-text">
-              <div class="label">Where</div>
-              <div class="value">TBD</div>
-            </div>
-          </div>
-
-          <div class="info-row">
-            <div class="info-icon" aria-hidden="true">🎭</div>
-            <div class="info-text">
-              <div class="label">Dress Code</div>
-              <div class="value">Costume Party!</div>
-            </div>
-          </div>
-
-          <div class="invite-blurb">
-            <div class="blurb-title">🎂 You're Invited!</div>
-            <p>Zavier turns 7! Expect Roblox-themed games, prizes, and cake. Dress comfy and bring your best costume — best costume wins a prize!</p>
-          </div>
-
-          <div class="card-actions">
-            <button class="btn-primary" id="rsvpOpen2"    type="button">🎉 RSVP Now</button>
-            <button class="btn-gold"    id="regretsOpen2" type="button">😢 Can't Go</button>
-          </div>
-
-          <div class="contact-row">
-            <span>📞</span>
-            <span>Questions? Contact <strong>Neil • +63 912 345 6789</strong></span>
+    <!-- ===== HORIZONTAL GALLERY ===== -->
+    <section class="hgallery" id="gallerySection" aria-label="Photos of Zavier">
+      <div class="hgallery-head">
+        <div class="eyebrow" data-reveal="up"><span class="idx">03</span> Meet the star</div>
+        <h2 class="sec-title" data-reveal="up">Say hello<br>to <em>Zavier</em></h2>
+      </div>
+      <div class="hgallery-viewport">
+        <div class="hgallery-track" id="hgTrack">
+          <figure class="hg-card">
+            <div class="hg-frame"><img class="skewable" src="1.jpg" alt="Zavier with his moving-up ceremony medal" width="1537" height="2048" decoding="async"></div>
+            <figcaption class="hg-caption"><span class="num">(01)</span><span class="txt">All grown up</span></figcaption>
+          </figure>
+          <figure class="hg-card">
+            <div class="hg-frame"><img class="skewable" src="2.jpg" alt="Zavier dressed as Juan Tamad for costume day" width="720" height="1024" decoding="async"></div>
+            <figcaption class="hg-caption"><span class="num">(02)</span><span class="txt">Costume star</span></figcaption>
+          </figure>
+          <figure class="hg-card">
+            <div class="hg-frame"><img class="skewable" src="3.jpg" alt="Zavier in Kid Scout uniform giving the salute" width="768" height="1005" decoding="async"></div>
+            <figcaption class="hg-caption"><span class="num">(03)</span><span class="txt">Ready for adventure</span></figcaption>
+          </figure>
+          <figure class="hg-card">
+            <div class="hg-frame"><img class="skewable" src="4.jpg" alt="Zavier smiling with a peace sign" width="768" height="1024" decoding="async"></div>
+            <figcaption class="hg-caption"><span class="num">(04)</span><span class="txt">All smiles</span></figcaption>
+          </figure>
+          <figure class="hg-card">
+            <div class="hg-frame"><img class="skewable" src="5.jpg" alt="Zavier playing on a garden swing" width="386" height="515" decoding="async"></div>
+            <figcaption class="hg-caption"><span class="num">(05)</span><span class="txt">Having a blast</span></figcaption>
+          </figure>
+          <div class="hg-end">
+            <span class="big">See you there!</span>
+            <span class="small">31 · 10 · 2026 · Jollibee BGC</span>
           </div>
         </div>
-      </aside>
+      </div>
+    </section>
 
-    </main>
+    <!-- ===== ACTIVITIES: STICKY STACK ===== -->
+    <section class="section" aria-label="What to expect">
+      <div class="container">
+        <div class="eyebrow" data-reveal="up"><span class="idx">04</span> What to expect</div>
+        <h2 class="sec-title" data-reveal="up">A party made<br>for <em>fun</em></h2>
 
-    <footer class="footer">
-      <p>Made with ❤️ for Zavier's birthday · October 2026 🎉</p>
+        <div class="stack-cards">
+          <div class="stack-card">
+            <div>
+              <h3 class="stack-title">Roblox Games</h3>
+              <p class="stack-desc">Screen-to-real-life mini games all afternoon. Obby races, quizzes, and challenges — winners climb the leaderboard.</p>
+            </div>
+            <span class="stack-emoji">🎮</span>
+            <span class="stack-idx">01</span>
+          </div>
+          <div class="stack-card">
+            <div>
+              <h3 class="stack-title">Prizes</h3>
+              <p class="stack-desc">Every game has loot. And the best costume of the day takes home a special grand prize.</p>
+            </div>
+            <span class="stack-emoji">🏆</span>
+            <span class="stack-idx">02</span>
+          </div>
+          <div class="stack-card">
+            <div>
+              <h3 class="stack-title">Birthday Cake</h3>
+              <p class="stack-desc">The big moment — candles, wishes, and cake for everyone. Seven never tasted so good.</p>
+            </div>
+            <span class="stack-emoji">🎂</span>
+            <span class="stack-idx">03</span>
+          </div>
+          <div class="stack-card">
+            <div>
+              <h3 class="stack-title">Costume Parade</h3>
+              <p class="stack-desc">Show off your look on the mini runway. Heroes, villains, dragons — everyone gets their moment.</p>
+            </div>
+            <span class="stack-emoji">🎭</span>
+            <span class="stack-idx">04</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== GIFT ===== -->
+    <section class="section gift" aria-label="Gift note">
+      <div class="container">
+        <span class="gift-mark" data-reveal="up">”</span>
+        <p class="gift-quote" data-reveal="up">Your presence is the <em>best present</em>.</p>
+        <p class="gift-note" data-reveal="up">Zavier is most excited to celebrate with the people he loves. If you'd like to bring something along, that's kind of you — but just being there is more than enough.</p>
+      </div>
+    </section>
+
+    <!-- ===== RSVP CTA ===== -->
+    <section class="section rsvp-cta" aria-label="RSVP">
+      <div class="rsvp-ghost" data-speed="0.6" aria-hidden="true">RSVP</div>
+      <div class="container">
+        <div class="eyebrow eyebrow--center" data-reveal="up">Don't miss it</div>
+        <h2 class="sec-title" data-reveal="up">Will you be <em>there?</em></h2>
+        <p class="sec-sub" data-reveal="up" style="margin-left:auto;margin-right:auto;text-align:center">Tell us you're coming — we'll save you a seat, a slice of cake, and a spot on the costume parade.</p>
+        <div class="btn-row" data-reveal="up">
+          <button class="btn btn--primary" type="button" data-open-modal="rsvpModal"><span class="btn-text">🎉 RSVP Now</span></button>
+          <button class="btn btn--gold" type="button" data-open-modal="regretsModal"><span class="btn-text">😢 Can't Go</span></button>
+        </div>
+        <div data-reveal="up"><span class="contact-pill">📞 Questions? Contact <strong>Neil · +63 912 345 6789</strong></span></div>
+      </div>
+    </section>
+
+    <!-- ===== FAQ ===== -->
+    <section class="section" aria-label="Frequently asked questions">
+      <div class="container">
+        <div class="eyebrow" data-reveal="up"><span class="idx">05</span> Good to know</div>
+        <h2 class="sec-title" data-reveal="up">Quick <em>questions</em></h2>
+
+        <div class="faq-list">
+          <div class="faq-item" data-reveal="up">
+            <button class="faq-question" aria-expanded="false">
+              What should we wear?
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer-wrap"><div class="faq-answer"><p>It's a costume party — and any costume works! Come as anyone or anything you love: a hero, something spooky (it's Halloween!), an animal, a game character, whatever makes you happy. Comfort first; there's no wrong answer.</p></div></div>
+          </div>
+          <div class="faq-item" data-reveal="up">
+            <button class="faq-question" aria-expanded="false">
+              Can I bring my family?
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer-wrap"><div class="faq-answer"><p>Of course! Add your companions right in the RSVP form so we know exactly who's coming.</p></div></div>
+          </div>
+          <div class="faq-item" data-reveal="up">
+            <button class="faq-question" aria-expanded="false">
+              Where exactly is the party?
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer-wrap"><div class="faq-answer"><p>At the Jollibee 1000th Store — 39th Street corner Triangle Drive, Bonifacio Global City (BGC), Taguig. Tap the "Where" row above for Google Maps directions.</p></div></div>
+          </div>
+          <div class="faq-item" data-reveal="up">
+            <button class="faq-question" aria-expanded="false">
+              My child has allergies — who do I tell?
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer-wrap"><div class="faq-answer"><p>Add a note in the message field when you RSVP, or contact Neil directly so we can plan around it.</p></div></div>
+          </div>
+          <div class="faq-item" data-reveal="up">
+            <button class="faq-question" aria-expanded="false">
+              Who do I contact with questions?
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer-wrap"><div class="faq-answer"><p>Reach out to Neil at +63 912 345 6789 for anything at all.</p></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== THANKS ===== -->
+    <section class="section thanks" aria-label="Thank you">
+      <div class="container">
+        <h2 class="thanks-title" data-reveal="up">Thank you for being<br>part of <em>Zavier's story</em></h2>
+        <p class="thanks-sub" data-reveal="up">We can't wait to celebrate seven wonderful years with you by our side.</p>
+      </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="site-footer">
+      <div class="marquee marquee--tilt-alt" aria-hidden="true">
+        <div class="marquee-inner skewable">
+          <div class="marquee-chunk">
+            <span>RSVP now</span><span class="star">✦</span>
+            <span class="ghosted">Costume party</span><span class="star">✦</span>
+            <span>October 31 · 2026</span><span class="star">✦</span>
+            <span class="ghosted">Zavier turns seven</span><span class="star">✦</span>
+          </div>
+          <div class="marquee-chunk">
+            <span>RSVP now</span><span class="star">✦</span>
+            <span class="ghosted">Costume party</span><span class="star">✦</span>
+            <span>October 31 · 2026</span><span class="star">✦</span>
+            <span class="ghosted">Zavier turns seven</span><span class="star">✦</span>
+          </div>
+        </div>
+      </div>
+      <div class="container">
+        <div class="footer-outline" style="margin-top:clamp(40px,7vh,80px)">See you<br>there!</div>
+        <p class="footer-meta">Made with ❤️ for Zavier <span class="sep">✦</span> October 2026 <span class="sep">✦</span> A little corner of the internet, just for this party</p>
+      </div>
     </footer>
-  </div>
 
-  <!-- ===== MODALS (IDs/forms preserved exactly) ===== -->
+  </main>
 
-  <!-- RSVP Modal -->
-  <div class="modal-backdrop" id="rsvpModal" role="dialog" aria-modal="true" aria-hidden="true" style="display:none">
+  <!-- ===== RSVP MODAL ===== -->
+  <div class="modal-backdrop" id="rsvpModal" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="modal" role="document" aria-labelledby="rsvpTitle">
       <div class="modal-header">
-        <h2 id="rsvpTitle">🎉 RSVP — Zavier's 7th</h2>
+        <div class="modal-icon">🎉</div>
+        <div>
+          <h2 id="rsvpTitle">RSVP — Zavier's 7th</h2>
+          <div class="modal-sub">We can't wait to see you there!</div>
+        </div>
       </div>
       <form id="rsvpForm" novalidate>
-        <div class="field">
+        <div class="field-float">
+          <input id="fullname" name="fullname" class="input" type="text" placeholder=" " required>
           <label for="fullname">Full Name</label>
-          <input id="fullname" name="fullname" class="input" type="text" placeholder="Juan dela Cruz" required>
-          <span id="errName" class="field-error"></span>
         </div>
+        <span id="errName" class="field-error"></span>
+
         <div class="form-grid-2">
-          <div class="field">
-            <label for="phone">Contact Number</label>
-            <input id="phone" name="phone" class="input" type="text" placeholder="09XXXXXXXXX" inputmode="tel" autocomplete="tel" required>
+          <div>
+            <div class="field-float">
+              <input id="phone" name="phone" class="input" type="text" placeholder=" " inputmode="tel" autocomplete="tel" required>
+              <label for="phone">Contact Number</label>
+              <span class="field-icon">📱</span>
+            </div>
             <span id="errPhone" class="field-error"></span>
           </div>
-          <div class="field">
-            <label for="email">Email <span style="opacity:.5;font-weight:400">(optional)</span></label>
-            <input id="email" name="email" class="input" type="email" placeholder="you@example.com" autocomplete="email">
+          <div>
+            <div class="field-float">
+              <input id="email" name="email" class="input" type="email" placeholder=" " autocomplete="email">
+              <label for="email">Email (optional)</label>
+              <span class="field-icon">✉️</span>
+            </div>
             <span id="errEmail" class="field-error"></span>
           </div>
         </div>
-        <div class="field">
+
+        <div class="field-plain">
           <label>Companions</label>
           <div class="companion-list" id="companions"></div>
-          <div style="margin-top:8px">
-            <button type="button" id="addCompanion" class="btn-modal-ghost" style="font-size:13px;width:100%">＋ Add Companion</button>
+          <div style="margin-top:10px">
+            <button type="button" class="btn btn--ghost btn--sm btn--block" data-add-companion><span class="btn-text">＋ Add Companion</span></button>
           </div>
         </div>
-        <div class="field">
-          <label for="message">Message <span style="opacity:.5;font-weight:400">(optional)</span></label>
-          <textarea id="message" name="message" class="input" placeholder="Allergies, notes, or anything else…"></textarea>
+
+        <div class="field-float">
+          <textarea id="message" name="message" class="input" placeholder=" "></textarea>
+          <label for="message">Message (optional)</label>
         </div>
+
         <div class="form-actions">
-          <button type="submit" class="btn-modal-primary">🎉 I'm Going!</button>
-          <button type="button" id="cancelRsvp" class="btn-modal-ghost">Cancel</button>
+          <button type="submit" class="btn btn--primary"><span class="btn-text">🎉 I'm Going!</span><span class="btn-spinner"></span></button>
+          <button type="button" class="btn btn--ghost" data-close-modal><span class="btn-text">Cancel</span></button>
         </div>
         <div id="rsvpFeedback" class="feedback" aria-live="polite"></div>
       </form>
     </div>
   </div>
 
-  <!-- Regrets Modal -->
-  <div class="modal-backdrop" id="regretsModal" role="dialog" aria-modal="true" aria-hidden="true" style="display:none">
+  <!-- ===== REGRETS MODAL ===== -->
+  <div class="modal-backdrop" id="regretsModal" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="modal" role="document" aria-labelledby="regretsTitle">
       <div class="modal-header">
-        <h2 id="regretsTitle">😢 Can't Make It</h2>
+        <div class="modal-icon">😢</div>
+        <div>
+          <h2 id="regretsTitle">Can't Make It</h2>
+          <div class="modal-sub">We'll miss you — thanks for letting us know.</div>
+        </div>
       </div>
       <form id="regretsForm" novalidate>
-        <div class="field">
+        <div class="field-float">
+          <input id="regName" name="regName" class="input" type="text" placeholder=" " required>
           <label for="regName">Full Name</label>
-          <input id="regName" name="regName" class="input" type="text" placeholder="Your name" required>
         </div>
-        <div class="field">
-          <label for="regMessage">Message <span style="opacity:.5;font-weight:400">(optional)</span></label>
-          <textarea id="regMessage" name="regMessage" class="input" placeholder="Sorry we can't make it…"></textarea>
+        <div class="field-float">
+          <textarea id="regMessage" name="regMessage" class="input" placeholder=" "></textarea>
+          <label for="regMessage">Message (optional)</label>
         </div>
         <div class="form-actions">
-          <button type="submit" class="btn-modal-yellow">Send Regrets</button>
-          <button type="button" id="cancelRegrets" class="btn-modal-ghost">Cancel</button>
+          <button type="submit" class="btn btn--gold"><span class="btn-text">Send Regrets</span><span class="btn-spinner"></span></button>
+          <button type="button" class="btn btn--ghost" data-close-modal><span class="btn-text">Cancel</span></button>
         </div>
         <div id="regretsFeedback" class="feedback" aria-live="polite"></div>
       </form>
     </div>
   </div>
 
-  <!-- Login Modal -->
-  <div class="modal-backdrop" id="loginModal" role="dialog" aria-modal="true" aria-hidden="true" style="display:none">
+  <!-- ===== LOGIN MODAL ===== -->
+  <div class="modal-backdrop" id="loginModal" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="modal" role="document" aria-labelledby="loginTitle">
       <div class="modal-header">
-        <h2 id="loginTitle">Admin Login ⚙</h2>
+        <div class="modal-icon">🔐</div>
+        <div>
+          <h2 id="loginTitle">Admin Login</h2>
+          <div class="modal-sub">Sign in to manage RSVPs</div>
+        </div>
       </div>
       <form id="loginForm" novalidate>
-        <div class="field">
+        <div class="field-float">
+          <input id="loginUser" name="loginUser" class="input" type="text" placeholder=" " autocomplete="username" required>
           <label for="loginUser">Username</label>
-          <input id="loginUser" name="loginUser" class="input" type="text" autocomplete="username" required>
         </div>
-        <div class="field">
-          <label for="loginPass">Password</label>
-          <div class="password-wrapper">
-            <input id="loginPass" name="loginPass" class="input" type="password" autocomplete="current-password" required>
-            <button id="togglePass" type="button" class="toggle-pass-btn" aria-label="Show password" title="Show password">👁</button>
+        <div class="password-wrapper">
+          <div class="field-float">
+            <input id="loginPass" name="loginPass" class="input" type="password" placeholder=" " autocomplete="current-password" required>
+            <label for="loginPass">Password</label>
           </div>
+          <button type="button" class="toggle-pass-btn" data-toggle-pass="loginPass" aria-label="Show password">👁</button>
         </div>
         <div class="form-actions">
-          <button type="submit" class="btn-modal-primary">Login</button>
-          <button type="button" id="cancelLogin" class="btn-modal-ghost">Cancel</button>
+          <button type="submit" class="btn btn--primary"><span class="btn-text">Login</span><span class="btn-spinner"></span></button>
+          <button type="button" class="btn btn--ghost" data-close-modal><span class="btn-text">Cancel</span></button>
         </div>
         <div id="loginFeedback" class="feedback" aria-live="polite"></div>
       </form>
     </div>
   </div>
 
-  <!-- Confirm Modal -->
-  <div class="modal-backdrop" id="confirmModal" role="dialog" aria-modal="true" aria-hidden="true" style="display:none;align-items:center;justify-content:center">
-    <div class="modal" role="document" aria-labelledby="confirmTitle" style="max-width:420px;position:relative;">
-      <button id="confirmClose" aria-label="Close confirmation">✕</button>
-      <div style="padding-top:8px">
-        <h3 id="confirmTitle" style="font-family:var(--font-head);font-size:22px;color:var(--white);margin-bottom:10px">🎉 Saved!</h3>
-        <div id="confirmMessage"></div>
+  <!-- ===== CONFIRM / SUCCESS MODAL ===== -->
+  <div class="modal-backdrop is-center success-modal" id="confirmModal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal" role="document" aria-labelledby="confirmTitle">
+      <button id="confirmClose" class="success-close" aria-label="Close confirmation" data-close-modal>✕</button>
+      <div class="success-badge" aria-hidden="true">
+        <svg viewBox="0 0 90 90">
+          <defs>
+            <linearGradient id="successGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#FF3D8A"/>
+              <stop offset="50%" stop-color="#FFC53D"/>
+              <stop offset="100%" stop-color="#23E5B0"/>
+            </linearGradient>
+          </defs>
+          <circle class="ring" cx="45" cy="45" r="35"/>
+          <path class="check" d="M28 46 L40 58 L64 32"/>
+        </svg>
       </div>
+      <h3 id="confirmTitle">Saved!</h3>
+      <div id="confirmMessage"></div>
     </div>
   </div>
 
-  <!-- ===== BACKGROUND ANIMATOR ===== -->
-  <script>
-    (function() {
-      const canvas = document.getElementById('bgCanvas');
-      const costumes = ['🦸','🧙','🦄','🎃','🦹','⚡','🌟','🎭','👻','🐉','🦊','🎪'];
-      const confettiColors = ['#FF2D78','#FFD700','#00F5A0','#9B5DE5','#00BFFF','#FF8C00'];
+  <!-- ===== SCRIPTS =====
+       Classic scripts only for visuals so everything also works when
+       the file is opened directly (file://). Firebase logic is an
+       inline module below for the same reason. -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js" defer></script>
+  <script src="main.js" defer></script>
+  <script src="bg3d.js" defer></script>
 
-      // Stars
-      for (let i = 0; i < 60; i++) {
-        const s = document.createElement('div');
-        s.className = 'star';
-        const sz = Math.random() * 3 + 1;
-        s.style.cssText = `width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;animation-duration:${2+Math.random()*4}s;animation-delay:${-Math.random()*6}s`;
-        canvas.appendChild(s);
-      }
-
-      // Floating costumes
-      costumes.forEach((emoji, i) => {
-        const f = document.createElement('div');
-        f.className = 'floaty';
-        f.textContent = emoji;
-        const dur = 14 + Math.random() * 12;
-        f.style.cssText = `left:${5+Math.random()*90}%;bottom:-60px;animation-duration:${dur}s;animation-delay:${-Math.random()*dur}s;font-size:${1.6+Math.random()*1.4}rem`;
-        canvas.appendChild(f);
-      });
-
-      // Confetti
-      for (let i = 0; i < 30; i++) {
-        const c = document.createElement('div');
-        c.className = 'confetti';
-        const col = confettiColors[Math.floor(Math.random()*confettiColors.length)];
-        const dur = 5 + Math.random() * 8;
-        c.style.cssText = `background:${col};left:${Math.random()*100}%;top:-10px;animation-duration:${dur}s;animation-delay:${-Math.random()*dur}s;transform:rotate(${Math.random()*360}deg);width:${5+Math.random()*7}px;height:${5+Math.random()*7}px;border-radius:${Math.random()>0.5?'50%':'2px'}`;
-        canvas.appendChild(c);
-      }
-    })();
-  </script>
-
-  <!-- ===== COUNTDOWN TIMER ===== -->
-  <script>
-    (function() {
-      const target = new Date('2026-10-26T00:00:00').getTime();
-      const els = {
-        d: document.getElementById('cdDays'),
-        h: document.getElementById('cdHrs'),
-        m: document.getElementById('cdMins'),
-        s: document.getElementById('cdSecs')
-      };
-      function pad(n){ return String(n).padStart(2,'0'); }
-      function tick() {
-        const diff = target - Date.now();
-        if (diff <= 0) {
-          if(els.d) els.d.textContent = '00';
-          if(els.h) els.h.textContent = '00';
-          if(els.m) els.m.textContent = '00';
-          if(els.s) els.s.textContent = '🎉';
-          return;
-        }
-        const days = Math.floor(diff / 86400000);
-        const hrs  = Math.floor((diff % 86400000) / 3600000);
-        const mins = Math.floor((diff % 3600000) / 60000);
-        const secs = Math.floor((diff % 60000) / 1000);
-        if(els.d) els.d.textContent = pad(days);
-        if(els.h) els.h.textContent = pad(hrs);
-        if(els.m) els.m.textContent = pad(mins);
-        if(els.s) els.s.textContent = pad(secs);
-      }
-      tick();
-      setInterval(tick, 1000);
-    })();
-  </script>
-
-  <!-- ===== FIREBASE + APP LOGIC (unchanged) ===== -->
+  <!-- ===== FIREBASE RSVP LOGIC (inline module so file:// works) ===== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
     import {
-      getFirestore, collection, addDoc, query, where, getDocs, orderBy, serverTimestamp
+      getFirestore, collection, addDoc, query, where, getDocs, serverTimestamp
     } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
     import {
       getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged
@@ -1301,520 +514,212 @@
     };
 
     const app = initializeApp(firebaseConfig);
-    const db  = getFirestore(app);
+    const db = getFirestore(app);
     const auth = getAuth(app);
     const ADMIN_EMAIL = 'nadelacruz01@gmail.com';
 
-    function nowISO(){ return new Date().toISOString(); }
-    function escapeHtml(str=''){ return String(str).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;'); }
-    function normalizeName(name){ return (name||'').trim().replace(/\s+/g,' ').toLowerCase(); }
-    function normalizePhone(phone){ if(!phone) return ''; return phone.replace(/[^\d+]/g,'').trim(); }
+    const byId = (id) => document.getElementById(id);
+    const nowISO = () => new Date().toISOString();
+    const normalizeName = (name) => (name || '').trim().replace(/\s+/g, ' ').toLowerCase();
+    const normalizePhone = (phone) => (phone ? phone.replace(/[^\d+]/g, '').trim() : '');
 
-    function loadLocalSubmissions(){
-      try { const raw = localStorage.getItem('rsvp_submissions'); return raw ? JSON.parse(raw) : []; } catch(e){ return []; }
+    function loadLocalSubmissions() {
+      try { return JSON.parse(localStorage.getItem('rsvp_submissions') || '[]'); }
+      catch { return []; }
     }
-    function saveLocalSubmission(obj){
+    function saveLocalSubmission(obj) {
       const arr = loadLocalSubmissions();
       arr.push(obj);
       localStorage.setItem('rsvp_submissions', JSON.stringify(arr));
     }
+    function isDuplicateEntryLocal(fullname, phone) {
+      const n = normalizeName(fullname), p = normalizePhone(phone);
+      if (!n || !p) return false;
+      return loadLocalSubmissions().some((item) => normalizeName(item.fullname || item.regName || '') === n && normalizePhone(item.phone || '') === p);
+    }
 
-    async function writeSubmissionToFirestore(sub){
+    async function writeSubmissionToFirestore(sub) {
       try {
-        const doc = {
+        await addDoc(collection(db, 'submissions'), {
           ...sub,
           fullname_norm: normalizeName(sub.fullname || sub.regName || ''),
           phone_norm: normalizePhone(sub.phone || ''),
-          createdAt: serverTimestamp()
-        };
-        await addDoc(collection(db, 'submissions'), doc);
+          createdAt: serverTimestamp(),
+        });
         return true;
       } catch (err) {
         console.error('Firestore write failed', err);
         return false;
       }
     }
-
-    async function isDuplicateInFirestore(fullname, phone){
+    async function isDuplicateInFirestore(fullname, phone) {
       try {
-        const fn = normalizeName(fullname);
-        const pn = normalizePhone(phone);
-        if(!fn || !pn) return false;
+        const fn = normalizeName(fullname), pn = normalizePhone(phone);
+        if (!fn || !pn) return false;
         const q = query(collection(db, 'submissions'), where('fullname_norm', '==', fn), where('phone_norm', '==', pn));
         const snap = await getDocs(q);
         return !snap.empty;
-      } catch (err) {
+      } catch {
+        return false;
+      }
+    }
+    async function isNameRegisteredInFirestore(fullname) {
+      try {
+        const fn = normalizeName(fullname);
+        if (!fn) return false;
+        const snap = await getDocs(query(collection(db, 'submissions'), where('fullname_norm', '==', fn)));
+        return !snap.empty;
+      } catch {
         return false;
       }
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
+    /* ---- RSVP form ---- */
+    (function initRsvpForm() {
+      const form = byId('rsvpForm');
+      if (!form) return;
+      const feedback = byId('rsvpFeedback');
+      const submitBtn = form.querySelector('button[type="submit"]');
+      let submitting = false;
 
-      /* ---- Slider JS ---- */
-      (function () {
-        const slidesEl = document.getElementById('slides');
-        const prev = document.getElementById('prev');
-        const next = document.getElementById('next');
-        const dotsContainer = document.getElementById('dots');
-        const sliderEl = document.querySelector('.slider');
-        if (!slidesEl || !sliderEl) return;
+      const validPHPhone = (v) => !!v && /^(09\d{9}|\+63\d{10})$/.test(v.trim());
+      const validEmail = (v) => !v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
 
-        const slides = Array.from(slidesEl.children).filter(n => n.nodeType === 1);
-        if (slides.length === 0) return;
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (submitting) return;
 
-        let index = 0;
-        const total = slides.length;
-        const ANIM_MS = 420;
-        const DEBOUNCE_MS = ANIM_MS + 60;
-        let isAnimating = false;
-        let autoId = null;
+        PartyUI.clearFieldErrors('errName', 'errPhone', 'errEmail');
+        feedback.textContent = '';
 
-        slides.forEach(s => {
-          s.style.flex = `0 0 ${100 / total}%`;
-          s.style.maxWidth = `${100 / total}%`;
-          s.style.contain = 'paint';
-        });
+        const name = byId('fullname').value.trim();
+        const phone = byId('phone').value.trim();
+        const email = byId('email').value.trim();
 
-        slidesEl.style.width = (total * 100) + '%';
-        slidesEl.style.display = 'flex';
-        slidesEl.style.transition = `transform ${ANIM_MS}ms cubic-bezier(.2,.9,.2,1)`;
-        slidesEl.style.willChange = 'transform';
-        slidesEl.style.backfaceVisibility = 'hidden';
-        slidesEl.style.touchAction = 'pan-y';
-        slidesEl.style.gap = '0';
+        let ok = true;
+        if (!name) { ok = false; PartyUI.setFieldError('fullname', 'errName', 'Please enter your full name.'); }
+        if (!validPHPhone(phone)) { ok = false; PartyUI.setFieldError('phone', 'errPhone', 'Enter a valid PH mobile number (09XXXXXXXXX or +63XXXXXXXXXX).'); }
+        if (!validEmail(email)) { ok = false; PartyUI.setFieldError('email', 'errEmail', 'Enter a valid email or leave blank.'); }
+        if (!ok) return;
 
-        if (dotsContainer) {
-          dotsContainer.innerHTML = '';
-          for (let i = 0; i < total; i++) {
-            const d = document.createElement('button');
-            d.className = 'dot' + (i === 0 ? ' active' : '');
-            d.setAttribute('data-index', i);
-            d.setAttribute('aria-label', 'Go to photo ' + (i + 1));
-            d.addEventListener('click', () => goTo(i));
-            dotsContainer.appendChild(d);
-          }
+        submitting = true;
+        PartyUI.setLoading(submitBtn, true, 'Saving…');
+
+        if (isDuplicateEntryLocal(name, phone)) {
+          feedback.textContent = "You're already registered. Contact Neil Dela Cruz if there's an issue.";
+          PartyUI.setLoading(submitBtn, false);
+          submitting = false;
+          return;
+        }
+        if (await isDuplicateInFirestore(name, phone)) {
+          feedback.textContent = "You're already registered. Contact Neil Dela Cruz if there's an issue.";
+          PartyUI.setLoading(submitBtn, false);
+          submitting = false;
+          return;
         }
 
-        slides.forEach(slide => {
-          const img = slide.querySelector('img');
-          if (!img) return;
-          img.style.transition = 'none';
-          img.decoding = img.decoding || 'async';
-        });
+        const submission = {
+          status: 'going',
+          fullname: name,
+          phone,
+          email,
+          companions: PartyUI.getCompanions(),
+          message: byId('message').value.trim(),
+          timestamp: nowISO(),
+        };
 
-        const pctPerSlide = 100 / total;
+        const wrote = await writeSubmissionToFirestore(submission);
+        if (!wrote) saveLocalSubmission(submission);
 
-        function setTransformForIndex(i, instant = false) {
-          const pct = -i * pctPerSlide;
-          if (instant) slidesEl.style.transition = 'none';
-          else slidesEl.style.transition = `transform ${ANIM_MS}ms cubic-bezier(.2,.9,.2,1)`;
-          slidesEl.style.transform = `translate3d(${pct}%,0,0)`;
+        PartyUI.showSuccess(`Thank you, ${name || 'friend'}! Your RSVP has been saved. See you at the party! 🎉`);
+        form.reset();
+        PartyUI.clearCompanions();
+
+        setTimeout(() => {
+          PartyUI.closeModal(byId('rsvpModal'));
+          PartyUI.setLoading(submitBtn, false);
+          submitting = false;
+        }, 700);
+      });
+    })();
+
+    /* ---- Regrets form ---- */
+    (function initRegretsForm() {
+      const form = byId('regretsForm');
+      if (!form) return;
+      const feedback = byId('regretsFeedback');
+      const submitBtn = form.querySelector('button[type="submit"]');
+      let submitting = false;
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (submitting) return;
+        feedback.textContent = '';
+
+        const name = byId('regName').value.trim();
+        const message = byId('regMessage').value.trim();
+        if (!name) { feedback.textContent = 'Please enter your name.'; return; }
+
+        submitting = true;
+        PartyUI.setLoading(submitBtn, true, 'Saving…');
+
+        if (await isNameRegisteredInFirestore(name)) {
+          feedback.textContent = "You're already registered. Contact Neil Dela Cruz if there's an issue.";
+          PartyUI.setLoading(submitBtn, false);
+          submitting = false;
+          return;
         }
 
-        function update(instant = false) {
-          if (isAnimating && !instant) return;
-          isAnimating = true;
-          setTransformForIndex(index, instant);
-          updateDots();
-          setTimeout(() => { isAnimating = false; }, DEBOUNCE_MS);
-        }
+        const submission = { status: 'regrets', fullname: name, phone: '', email: '', companions: '', message, timestamp: nowISO() };
+        const wrote = await writeSubmissionToFirestore(submission);
+        if (!wrote) saveLocalSubmission(submission);
 
-        function updateDots() {
-          if (!dotsContainer) return;
-          Array.from(dotsContainer.children).forEach((d, i) => {
-            d.classList.toggle('active', i === index);
-            d.setAttribute('aria-selected', i === index ? 'true' : 'false');
-          });
-        }
+        PartyUI.showSuccess(`Thanks, ${name || 'friend'}. Your regrets have been saved. We'll miss you! 😢`);
+        form.reset();
 
-        function goTo(i) {
-          if (isAnimating) return;
-          index = (i + total) % total;
-          update();
-        }
+        setTimeout(() => {
+          PartyUI.closeModal(byId('regretsModal'));
+          PartyUI.setLoading(submitBtn, false);
+          submitting = false;
+        }, 700);
+      });
+    })();
 
-        if (prev) prev.addEventListener('click', () => goTo(index - 1));
-        if (next) next.addEventListener('click', () => goTo(index + 1));
+    /* ---- Admin login form ---- */
+    (function initLoginForm() {
+      const form = byId('loginForm');
+      if (!form) return;
+      const feedback = byId('loginFeedback');
+      const submitBtn = form.querySelector('button[type="submit"]');
 
-        function startAuto(ms = 4000) {
-          stopAuto();
-          autoId = setInterval(() => {
-            if (!isAnimating) goTo(index + 1);
-          }, ms);
-        }
-        function stopAuto() {
-          if (autoId) { clearInterval(autoId); autoId = null; }
-        }
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        feedback.textContent = '';
+        const user = byId('loginUser').value.trim();
+        const pass = byId('loginPass').value;
 
-        if (sliderEl) {
-          sliderEl.addEventListener('mouseenter', stopAuto);
-          sliderEl.addEventListener('mouseleave', () => startAuto(4000));
-          sliderEl.addEventListener('touchstart', stopAuto, { passive: true });
-          sliderEl.addEventListener('touchend', () => startAuto(4000));
-        }
-
-        let startX = 0, currentX = 0, dragging = false, rafId = null;
-        function applyDragTransform(pct) {
-          slidesEl.style.transition = 'none';
-          slidesEl.style.transform = `translate3d(${pct}%,0,0)`;
-        }
-
-        slidesEl.addEventListener('touchstart', (e) => {
-          if (e.touches.length !== 1) return;
-          stopAuto();
-          startX = e.touches[0].clientX;
-          currentX = startX;
-          dragging = true;
-          if (rafId) cancelAnimationFrame(rafId);
-        }, { passive: true });
-
-        slidesEl.addEventListener('touchmove', (e) => {
-          if (!dragging) return;
-          currentX = e.touches[0].clientX;
-          const dx = currentX - startX;
-          const sliderWidth = sliderEl.clientWidth || sliderEl.getBoundingClientRect().width;
-          const pct = (dx / sliderWidth) * pctPerSlide;
-          const targetPct = -index * pctPerSlide + pct;
-          if (rafId) cancelAnimationFrame(rafId);
-          rafId = requestAnimationFrame(() => applyDragTransform(targetPct));
-        }, { passive: true });
-
-        slidesEl.addEventListener('touchend', () => {
-          if (!dragging) return;
-          dragging = false;
-          if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
-          slidesEl.style.transition = `transform ${ANIM_MS}ms cubic-bezier(.2,.9,.2,1)`;
-          const dx = currentX - startX;
-          if (Math.abs(dx) > 40) {
-            index = dx < 0 ? (index + 1) % total : (index - 1 + total) % total;
-          }
-          update();
-          setTimeout(() => startAuto(4000), DEBOUNCE_MS);
-        }, { passive: true });
-
-        setTransformForIndex(0, true);
-        updateDots();
-        requestAnimationFrame(() => startAuto(4000));
-      })();
-
-      /* ---- Modal helpers ---- */
-      function openModal(modal){ if (!modal) return; modal.style.display = 'flex'; modal.setAttribute('aria-hidden','false'); const first = modal.querySelector('input,textarea,button'); if(first) first.focus(); document.documentElement.style.overflow = 'hidden'; document.body.style.overflow = 'hidden'; }
-      function closeModal(modal){ if (!modal) return; modal.style.display = 'none'; modal.setAttribute('aria-hidden','true'); document.documentElement.style.overflow = ''; document.body.style.overflow = ''; }
-
-      /* ---- Modal open/close bindings ---- */
-      (function(){
-        const rsvpModal    = document.getElementById('rsvpModal');
-        const regretsModal = document.getElementById('regretsModal');
-
-        ['rsvpOpen','rsvpOpen2'].forEach(id => {
-          const btn = document.getElementById(id);
-          if (btn) btn.addEventListener('click', () => openModal(rsvpModal));
-        });
-        ['regretsOpen','regretsOpen2'].forEach(id => {
-          const btn = document.getElementById(id);
-          if (btn) btn.addEventListener('click', () => openModal(regretsModal));
-        });
-
-        const cancelRsvp    = document.getElementById('cancelRsvp');
-        const cancelRegrets = document.getElementById('cancelRegrets');
-        if (cancelRsvp)    cancelRsvp.addEventListener('click',    () => closeModal(rsvpModal));
-        if (cancelRegrets) cancelRegrets.addEventListener('click', () => closeModal(regretsModal));
-
-        [rsvpModal, regretsModal].forEach(m => {
-          if (!m) return;
-          m.addEventListener('click', (e) => { if (e.target === m) closeModal(m); });
-        });
-
-        /* Companions */
-        const companionsEl    = document.getElementById('companions');
-        const addCompanionBtn = document.getElementById('addCompanion');
-        function addCompanion(name=''){
-          if (!companionsEl) return;
-          const wrapper = document.createElement('div');
-          wrapper.className = 'companion-item';
-          const input = document.createElement('input');
-          input.type = 'text';
-          input.placeholder = 'Companion name';
-          input.value = name;
-          input.className = 'input';
-          input.style.height = '40px';
-          input.style.flex = '1';
-          const remove = document.createElement('button');
-          remove.type = 'button';
-          remove.innerText = 'Remove';
-          remove.className = 'btn-modal-ghost';
-          remove.style.cssText = 'padding:10px 16px;font-size:13px;height:42px;flex-shrink:0';
-          remove.addEventListener('click', () => wrapper.remove());
-          wrapper.appendChild(input);
-          wrapper.appendChild(remove);
-          companionsEl.appendChild(wrapper);
-          input.focus();
-        }
-        if (addCompanionBtn) addCompanionBtn.addEventListener('click', () => addCompanion());
-      })();
-
-      /* ---- Local helpers ---- */
-      function buildCompanionsString(formEl){
-        return Array.from(formEl.querySelectorAll('.companion-item input'))
-          .map(i => i.value.trim()).filter(Boolean).join(', ');
-      }
-      function isDuplicateEntryLocal(fullname, phone){
-        const normName = normalizeName(fullname);
-        const normPhone = normalizePhone(phone);
-        if(!normName || !normPhone) return false;
-        const arr = loadLocalSubmissions();
-        return arr.some(item => {
-          const iname = normalizeName(item.fullname || item.regName || '');
-          const iphone = normalizePhone(item.phone || '');
-          return iname === normName && iphone === normPhone;
-        });
-      }
-
-      let rsvpSubmitting = false;
-      let regretsSubmitting = false;
-
-      /* ---- RSVP form ---- */
-      (function(){
-        const rsvpForm   = document.getElementById('rsvpForm');
-        if (!rsvpForm) return;
-        const rsvpFeedback  = document.getElementById('rsvpFeedback');
-        const rsvpSubmitBtn = rsvpForm.querySelector('button[type="submit"]');
-
-        function validPHPhone(v){ if(!v) return false; v=v.trim(); return /^(09\d{9}|\+63\d{10})$/.test(v); }
-        function validEmail(v){ if(!v) return true; v=v.trim(); return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
-
-        const errNameEl  = document.getElementById('errName');
-        const errPhoneEl = document.getElementById('errPhone');
-        const errEmailEl = document.getElementById('errEmail');
-
-        rsvpForm.addEventListener('submit', async function(e){
-          e.preventDefault();
-          if (rsvpSubmitting) return;
-          rsvpSubmitting = true;
-          if (rsvpSubmitBtn) { rsvpSubmitBtn.disabled = true; rsvpSubmitBtn.innerText = 'Saving…'; }
-          rsvpFeedback.innerHTML = '';
-          if (errNameEl)  { errNameEl.style.display='none';  errNameEl.innerText=''; }
-          if (errPhoneEl) { errPhoneEl.style.display='none'; errPhoneEl.innerText=''; }
-          if (errEmailEl) { errEmailEl.style.display='none'; errEmailEl.innerText=''; }
-
-          const name  = document.getElementById('fullname').value.trim();
-          const phone = document.getElementById('phone').value.trim();
-          const email = document.getElementById('email').value.trim();
-
-          let ok = true;
-          if(!name){ ok=false; if(errNameEl){ errNameEl.innerText='Please enter your full name.'; errNameEl.style.display='block'; } }
-          if(!validPHPhone(phone)){ ok=false; if(errPhoneEl){ errPhoneEl.innerText='Enter a valid PH mobile number (09XXXXXXXXX or +63XXXXXXXXXX).'; errPhoneEl.style.display='block'; } }
-          if(!validEmail(email)){ ok=false; if(errEmailEl){ errEmailEl.innerText='Enter a valid email or leave blank.'; errEmailEl.style.display='block'; } }
-
-          if(!ok){
-            rsvpSubmitting = false;
-            if (rsvpSubmitBtn) { rsvpSubmitBtn.disabled=false; rsvpSubmitBtn.innerText="🎉 I'm Going!"; }
+        PartyUI.setLoading(submitBtn, true, 'Signing in…');
+        try {
+          const cred = await signInWithEmailAndPassword(auth, user, pass);
+          if (cred.user && cred.user.email === ADMIN_EMAIL) {
+            sessionStorage.setItem('admin_logged_in', '1');
+            window.location.href = 'admin.html';
             return;
           }
-
-          if(isDuplicateEntryLocal(name, phone)){
-            rsvpFeedback.innerHTML = '<div style="color:#FF6FA3">You are already registered locally. Contact Neil Dela Cruz if there\'s an issue.</div>';
-            rsvpSubmitting = false;
-            if (rsvpSubmitBtn) { rsvpSubmitBtn.disabled=false; rsvpSubmitBtn.innerText="🎉 I'm Going!"; }
-            return;
-          }
-
-          let duplicate = false;
-          try { duplicate = await isDuplicateInFirestore(name, phone); } catch(err){ duplicate=false; }
-          if(duplicate){
-            rsvpFeedback.innerHTML = '<div style="color:#FF6FA3">You are already registered. Contact Neil Dela Cruz if there\'s an issue.</div>';
-            rsvpSubmitting = false;
-            if (rsvpSubmitBtn) { rsvpSubmitBtn.disabled=false; rsvpSubmitBtn.innerText="🎉 I'm Going!"; }
-            return;
-          }
-
-          const companions = buildCompanionsString(rsvpForm);
-          const message = document.getElementById('message').value.trim();
-          const submission = { status:'going', fullname:name, phone, email, companions, message, timestamp:nowISO() };
-
-          let okWrite = false;
-          try { okWrite = await writeSubmissionToFirestore(submission); } catch(err){ okWrite=false; }
-          if(!okWrite){ saveLocalSubmission(submission); }
-
-          const safeName = name || 'friend';
-          (function showConfirmation(msg){
-            try {
-              const modal   = document.getElementById('confirmModal');
-              const msgEl   = document.getElementById('confirmMessage');
-              const closeBtn= document.getElementById('confirmClose');
-              if(!modal || !msgEl || !closeBtn){
-                const toast = document.createElement('div');
-                toast.style.cssText='position:fixed;left:50%;top:18%;transform:translateX(-50%);background:linear-gradient(90deg,var(--gold),var(--orange));color:#1a0800;padding:18px 22px;border-radius:14px;box-shadow:0 18px 60px rgba(0,0,0,.45);z-index:9999;font-weight:800;font-family:Baloo 2,sans-serif';
-                toast.innerText = msg;
-                document.body.appendChild(toast);
-                setTimeout(()=>{ toast.style.opacity='0'; toast.style.transition='opacity .4s'; setTimeout(()=>toast.remove(),500); },1800);
-                return;
-              }
-              msgEl.innerText = msg;
-              modal.style.display = 'flex';
-              modal.setAttribute('aria-hidden','false');
-              closeBtn.focus();
-              const onClose = () => { modal.style.display='none'; modal.setAttribute('aria-hidden','true'); closeBtn.removeEventListener('click',onClose); };
-              closeBtn.addEventListener('click', onClose);
-            } catch(e){ console.error(e); }
-          })(`Thank you, ${safeName}! Your RSVP has been saved. See you at the party! 🎉`);
-
-          rsvpForm.reset();
-          setTimeout(()=>{
-            const modal = document.getElementById('rsvpModal');
-            if(modal) modal.style.display='none';
-            if(rsvpSubmitBtn){ rsvpSubmitBtn.disabled=false; rsvpSubmitBtn.innerText="🎉 I'm Going!"; }
-            rsvpSubmitting = false;
-          }, 800);
-        });
-      })();
-
-      /* ---- Regrets form ---- */
-      (function(){
-        const regretsForm = document.getElementById('regretsForm');
-        if (!regretsForm) return;
-        const regretsFeedback  = document.getElementById('regretsFeedback');
-        const regretsSubmitBtn = regretsForm.querySelector('button[type="submit"]');
-
-        regretsForm.addEventListener('submit', async function(e){
-          e.preventDefault();
-          if (regretsSubmitting) return;
-          regretsSubmitting = true;
-          if (regretsSubmitBtn) { regretsSubmitBtn.disabled=true; regretsSubmitBtn.innerText='Saving…'; }
-          regretsFeedback.innerHTML = '';
-
-          const name    = document.getElementById('regName').value.trim();
-          const message = document.getElementById('regMessage').value.trim();
-          if(!name){
-            regretsFeedback.innerHTML='<div style="color:#FF6FA3">Please enter your name.</div>';
-            regretsSubmitting=false;
-            if(regretsSubmitBtn){ regretsSubmitBtn.disabled=false; regretsSubmitBtn.innerText='Send Regrets'; }
-            return;
-          }
-
-          const fn = normalizeName(name);
-          let foundSameName = false;
-          try {
-            const q = query(collection(db,'submissions'), where('fullname_norm','==',fn));
-            const snap = await getDocs(q);
-            foundSameName = !snap.empty;
-          } catch(err){ foundSameName=false; }
-          if(foundSameName){
-            regretsFeedback.innerHTML="<div style='color:#FF6FA3'>You are already registered. Contact Neil Dela Cruz if there's an issue.</div>";
-            regretsSubmitting=false;
-            if(regretsSubmitBtn){ regretsSubmitBtn.disabled=false; regretsSubmitBtn.innerText='Send Regrets'; }
-            return;
-          }
-
-          const submission = { status:'regrets', fullname:name, phone:'', email:'', companions:'', message, timestamp:nowISO() };
-          let okWrite=false;
-          try { okWrite=await writeSubmissionToFirestore(submission); } catch(err){ okWrite=false; }
-          if(!okWrite){ saveLocalSubmission(submission); }
-
-          if(regretsSubmitBtn){ regretsSubmitBtn.disabled=true; regretsSubmitBtn.innerText='Saved ✓'; }
-
-          const safeName = name || 'friend';
-          (function showConfirmation(msg){
-            try {
-              const modal   = document.getElementById('confirmModal');
-              const msgEl   = document.getElementById('confirmMessage');
-              const closeBtn= document.getElementById('confirmClose');
-              if(!modal || !msgEl || !closeBtn){
-                const toast = document.createElement('div');
-                toast.style.cssText='position:fixed;left:50%;top:18%;transform:translateX(-50%);background:linear-gradient(90deg,var(--gold),var(--orange));color:#1a0800;padding:18px 22px;border-radius:14px;box-shadow:0 18px 60px rgba(0,0,0,.45);z-index:9999;font-weight:800;font-family:Baloo 2,sans-serif';
-                toast.innerText = msg;
-                document.body.appendChild(toast);
-                setTimeout(()=>{ toast.style.opacity='0'; toast.style.transition='opacity .4s'; setTimeout(()=>toast.remove(),500); },1800);
-                return;
-              }
-              msgEl.innerText = msg;
-              modal.style.display = 'flex';
-              modal.setAttribute('aria-hidden','false');
-              closeBtn.focus();
-              const onClose = () => { modal.style.display='none'; modal.setAttribute('aria-hidden','true'); closeBtn.removeEventListener('click',onClose); };
-              closeBtn.addEventListener('click', onClose);
-            } catch(e){ console.error(e); }
-          })(`Thanks, ${safeName}. Your regrets have been saved. We'll miss you! 😢`);
-
-          regretsForm.reset();
-          setTimeout(()=>{
-            const modal = document.getElementById('regretsModal');
-            if(modal) modal.style.display='none';
-            if(regretsSubmitBtn){ regretsSubmitBtn.disabled=false; regretsSubmitBtn.innerText='Send Regrets'; }
-            regretsSubmitting=false;
-          },800);
-        });
-      })();
-
-      /* ---- Login modal ---- */
-      (function(){
-        const loginOpen  = document.getElementById('loginOpen');
-        const loginModal = document.getElementById('loginModal');
-        const cancelLogin= document.getElementById('cancelLogin');
-        const loginForm  = document.getElementById('loginForm');
-        const loginFeedback = document.getElementById('loginFeedback');
-        const togglePass = document.getElementById('togglePass');
-
-        function openLoginModal(modal){ if(!modal)return; modal.style.display='flex'; modal.setAttribute('aria-hidden','false'); const first=modal.querySelector('input,textarea,button'); if(first)first.focus(); document.documentElement.style.overflow='hidden'; document.body.style.overflow='hidden'; }
-        function closeLoginModal(modal){ if(!modal)return; modal.style.display='none'; modal.setAttribute('aria-hidden','true'); document.documentElement.style.overflow=''; document.body.style.overflow=''; }
-
-        if(loginOpen)   loginOpen.addEventListener('click', ()=>openLoginModal(loginModal));
-        if(cancelLogin) cancelLogin.addEventListener('click', ()=>closeLoginModal(loginModal));
-        if(loginModal)  loginModal.addEventListener('click', (e)=>{ if(e.target===loginModal)closeLoginModal(loginModal); });
-
-        if(togglePass){
-          togglePass.addEventListener('click',()=>{
-            const pass=document.getElementById('loginPass');
-            if(!pass)return;
-            if(pass.type==='password'){ pass.type='text'; togglePass.innerText='🙈'; togglePass.setAttribute('aria-label','Hide password'); }
-            else { pass.type='password'; togglePass.innerText='👁'; togglePass.setAttribute('aria-label','Show password'); }
-            pass.focus();
-          });
+          await signOut(auth);
+          feedback.textContent = 'Not authorized for admin access.';
+        } catch {
+          feedback.textContent = 'Invalid credentials or network error.';
         }
-
-        loginForm && loginForm.addEventListener('submit', async function(e){
-          e.preventDefault();
-          loginFeedback.innerHTML='';
-          const user=document.getElementById('loginUser').value.trim();
-          const pass=document.getElementById('loginPass').value;
-          try {
-            const cred=await signInWithEmailAndPassword(auth,user,pass);
-            if(cred.user && cred.user.email===ADMIN_EMAIL){
-              sessionStorage.setItem('admin_logged_in','1');
-              window.location.href='admin.html';
-            } else {
-              await signOut(auth);
-              loginFeedback.innerHTML='<div style="color:#FF6FA3">Not authorized for admin access.</div>';
-            }
-          } catch(err){
-            loginFeedback.innerHTML='<div style="color:#FF6FA3">Invalid credentials or network error.</div>';
-          }
-        });
-
-        onAuthStateChanged(auth,(user)=>{
-          if(user && user.email===ADMIN_EMAIL){ sessionStorage.setItem('admin_logged_in','1'); }
-        });
-      })();
-
-      /* ---- Focus trap ---- */
-      document.addEventListener('focusin',(e)=>{
-        const openModal=document.querySelector('.modal-backdrop[aria-hidden="false"]');
-        if(!openModal)return;
-        if(!openModal.contains(e.target)){ const first=openModal.querySelector('input,button,textarea'); if(first)first.focus(); }
+        PartyUI.setLoading(submitBtn, false);
       });
 
-      /* ---- Escape key closes modals ---- */
-      document.addEventListener('keydown',(e)=>{
-        if(e.key==='Escape'){
-          document.querySelectorAll('.modal-backdrop[aria-hidden="false"]').forEach(m=>{
-            m.style.display='none'; m.setAttribute('aria-hidden','true');
-            document.documentElement.style.overflow=''; document.body.style.overflow='';
-          });
-        }
+      onAuthStateChanged(auth, (user) => {
+        if (user && user.email === ADMIN_EMAIL) sessionStorage.setItem('admin_logged_in', '1');
       });
+    })();
 
-      console.debug('RSVP flow initialized with Firestore integration.');
-    });
+    console.debug('RSVP flow initialized with Firestore integration.');
   </script>
 </body>
 </html>
