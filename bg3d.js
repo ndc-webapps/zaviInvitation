@@ -10,8 +10,8 @@
   'use strict';
 
   var canvas = document.getElementById('bg3d');
-  var forceMotion = /[?&]motion=/.test(window.location.search);
-  var reducedMotion = !forceMotion && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  /* Motion is ON by default; ?motion=0 renders a static frame instead */
+  var reducedMotion = /[?&]motion=0/.test(window.location.search);
 
   function bail() {
     document.documentElement.classList.add('no-webgl');

@@ -2,13 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
+  <script>if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; } window.scrollTo(0, 0);</script>
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Zavier's 7th Birthday — Costume Party! 🎭</title>
   <meta name="description" content="Zavier turns seven. Halloween costume party, October 31 2026 at Jollibee 1000th Store BGC. Games, prizes, cake. RSVP now.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=9">
   <noscript><style>.preloader{display:none}</style></noscript>
 </head>
 <body>
@@ -72,11 +73,6 @@
         <p class="hero-sub">Games · Prizes · Cake<br>
           <span class="hl">Come dressed as your favourite character!</span>
         </p>
-
-        <div class="hero-actions">
-          <button class="btn btn--primary" type="button" data-open-modal="rsvpModal"><span class="btn-text">🎉 RSVP Now</span></button>
-          <button class="btn btn--ghost" type="button" data-open-modal="regretsModal"><span class="btn-text">😢 Can't Go</span></button>
-        </div>
       </div>
 
       <button class="scroll-cue" type="button" aria-label="Scroll to explore">
@@ -249,9 +245,70 @@
       </div>
     </section>
 
+    <!-- ===== SPECIAL THANKS ===== -->
+    <section class="section sthanks" id="specialThanks" aria-label="Special thanks">
+      <div class="container">
+        <div class="eyebrow" data-reveal="up"><span class="idx">05</span> Special thanks</div>
+        <h2 class="sec-title sthanks-heading">
+          <span class="st-line" data-split-scroll>The crews behind</span>
+          <span class="st-accent"><span class="line-inner">the magic ✨</span></span>
+        </h2>
+        <p class="sec-sub" data-reveal="up">Every party has quiet heroes. Three crews of seven made Zavier's big day possible — the blue bills, the gifts and the treats, all covered with love.</p>
+
+        <div class="sthanks-grid">
+          <article class="sthanks-card sthanks-card--gold" data-reveal-loop>
+            <div class="sthanks-glow" aria-hidden="true"></div>
+            <span class="sthanks-icon" aria-hidden="true"><span class="ic">💵</span></span>
+            <h3 class="sthanks-name">7 Blue Bills</h3>
+            <span class="sthanks-divider" aria-hidden="true"></span>
+            <ol class="sthanks-list">
+              <li data-reveal-loop><span class="n">01</span> Ninang Chel</li>
+              <li data-reveal-loop><span class="n">02</span> Ninang Liza</li>
+              <li data-reveal-loop><span class="n">03</span> Ninang Ann</li>
+              <li data-reveal-loop><span class="n">04</span> Ninang Lyn</li>
+              <li data-reveal-loop><span class="n">05</span> Ninang Nicole</li>
+              <li data-reveal-loop><span class="n">06</span> Ninang Rhoda</li>
+              <li data-reveal-loop><span class="n">07</span> Odette Mayor</li>
+            </ol>
+          </article>
+
+          <article class="sthanks-card sthanks-card--magenta" data-reveal-loop>
+            <div class="sthanks-glow" aria-hidden="true"></div>
+            <span class="sthanks-icon" aria-hidden="true"><span class="ic">🎁</span></span>
+            <h3 class="sthanks-name">7 Gifts</h3>
+            <span class="sthanks-divider" aria-hidden="true"></span>
+            <ol class="sthanks-list">
+              <li data-reveal-loop><span class="n">01</span> Ninong Rance</li>
+              <li data-reveal-loop><span class="n">02</span> Ninong Lars</li>
+              <li data-reveal-loop><span class="n">03</span> Ninang Kei</li>
+              <li data-reveal-loop><span class="n">04</span> Ninang Jodi Mae</li>
+              <li data-reveal-loop><span class="n">05</span> Iza</li>
+              <li data-reveal-loop><span class="n">06</span> Aldie / Ann</li>
+              <li data-reveal-loop><span class="n">07</span> Tita Danica</li>
+            </ol>
+          </article>
+
+          <article class="sthanks-card sthanks-card--teal" data-reveal-loop>
+            <div class="sthanks-glow" aria-hidden="true"></div>
+            <span class="sthanks-icon" aria-hidden="true"><span class="ic">🍭</span></span>
+            <h3 class="sthanks-name">7 Treats</h3>
+            <span class="sthanks-divider" aria-hidden="true"></span>
+            <ol class="sthanks-list">
+              <li data-reveal-loop><span class="n">01</span> Mayin</li>
+              <li data-reveal-loop><span class="n">02</span> Niro</li>
+              <li data-reveal-loop><span class="n">03</span> Zion / Zeus</li>
+              <li data-reveal-loop><span class="n">04</span> Chenel / Enoch</li>
+              <li data-reveal-loop><span class="n">05</span> Sam</li>
+              <li data-reveal-loop><span class="n">06</span> Cara</li>
+              <li data-reveal-loop><span class="n">07</span> Cali</li>
+            </ol>
+          </article>
+        </div>
+      </div>
+    </section>
+
     <!-- ===== RSVP CTA ===== -->
     <section class="section rsvp-cta" aria-label="RSVP">
-      <div class="rsvp-ghost" data-speed="0.6" aria-hidden="true">RSVP</div>
       <div class="container">
         <div class="eyebrow eyebrow--center" data-reveal="up">Don't miss it</div>
         <h2 class="sec-title" data-reveal="up">Will you be <em>there?</em></h2>
@@ -267,7 +324,7 @@
     <!-- ===== FAQ ===== -->
     <section class="section" aria-label="Frequently asked questions">
       <div class="container">
-        <div class="eyebrow" data-reveal="up"><span class="idx">05</span> Good to know</div>
+        <div class="eyebrow" data-reveal="up"><span class="idx">06</span> Good to know</div>
         <h2 class="sec-title" data-reveal="up">Quick <em>questions</em></h2>
 
         <div class="faq-list">
@@ -491,8 +548,8 @@
   <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js" defer></script>
-  <script src="main.js" defer></script>
-  <script src="bg3d.js" defer></script>
+  <script src="main.js?v=9" defer></script>
+  <script src="bg3d.js?v=9" defer></script>
 
   <!-- ===== FIREBASE RSVP LOGIC (inline module so file:// works) ===== -->
   <script type="module">
@@ -574,6 +631,81 @@
       }
     }
 
+    /* ---- Zavier's crews: 7 Bills / 7 Gifts / 7 Treats ----
+       Matching is whole-word based (an alias matches when ALL of its
+       words appear as words in the submitted name), so short aliases
+       like "Iza" never false-match inside "Liza". Nicknames and full
+       names are both listed per person. */
+    const PARTY_CREWS = [
+      {
+        label: 'the 7 Blue Bills 💙',
+        aliases: [
+          'chel dela cruz', 'rochel dela cruz', 'chel', 'rochel',
+          'liza',
+          'ann dela cruz', 'neyzie ann dela cruz', 'neyzie',
+          'lyn torre',
+          'nicole raven dela cruz', 'nicole dela cruz', 'tara dela cruz', 'tara',
+          'rhoda',
+          'odette mayor', 'odette',
+        ],
+      },
+      {
+        label: 'the 7 Gifts 🎁',
+        aliases: [
+          'rance', 'ranz',
+          'lars', 'romelie',
+          'kei', 'kei kei',
+          'jodi mae', 'jodi',
+          'iza',
+          'aldie', 'aldrich',
+          'danica torre', 'nica torre', 'danica',
+        ],
+      },
+      {
+        label: 'the 7 Treats 🍭',
+        aliases: [
+          'mayin',
+          'niro',
+          'zion', 'zeus',
+          'chenel', 'enoch',
+          'sam', 'samantha agustin', 'samantha',
+          'cara',
+          'cali',
+        ],
+      },
+    ];
+    const nameWords = (s) => normalizeName(s).replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(Boolean);
+    function findPartyCrew(name) {
+      const words = nameWords(name);
+      if (!words.length) return null;
+      for (const crew of PARTY_CREWS) {
+        for (const alias of crew.aliases) {
+          if (alias.split(' ').every((w) => words.includes(w))) return crew.label;
+        }
+      }
+      return null;
+    }
+    function collectCrewMatches(fullname, companionsStr) {
+      const matches = [];
+      const seen = new Set();
+      const check = (rawName) => {
+        const who = (rawName || '').trim();
+        if (!who || seen.has(normalizeName(who))) return;
+        seen.add(normalizeName(who));
+        const label = findPartyCrew(who);
+        if (label) matches.push({ who, label });
+      };
+      check(fullname);
+      (companionsStr || '').split(',').forEach(check);
+      return matches;
+    }
+    function crewNoteText(matches) {
+      if (!matches.length) return '';
+      return '\n\n' + matches.map((m) => `⭐ ${m.who} — you're part of ${m.label}!`).join('\n');
+    }
+    /* exposed for testing/debugging in the console */
+    window.PartyCrew = { findPartyCrew, collectCrewMatches };
+
     /* ---- RSVP form ---- */
     (function initRsvpForm() {
       const form = byId('rsvpForm');
@@ -618,20 +750,23 @@
           return;
         }
 
+        const companions = PartyUI.getCompanions();
+        const crewMatches = collectCrewMatches(name, companions);
         const submission = {
           status: 'going',
           fullname: name,
           phone,
           email,
-          companions: PartyUI.getCompanions(),
+          companions,
           message: byId('message').value.trim(),
+          crewTags: crewMatches.map((m) => `${m.who}: ${m.label}`).join('; '),
           timestamp: nowISO(),
         };
 
         const wrote = await writeSubmissionToFirestore(submission);
         if (!wrote) saveLocalSubmission(submission);
 
-        PartyUI.showSuccess(`Thank you, ${name || 'friend'}! Your RSVP has been saved. See you at the party! 🎉`);
+        PartyUI.showSuccess(`Thank you, ${name || 'friend'}! Your RSVP has been saved. See you at the party! 🎉${crewNoteText(crewMatches)}`);
         form.reset();
         PartyUI.clearCompanions();
 

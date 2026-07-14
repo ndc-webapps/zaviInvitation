@@ -21,6 +21,11 @@
 
   if (hasGsap && window.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
 
+  /* Cinematic entry: always start at the top (preloader + hero intro),
+     and keep the browser's scroll restore from fighting smooth scroll */
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  window.scrollTo(0, 0);
+
   window.PartyUI = {};
 
   /* ---------------------------------------------------------------
@@ -301,7 +306,7 @@
       raf = (Math.abs(mx - rx) > 0.2 || Math.abs(my - ry) > 0.2) ? requestAnimationFrame(loop) : null;
     }
 
-    const HOVERABLE = 'a, button, .btn, .chip, .detail-row, .hg-card, .faq-question, input, textarea';
+    const HOVERABLE = 'a, button, .btn, .chip, .detail-row, .hg-card, .sthanks-card, .faq-question, input, textarea';
     document.addEventListener('mouseover', (e) => {
       if (e.target.closest && e.target.closest(HOVERABLE)) ring.classList.add('is-hovering');
     });
@@ -335,7 +340,11 @@
     initVelocitySkew();
     initHorizontalGallery();
     initHeroPhotoLife();
+    initSthanksTitle();
+    initSthanksCards();
+    initSthanksAmbience();
     setupHeroHiddenState();
+    refreshOnContentSettle();
     runPreloader().then(playHeroIntro).then(() => { if (window.ScrollTrigger) ScrollTrigger.refresh(); });
 
     function initSmoothScroll() {
@@ -400,7 +409,7 @@
       document.querySelectorAll('[data-split]').forEach(splitChars);
       gsap.set('.mega-title .char', { yPercent: 118, rotate: 5 });
       gsap.set('.mega-line--accent .line-inner', { yPercent: 118 });
-      gsap.set(['.hero-badge', '.hero-sub', '.hero-actions', '.scroll-cue'], { opacity: 0, y: 28 });
+      gsap.set(['.hero-badge', '.hero-sub', '.scroll-cue'], { opacity: 0, y: 28 });
       gsap.set('.hero-photo', { opacity: 0, scale: 0.55, rotate: (i) => [-16, 14, -10][i] || 0 });
       gsap.set('.marquee--tilt', { opacity: 0, y: 46 });
     }
@@ -430,7 +439,6 @@
         .to('.mega-title .char', { yPercent: 0, rotate: 0, duration: 1.3, stagger: 0.045 }, 0.12)
         .to('.mega-line--accent .line-inner', { yPercent: 0, duration: 1.2 }, 0.62)
         .to('.hero-sub', { opacity: 1, y: 0, duration: 0.9 }, 0.95)
-        .to('.hero-actions', { opacity: 1, y: 0, duration: 0.9 }, 1.1)
         .to('.hero-photo', { opacity: 1, scale: 1, rotate: 0, duration: 1.1, ease: 'back.out(1.5)', stagger: 0.12 }, 0.85)
         .to('.marquee--tilt', { opacity: 1, y: 0, duration: 0.9 }, 1.25)
         .to('.scroll-cue', { opacity: 1, y: 0, duration: 0.9 }, 1.4);
@@ -438,7 +446,7 @@
 
     function initScrollReveals() {
       if (prefersReducedMotion || !window.ScrollTrigger) {
-        document.querySelectorAll('[data-reveal]').forEach((el) => {
+        document.querySelectorAll('[data-reveal], [data-reveal-loop]').forEach((el) => {
           el.style.opacity = '1'; el.style.transform = 'none'; el.style.filter = 'none';
         });
         return;
@@ -458,6 +466,57 @@
           onEnter: (batch) => gsap.to(batch, Object.assign({}, cfg.to, { duration: 1.1, ease: 'power3.out', stagger: 0.09, clearProps: 'filter' })),
         });
       });
+
+      /* Reversible reveals (Special Thanks). Each name/card fades in as it
+         approaches — that part is per-element and fine. The bug was tying
+         the *hide* to each element's own tiny bounding box: a name near the
+         top of a tall card would scroll "past" its own end long before the
+         card (or the section) actually left the screen, so it vanished
+         while still clearly in view. Fixed by decoupling: elements only
+         hide once the scene itself is actually left — i.e. once the next
+         section (Will you be there?) is reached — or if the user scrolls
+         back up above the whole Special Thanks scene. */
+      const loopEls = gsap.utils.toArray('[data-reveal-loop]');
+      loopEls.forEach((el) => {
+        const delay = el.matches('li')
+          ? Array.prototype.indexOf.call(el.parentNode.children, el) * 0.06
+          : 0;
+        gsap.fromTo(el, { opacity: 0, y: 44 }, {
+          opacity: 1, y: 0, duration: 1, delay, ease: 'power3.out',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top bottom',
+            toggleActions: 'play none none reverse',
+            invalidateOnRefresh: true,
+          },
+        });
+      });
+
+      const sthanksSection = document.getElementById('specialThanks');
+      const nextSection = document.querySelector('.rsvp-cta');
+      if (loopEls.length && sthanksSection && nextSection) {
+        const hideAll = () => gsap.to(loopEls, { opacity: 0, y: 44, duration: 0.5, ease: 'power2.in', overwrite: true });
+        const showAll = () => gsap.to(loopEls, { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out', overwrite: true, stagger: 0.02 });
+        ScrollTrigger.create({
+          trigger: nextSection,
+          start: 'top 75%',
+          onEnter: hideAll,
+          onLeaveBack: showAll,
+        });
+      }
+    }
+
+    /* Web fonts (Fraunces) can swap in after ScrollTrigger first measures
+       the page, shifting section heights. Without a refresh, trigger
+       start/end values go stale and elements can appear to "vanish"
+       mid-scroll on machines where the font loads slowly. Re-measure
+       once fonts and all images have actually settled. */
+    function refreshOnContentSettle() {
+      if (!window.ScrollTrigger) return;
+      const refresh = () => ScrollTrigger.refresh();
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(refresh);
+      window.addEventListener('load', refresh);
+      setTimeout(refresh, 2500);
     }
 
     function initParallax() {
@@ -539,9 +598,71 @@
         });
       });
     }
+
+    /* Special Thanks: heading chars rise on scroll (same language as hero) */
+    function initSthanksTitle() {
+      if (prefersReducedMotion || !window.ScrollTrigger) return;
+      const line = document.querySelector('[data-split-scroll]');
+      if (!line) return;
+      splitChars(line);
+      const chars = line.querySelectorAll('.char');
+      const accent = document.querySelector('.sthanks .st-accent .line-inner');
+      gsap.set(chars, { yPercent: 118, rotate: 5 });
+      if (accent) gsap.set(accent, { yPercent: 118 });
+      ScrollTrigger.create({
+        trigger: line,
+        start: 'top 85%',
+        onEnter: () => {
+          gsap.to(chars, { yPercent: 0, rotate: 0, duration: 1.1, ease: 'expo.out', stagger: 0.04, overwrite: true });
+          if (accent) gsap.to(accent, { yPercent: 0, duration: 1, ease: 'expo.out', delay: 0.3, overwrite: true });
+        },
+        onLeaveBack: () => {
+          gsap.to(chars, { yPercent: 118, rotate: 5, duration: 0.5, ease: 'power2.in', overwrite: true });
+          if (accent) gsap.to(accent, { yPercent: 118, duration: 0.5, ease: 'power2.in', overwrite: true });
+        },
+      });
+    }
+
+    /* Special Thanks: subtle 3D tilt + glow tracking on the crew cards */
+    function initSthanksCards() {
+      if (isTouch || prefersReducedMotion) return;
+      document.querySelectorAll('.sthanks-card').forEach((card) => {
+        const glow = card.querySelector('.sthanks-glow');
+        card.addEventListener('mousemove', (e) => {
+          const r = card.getBoundingClientRect();
+          const px = (e.clientX - r.left) / r.width - 0.5;
+          const py = (e.clientY - r.top) / r.height - 0.5;
+          gsap.to(card, { rotateY: px * 5, rotateX: -py * 5, y: -8, duration: 0.6, ease: 'power2.out', transformPerspective: 900 });
+          if (glow) gsap.to(glow, { x: px * 70, y: py * 70, duration: 0.6, ease: 'power2.out' });
+        });
+        card.addEventListener('mouseleave', () => {
+          gsap.to(card, { rotateX: 0, rotateY: 0, y: 0, duration: 0.9, ease: 'elastic.out(1,0.5)' });
+          if (glow) gsap.to(glow, { x: 0, y: 0, duration: 0.9, ease: 'power2.out' });
+        });
+      });
+    }
+
+    /* Special Thanks: the aurora breathes a little brighter in this scene */
+    function initSthanksAmbience() {
+      if (prefersReducedMotion || !window.ScrollTrigger) return;
+      if (!document.querySelector('.sthanks')) return;
+      const blobs = ['.aurora-1', '.aurora-2', '.aurora-3'];
+      const base = [0.30, 0.22, 0.14];
+      const lit = [0.44, 0.34, 0.24];
+      ScrollTrigger.create({
+        trigger: '.sthanks',
+        start: 'top 65%',
+        end: 'bottom 35%',
+        onToggle(self) {
+          blobs.forEach((sel, i) => {
+            gsap.to(sel, { opacity: self.isActive ? lit[i] : base[i], duration: 1.2, ease: 'power2.out', overwrite: true });
+          });
+        },
+      });
+    }
   } else {
     document.querySelectorAll('.preloader').forEach((p) => p.classList.add('is-done'));
-    document.querySelectorAll('[data-reveal]').forEach((el) => { el.style.opacity = '1'; });
+    document.querySelectorAll('[data-reveal], [data-reveal-loop]').forEach((el) => { el.style.opacity = '1'; });
   }
 
   document.documentElement.classList.add('js-ready');
