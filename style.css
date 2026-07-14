@@ -720,10 +720,16 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 600; line-height
 
 .modal {
   width: 100%; max-width: 580px; position: relative;
-  background: linear-gradient(165deg, #120C2C 0%, #1A1040 100%);
+  /* same frosted-glass language as the Special Thanks cards: a light
+     magenta/gold tint over a mostly-dark base, blurred so the 3D "7"
+     and aurora glow read through — ties the modal to the rest of the
+     scene instead of sitting on a flat, unrelated panel */
+  background: linear-gradient(165deg, rgba(255,61,138,0.10), rgba(16,11,36,0.86) 60%);
+  -webkit-backdrop-filter: blur(22px) saturate(1.2);
+  backdrop-filter: blur(22px) saturate(1.2);
   border: 1px solid var(--line-lit);
   border-radius: var(--r-lg); padding: clamp(30px, 5vw, 48px);
-  box-shadow: 0 60px 160px rgba(0,0,0,0.6);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 60px 160px rgba(0,0,0,0.6);
   max-height: calc(100vh - 40px); /* fallback */
   max-height: calc(100svh - 40px); /* ignores toolbar show/hide jump */
   max-height: calc(100dvh - 40px); /* shrinks above an on-screen keyboard */
@@ -732,13 +738,13 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 600; line-height
 }
 .modal::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-  background: linear-gradient(90deg, var(--magenta), var(--gold), var(--teal), var(--violet));
+  background: linear-gradient(90deg, var(--magenta), var(--gold-2));
   border-radius: var(--r-lg) var(--r-lg) 0 0;
 }
 .modal-header { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; }
 .modal-icon {
   width: 52px; height: 52px; border-radius: 16px; flex-shrink: 0;
-  background: linear-gradient(135deg, rgba(255,61,138,0.22), rgba(139,92,246,0.18));
+  background: linear-gradient(135deg, rgba(255,61,138,0.22), rgba(255,197,61,0.16));
   border: 1px solid var(--line-lit);
   display: flex; align-items: center; justify-content: center; font-size: 22px;
 }
@@ -782,7 +788,7 @@ textarea.input { height: auto; min-height: 122px; padding-top: 30px; resize: ver
 .field-error.is-visible { display: block; }
 
 .field-plain { margin-bottom: 18px; }
-.field-plain > label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: var(--teal-2); margin-bottom: 10px; }
+.field-plain > label { display: block; font-size: 11px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: var(--gold-2); margin-bottom: 10px; }
 
 .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 
@@ -799,15 +805,15 @@ textarea.input { height: auto; min-height: 122px; padding-top: 30px; resize: ver
 .password-wrapper .field-float { flex: 1; margin-bottom: 0; }
 .toggle-pass-btn {
   flex-shrink: 0; width: 60px; height: 60px; border-radius: var(--r-sm);
-  background: rgba(139,92,246,0.12); border: 1px solid var(--violet);
-  color: var(--violet-2); font-size: 18px;
+  background: rgba(255,197,61,0.12); border: 1px solid var(--gold);
+  color: var(--gold-2); font-size: 18px;
   display: flex; align-items: center; justify-content: center; transition: all 0.3s;
 }
-.toggle-pass-btn:hover { background: rgba(139,92,246,0.22); }
+.toggle-pass-btn:hover { background: rgba(255,197,61,0.22); }
 
 .form-actions { display: flex; gap: 12px; margin-top: 26px; flex-wrap: wrap; }
 .form-actions .btn { flex: 1; min-width: 170px; }
-.feedback { margin-top: 16px; font-size: 13.5px; font-weight: 600; color: var(--teal-2); line-height: 1.6; }
+.feedback { margin-top: 16px; font-size: 13.5px; font-weight: 600; color: var(--gold-2); line-height: 1.6; }
 
 /* Success modal */
 .success-modal .modal { max-width: 460px; text-align: center; }

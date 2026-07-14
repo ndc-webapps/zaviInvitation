@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=15">
+  <link rel="stylesheet" href="style.css?v=21">
   <noscript><style>.preloader{display:none}</style></noscript>
 </head>
 <body>
@@ -543,6 +543,9 @@
       </div>
       <h3 id="confirmTitle">Saved!</h3>
       <div id="confirmMessage"></div>
+      <button type="button" id="addToCalendarBtn" class="btn btn--gold btn--block" style="margin-top:22px;display:none">
+        <span class="btn-text">📅 Add to Calendar</span>
+      </button>
     </div>
   </div>
 
@@ -554,8 +557,8 @@
   <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js" defer></script>
-  <script src="main.js?v=15" defer></script>
-  <script src="bg3d.js?v=15" defer></script>
+  <script src="main.js?v=21" defer></script>
+  <script src="bg3d.js?v=21" defer></script>
 
   <!-- ===== FIREBASE RSVP LOGIC (inline module so file:// works) ===== -->
   <script type="module">
@@ -775,7 +778,7 @@
         const wrote = await writeSubmissionToFirestore(submission);
         if (!wrote) saveLocalSubmission(submission);
 
-        PartyUI.showSuccess(`Thank you, ${name || 'friend'}! Your RSVP has been saved. See you at the party! 🎉${crewNoteText(crewMatches)}`);
+        PartyUI.showSuccess(`Thank you, ${name || 'friend'}! Your RSVP has been saved. See you at the party! 🎉${crewNoteText(crewMatches)}`, { calendar: true });
         form.reset();
         PartyUI.clearCompanions();
 

@@ -120,14 +120,99 @@
     }
   };
 
-  PartyUI.showSuccess = function (message) {
+  PartyUI.showSuccess = function (message, opts) {
     const modal = byId('confirmModal');
     const msgEl = byId('confirmMessage');
     const badge = modal && modal.querySelector('.success-badge');
+    const calBtn = byId('addToCalendarBtn');
     if (msgEl) msgEl.textContent = message;
     if (badge) { badge.classList.remove('is-playing'); void badge.offsetWidth; badge.classList.add('is-playing'); }
+    if (calBtn) calBtn.style.display = (opts && opts.calendar) ? '' : 'none';
     PartyUI.openModal(modal);
   };
+
+  /* ---------------------------------------------------------------
+     ADD TO CALENDAR (iOS + Android + desktop)
+     Party: Oct 31 2026, 6:30–9:30 PM, Asia/Manila (UTC+8, no DST) —
+     written in UTC so every calendar app shows the correct local time
+     regardless of the guest's own device timezone.
+     --------------------------------------------------------------- */
+  (function initAddToCalendar() {
+    const btn = byId('addToCalendarBtn');
+    if (!btn) return;
+
+    const EVENT = {
+      title: "Zavier's 7th Birthday — Costume Party!",
+      details: 'Halloween costume party for Zavier turning seven. Games, prizes, and cake. Come dressed as anyone or anything you love!',
+      location: 'Jollibee 1000th Store, 39th Street corner Triangle Drive, Bonifacio Global City (BGC), Taguig',
+      startUTC: '20261031T103000Z',
+      endUTC: '20261031T133000Z',
+    };
+
+    function icsEscape(s) {
+      return String(s).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
+    }
+
+    function buildICS() {
+      const stamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+      return [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//Zaviers7th//RSVP//EN',
+        'CALSCALE:GREGORIAN',
+        'BEGIN:VEVENT',
+        'UID:zaviers-7th-birthday-2026@zaviinvitation',
+        'DTSTAMP:' + stamp,
+        'DTSTART:' + EVENT.startUTC,
+        'DTEND:' + EVENT.endUTC,
+        'SUMMARY:' + icsEscape(EVENT.title),
+        'DESCRIPTION:' + icsEscape(EVENT.details),
+        'LOCATION:' + icsEscape(EVENT.location),
+        'END:VEVENT',
+        'END:VCALENDAR',
+      ].join('\r\n');
+    }
+
+    function googleCalUrl() {
+      const params = new URLSearchParams({
+        action: 'TEMPLATE',
+        text: EVENT.title,
+        dates: EVENT.startUTC + '/' + EVENT.endUTC,
+        details: EVENT.details,
+        location: EVENT.location,
+      });
+      return 'https://calendar.google.com/calendar/render?' + params.toString();
+    }
+
+    btn.addEventListener('click', () => {
+      const ua = navigator.userAgent || '';
+      const isIOS = /iPad|iPhone|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+      const isAndroid = /Android/.test(ua);
+
+      if (isIOS) {
+        /* iOS Safari recognizes the text/calendar mime type on navigation
+           and opens the native "Add to Calendar" sheet directly */
+        const dataUri = 'data:text/calendar;charset=utf-8,' + encodeURIComponent(buildICS());
+        window.location.href = dataUri;
+      } else if (isAndroid) {
+        /* Google Calendar is the default app on almost every Android
+           device — this deep-links straight into a prefilled "Save" screen */
+        window.open(googleCalUrl(), '_blank', 'noopener');
+      } else {
+        /* Desktop: download the .ics for Outlook/Apple Calendar/Google
+           Calendar import */
+        const blob = new Blob([buildICS()], { type: 'text/calendar;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'zaviers-7th-birthday.ics';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 4000);
+      }
+    });
+  })();
 
   /* ---------------------------------------------------------------
      COMPANIONS
