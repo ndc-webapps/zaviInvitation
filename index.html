@@ -5,11 +5,11 @@
   <script>if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; } window.scrollTo(0, 0);</script>
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Zavier's 7th Birthday — Costume Party! 🎭</title>
-  <meta name="description" content="Zavier turns seven. Halloween costume party, October 31 2026 at Jollibee 1000th Store BGC. Games, prizes, cake. RSVP now.">
+  <meta name="description" content="Zavier turns seven. Halloween costume party, October 31 2026, 7:00–9:30 PM at Jollibee 1000th Store BGC. Games, prizes, cake. RSVP now.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=9">
+  <link rel="stylesheet" href="style.css?v=14">
   <noscript><style>.preloader{display:none}</style></noscript>
 </head>
 <body>
@@ -63,7 +63,7 @@
       </figure>
 
       <div class="hero-core">
-        <div class="hero-badge"><span class="dot"></span> Costume Party · October 31, 2026</div>
+        <div class="hero-badge"><span class="dot"></span> Costume Party · Oct 31, 2026 · 7:00–9:30 PM</div>
 
         <h1 class="mega-title" id="page-title">
           <span class="mega-line" data-split>Zavier</span>
@@ -126,7 +126,7 @@
             <span class="detail-idx">(01)</span>
             <span class="detail-label">When</span>
             <span class="detail-value">October 31, <em>2026</em>
-              <span class="detail-note">Halloween Saturday — the perfect day for costumes 🎃</span>
+              <span class="detail-note">Halloween Saturday, 7:00 PM – 9:30 PM — the perfect night for costumes 🎃</span>
             </span>
             <span class="detail-arrow">→</span>
           </div>
@@ -202,8 +202,8 @@
         <div class="stack-cards">
           <div class="stack-card">
             <div>
-              <h3 class="stack-title">Roblox Games</h3>
-              <p class="stack-desc">Screen-to-real-life mini games all afternoon. Obby races, quizzes, and challenges — winners climb the leaderboard.</p>
+              <h3 class="stack-title">Fun and Games</h3>
+              <p class="stack-desc">Exciting mini games all night long. Races, quizzes, and playful challenges — winners climb the leaderboard.</p>
             </div>
             <span class="stack-emoji">🎮</span>
             <span class="stack-idx">01</span>
@@ -317,7 +317,13 @@
           <button class="btn btn--primary" type="button" data-open-modal="rsvpModal"><span class="btn-text">🎉 RSVP Now</span></button>
           <button class="btn btn--gold" type="button" data-open-modal="regretsModal"><span class="btn-text">😢 Can't Go</span></button>
         </div>
-        <div data-reveal="up"><span class="contact-pill">📞 Questions? Contact <strong>Neil · +63 912 345 6789</strong></span></div>
+        <div class="contact-row" data-reveal="up">
+          <span class="contact-lead">Questions? Contact <strong>Neil</strong></span>
+          <span class="contact-pills">
+            <a class="contact-pill" href="tel:+639604185732">📞 +63 960 418 5732</a>
+            <a class="contact-pill" href="https://www.facebook.com/nadelacruz01/" target="_blank" rel="noopener">💬 Message on Facebook</a>
+          </span>
+        </div>
       </div>
     </section>
 
@@ -354,14 +360,14 @@
               My child has allergies — who do I tell?
               <span class="faq-icon">+</span>
             </button>
-            <div class="faq-answer-wrap"><div class="faq-answer"><p>Add a note in the message field when you RSVP, or contact Neil directly so we can plan around it.</p></div></div>
+            <div class="faq-answer-wrap"><div class="faq-answer"><p>Add a note in the message field when you RSVP, or contact Neil directly at <a href="tel:+639604185732">+63 960 418 5732</a> so we can plan around it.</p></div></div>
           </div>
           <div class="faq-item" data-reveal="up">
             <button class="faq-question" aria-expanded="false">
               Who do I contact with questions?
               <span class="faq-icon">+</span>
             </button>
-            <div class="faq-answer-wrap"><div class="faq-answer"><p>Reach out to Neil at +63 912 345 6789 for anything at all.</p></div></div>
+            <div class="faq-answer-wrap"><div class="faq-answer"><p>Reach out to Neil at <a href="tel:+639604185732">+63 960 418 5732</a>, or message him on <a href="https://www.facebook.com/nadelacruz01/" target="_blank" rel="noopener">Facebook</a> for anything at all.</p></div></div>
           </div>
         </div>
       </div>
@@ -548,8 +554,8 @@
   <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/lenis@1/dist/lenis.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js" defer></script>
-  <script src="main.js?v=9" defer></script>
-  <script src="bg3d.js?v=9" defer></script>
+  <script src="main.js?v=14" defer></script>
+  <script src="bg3d.js?v=14" defer></script>
 
   <!-- ===== FIREBASE RSVP LOGIC (inline module so file:// works) ===== -->
   <script type="module">
@@ -636,64 +642,67 @@
        words appear as words in the submitted name), so short aliases
        like "Iza" never false-match inside "Liza". Nicknames and full
        names are both listed per person. */
-    const PARTY_CREWS = [
-      {
-        label: 'the 7 Blue Bills 💙',
-        aliases: [
-          'chel dela cruz', 'rochel dela cruz', 'chel', 'rochel',
-          'liza',
-          'ann dela cruz', 'neyzie ann dela cruz', 'neyzie',
-          'lyn torre',
-          'nicole raven dela cruz', 'nicole dela cruz', 'tara dela cruz', 'tara',
-          'rhoda',
-          'odette mayor', 'odette',
-        ],
-      },
-      {
-        label: 'the 7 Gifts 🎁',
-        aliases: [
-          'rance', 'ranz',
-          'lars', 'romelie',
-          'kei', 'kei kei',
-          'jodi mae', 'jodi',
-          'iza',
-          'aldie', 'aldrich',
-          'danica torre', 'nica torre', 'danica',
-        ],
-      },
-      {
-        label: 'the 7 Treats 🍭',
-        aliases: [
-          'mayin',
-          'niro',
-          'zion', 'zeus',
-          'chenel', 'enoch',
-          'sam', 'samantha agustin', 'samantha',
-          'cara',
-          'cali',
-        ],
-      },
+    /* One entry per PERSON, each with a canonical display name and every
+       nickname/spelling that should match them. A "X / Y" on the cards means
+       TWO different people sharing a slot (e.g. Zion and Zeus are separate
+       people) — so they are listed separately here and each is detected on
+       its own: enter both and you get two lines. Aliases joined by "or" for
+       the SAME person (e.g. Sam / Samantha, Kei / Kei Kei) stay as one entry.
+       Matching is whole-word so short names like "iza" never match inside
+       "liza", and case-insensitive. */
+    const PARTY_PEOPLE = [
+      // 7 Blue Bills 💙
+      { crew: 'the 7 Blue Bills 💙', display: 'Ninang Chel',   aliases: ['chel', 'rochel', 'chel dela cruz', 'rochel dela cruz'] },
+      { crew: 'the 7 Blue Bills 💙', display: 'Ninang Liza',   aliases: ['liza'] },
+      { crew: 'the 7 Blue Bills 💙', display: 'Ninang Ann',    aliases: ['ann dela cruz', 'neyzie ann dela cruz', 'neyzie'] },
+      { crew: 'the 7 Blue Bills 💙', display: 'Ninang Lyn',    aliases: ['lyn torre', 'lyn'] },
+      { crew: 'the 7 Blue Bills 💙', display: 'Ninang Nicole', aliases: ['nicole', 'nicole raven dela cruz', 'nicole dela cruz', 'tara', 'tara dela cruz'] },
+      { crew: 'the 7 Blue Bills 💙', display: 'Ninang Rhoda',  aliases: ['rhoda'] },
+      { crew: 'the 7 Blue Bills 💙', display: 'Odette Mayor',  aliases: ['odette', 'odette mayor'] },
+      // 7 Gifts 🎁
+      { crew: 'the 7 Gifts 🎁', display: 'Ninong Rance',   aliases: ['rance', 'ranz'] },
+      { crew: 'the 7 Gifts 🎁', display: 'Ninong Lars',    aliases: ['lars', 'romelie'] },
+      { crew: 'the 7 Gifts 🎁', display: 'Ninang Kei',     aliases: ['kei', 'kei kei'] },
+      { crew: 'the 7 Gifts 🎁', display: 'Ninang Jodi Mae', aliases: ['jodi', 'jodi mae'] },
+      { crew: 'the 7 Gifts 🎁', display: 'Iza',            aliases: ['iza'] },
+      { crew: 'the 7 Gifts 🎁', display: 'Aldie',          aliases: ['aldie', 'aldrich'] },
+      { crew: 'the 7 Gifts 🎁', display: 'Ann',            aliases: ['ann'] },
+      { crew: 'the 7 Gifts 🎁', display: 'Tita Danica',    aliases: ['danica', 'danica torre', 'nica torre'] },
+      // 7 Treats 🍭
+      { crew: 'the 7 Treats 🍭', display: 'Mayin',         aliases: ['mayin'] },
+      { crew: 'the 7 Treats 🍭', display: 'Niro',          aliases: ['niro'] },
+      { crew: 'the 7 Treats 🍭', display: 'Zion',          aliases: ['zion'] },
+      { crew: 'the 7 Treats 🍭', display: 'Zeus',          aliases: ['zeus'] },
+      { crew: 'the 7 Treats 🍭', display: 'Chenel',        aliases: ['chenel'] },
+      { crew: 'the 7 Treats 🍭', display: 'Enoch',         aliases: ['enoch'] },
+      { crew: 'the 7 Treats 🍭', display: 'Sam',           aliases: ['sam', 'samantha', 'samantha agustin'] },
+      { crew: 'the 7 Treats 🍭', display: 'Cara',          aliases: ['cara'] },
+      { crew: 'the 7 Treats 🍭', display: 'Cali',          aliases: ['cali'] },
     ];
     const nameWords = (s) => normalizeName(s).replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(Boolean);
-    function findPartyCrew(name) {
+    function findPerson(name) {
       const words = nameWords(name);
       if (!words.length) return null;
-      for (const crew of PARTY_CREWS) {
-        for (const alias of crew.aliases) {
-          if (alias.split(' ').every((w) => words.includes(w))) return crew.label;
+      for (const person of PARTY_PEOPLE) {
+        for (const alias of person.aliases) {
+          if (alias.split(' ').every((w) => words.includes(w))) return person;
         }
       }
       return null;
     }
+    /* back-compat helper: returns just the crew label for a name */
+    function findPartyCrew(name) {
+      const p = findPerson(name);
+      return p ? p.crew : null;
+    }
     function collectCrewMatches(fullname, companionsStr) {
       const matches = [];
-      const seen = new Set();
+      const seenPeople = new Set();
       const check = (rawName) => {
-        const who = (rawName || '').trim();
-        if (!who || seen.has(normalizeName(who))) return;
-        seen.add(normalizeName(who));
-        const label = findPartyCrew(who);
-        if (label) matches.push({ who, label });
+        const person = findPerson(rawName || '');
+        if (!person || seenPeople.has(person.display)) return;
+        seenPeople.add(person.display);
+        matches.push({ who: person.display, label: person.crew });
       };
       check(fullname);
       (companionsStr || '').split(',').forEach(check);
@@ -704,7 +713,7 @@
       return '\n\n' + matches.map((m) => `⭐ ${m.who} — you're part of ${m.label}!`).join('\n');
     }
     /* exposed for testing/debugging in the console */
-    window.PartyCrew = { findPartyCrew, collectCrewMatches };
+    window.PartyCrew = { findPerson, findPartyCrew, collectCrewMatches };
 
     /* ---- RSVP form ---- */
     (function initRsvpForm() {

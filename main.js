@@ -467,42 +467,41 @@
         });
       });
 
-      /* Reversible reveals (Special Thanks). Each name/card fades in as it
-         approaches — that part is per-element and fine. The bug was tying
-         the *hide* to each element's own tiny bounding box: a name near the
-         top of a tall card would scroll "past" its own end long before the
-         card (or the section) actually left the screen, so it vanished
-         while still clearly in view. Fixed by decoupling: elements only
-         hide once the scene itself is actually left — i.e. once the next
-         section (Will you be there?) is reached — or if the user scrolls
-         back up above the whole Special Thanks scene. */
-      const loopEls = gsap.utils.toArray('[data-reveal-loop]');
-      loopEls.forEach((el) => {
-        const delay = el.matches('li')
-          ? Array.prototype.indexOf.call(el.parentNode.children, el) * 0.06
-          : 0;
-        gsap.fromTo(el, { opacity: 0, y: 44 }, {
-          opacity: 1, y: 0, duration: 1, delay, ease: 'power3.out',
-          scrollTrigger: {
-            trigger: el,
-            start: 'top bottom',
-            toggleActions: 'play none none reverse',
-            invalidateOnRefresh: true,
-          },
-        });
-      });
+      /* Special Thanks reveal — driven by ONE trigger on the whole section,
+         never by each element's own box (that was the vanishing bug: a name
+         near the top of a tall card would scroll "past" its own tiny trigger
+         and hide while the card was still clearly on screen).
 
+         Rules that make it bulletproof:
+         - Cards/names fade in (staggered) as the section approaches.
+         - Once shown they STAY shown the entire time the section is on
+           screen AND while scrolling down past it into the RSVP section.
+         - They only reset to hidden when you scroll fully back up ABOVE the
+           section (so re-entering replays the cascade) — never in view.
+         - A safety net force-reveals them if the section is anywhere near
+           the viewport, so a late font-load/refresh can't leave them stuck. */
+      const loopEls = gsap.utils.toArray('[data-reveal-loop]');
       const sthanksSection = document.getElementById('specialThanks');
-      const nextSection = document.querySelector('.rsvp-cta');
-      if (loopEls.length && sthanksSection && nextSection) {
-        const hideAll = () => gsap.to(loopEls, { opacity: 0, y: 44, duration: 0.5, ease: 'power2.in', overwrite: true });
-        const showAll = () => gsap.to(loopEls, { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out', overwrite: true, stagger: 0.02 });
+      if (loopEls.length && sthanksSection) {
+        gsap.set(loopEls, { opacity: 0, y: 44 });
+        const revealTl = gsap.timeline({ paused: true })
+          .to(loopEls, { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out', stagger: 0.05 });
+
         ScrollTrigger.create({
-          trigger: nextSection,
-          start: 'top 75%',
-          onEnter: hideAll,
-          onLeaveBack: showAll,
+          trigger: sthanksSection,
+          start: 'top 82%',
+          onEnter: () => revealTl.play(),
+          onEnterBack: () => revealTl.play(),
+          onLeaveBack: () => revealTl.pause(0),
+          invalidateOnRefresh: true,
         });
+
+        const safetyReveal = () => {
+          const r = sthanksSection.getBoundingClientRect();
+          if (r.top < window.innerHeight * 0.9 && r.bottom > 0) revealTl.play();
+        };
+        window.addEventListener('load', safetyReveal);
+        setTimeout(safetyReveal, 2600);
       }
     }
 
